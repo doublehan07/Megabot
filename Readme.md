@@ -12,3 +12,12 @@
 ###编队通过指定地形
 
 ###获取地形信息，自组织，传送
+
+##硬件
+###STM32F401(NUCLEO)+DW1000(DECAWAVE)
+
+##仿真
+processing & matlab
+
+##上位机程序
+labview & qt
