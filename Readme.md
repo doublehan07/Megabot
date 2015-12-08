@@ -1,14 +1,5 @@
-#Challenge Cup & Spark
+#Videos
 
-##目标
-### 上位机发送信息，小车编队自组织成对应形状
-- 如果把小车换成机器人，我们有Harvard的机器人视频(14.8)，和另外一个类似的视频(15.1)
-- 一种可行的还原方式：轮图
-- 自组织，简化行走模式，降低碰撞几率
+- 2014.8 Harvard: Programmable self-assembly in a thousand-robot swarm
 
-###上位机捕捉到小车编队，对队形进行重构
-- 是否可以定位：图刚性理论
-
-###编队通过指定地形
-
-###获取地形信息，自组织，传送
+- 2015.1 ???: Self-Organized Collective Decisions in a Robot Swarm
