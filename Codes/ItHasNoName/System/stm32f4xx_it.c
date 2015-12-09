@@ -167,11 +167,14 @@ void SysTick_Handler(void)
 __IO uint32_t us_Delay;
 void TIM5_IRQHandler(void)//2us
 {
+	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET)
+		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 	if (us_Delay != 0x00)
   { 
     us_Delay--;
   }
-	TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
+	else
+		TIM_Cmd(TIM5, DISABLE);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

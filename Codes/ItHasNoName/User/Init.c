@@ -98,7 +98,7 @@ void TimerInit(void)
   TIM_TimeBaseStructure.TIM_Prescaler = 0;
   TIM_TimeBaseInit(TIM5, &TIM_TimeBaseStructure);
   TIM_ITConfig(TIM5, TIM_IT_Update, ENABLE);
-	TIM_Cmd(TIM5, ENABLE);
+	TIM_Cmd(TIM5, DISABLE);
 }
 
 //÷–∂œ≈‰÷√

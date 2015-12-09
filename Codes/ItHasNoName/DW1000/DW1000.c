@@ -326,5 +326,6 @@ extern __IO uint32_t us_Delay;
 void wait_us(__IO uint32_t nTime)
 { 
 		us_Delay = nTime/2;
+		TIM_Cmd(TIM5, ENABLE);
 		while(us_Delay != 0);
 }
