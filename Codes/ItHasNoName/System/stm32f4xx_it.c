@@ -171,6 +171,7 @@ void TIM5_IRQHandler(void)//2us
   { 
     us_Delay--;
   }
+	TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
