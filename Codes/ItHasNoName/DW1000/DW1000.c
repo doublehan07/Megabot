@@ -32,6 +32,7 @@ uint16_t getFramelength(void);                                                  
 // SPI Inteface
 uint8_t readRegister8(uint8_t reg, uint16_t subaddress);                                // expressive methods to read or write the number of bits written in the name
 uint16_t readRegister16(uint8_t reg, uint16_t subaddress);
+uint32_t readRegister32(uint8_t reg, uint16_t subaddress);
 uint64_t readRegister40(uint8_t reg, uint16_t subaddress);
 void writeRegister8(uint8_t reg, uint16_t subaddress, uint8_t buffer);
 void writeRegister16(uint8_t reg, uint16_t subaddress, uint16_t buffer);
@@ -47,6 +48,8 @@ static void wait_us(__IO uint32_t);
 
 /* Private functions ---------------------------------------------------------*/
 void DW1000_Init() {
+	uint16_t buffer16;
+	uint32_t buffer32;
 		setCallbacks(NULL, NULL);
 	
 		deselect();
@@ -70,13 +73,20 @@ void DW1000_Init() {
 
     //Those values are for the 110kbps mode (5, 16MHz, 1024 Symbols) and are quite complete
     writeRegister16(DW1000_AGC_CTRL, 0x04, 0x8870);             //AGC_TUNE1 for 16MHz PRF
+		buffer16 = readRegister16(DW1000_AGC_CTRL, 0x04);
     writeRegister32(DW1000_AGC_CTRL, 0x0C, 0x2502A907);         //AGC_TUNE2 (Universal)
+		buffer32 = readRegister32(DW1000_AGC_CTRL, 0x0C);
     writeRegister16(DW1000_AGC_CTRL, 0x12, 0x0055);             //AGC_TUNE3 (Universal)
+		buffer16 = readRegister16(DW1000_AGC_CTRL, 0x12);
 
     writeRegister16(DW1000_DRX_CONF, 0x02, 0x000A);             //DRX_TUNE0b for 110kbps
+		buffer16 = readRegister16(DW1000_DRX_CONF, 0x02);
     writeRegister16(DW1000_DRX_CONF, 0x04, 0x0087);             //DRX_TUNE1a for 16MHz PRF
+		buffer16 = readRegister16(DW1000_DRX_CONF, 0x04);
     writeRegister16(DW1000_DRX_CONF, 0x06, 0x0064);             //DRX_TUNE1b for 110kbps & > 1024 symbols
+		buffer16 = readRegister16(DW1000_DRX_CONF, 0x06);
     writeRegister32(DW1000_DRX_CONF, 0x08, 0x351A009A);         //PAC size for 1024 symbols preamble & 16MHz PRF
+		buffer32 = readRegister32(DW1000_DRX_CONF, 0x08);
     //writeRegister32(DW1000_DRX_CONF, 0x08, 0x371A011D);               //PAC size for 2048 symbols preamble
 
     writeRegister8 (DW1000_LDE_CTRL, 0x0806, 0xD);              //LDE_CFG1
@@ -264,6 +274,12 @@ uint8_t readRegister8(uint8_t reg, uint16_t subaddress) {
 uint16_t readRegister16(uint8_t reg, uint16_t subaddress) {
     uint16_t result;
     readRegister(reg, subaddress, (uint8_t*)&result, 2);
+    return result;
+}
+
+uint32_t readRegister32(uint8_t reg, uint16_t subaddress) {
+    uint32_t result;
+    readRegister(reg, subaddress, (uint8_t*)&result, 4);
     return result;
 }
 

@@ -170,9 +170,7 @@ void TIM5_IRQHandler(void)//2us
 	if (TIM_GetITStatus(TIM5, TIM_IT_Update) != RESET)
 		TIM_ClearITPendingBit(TIM5, TIM_IT_Update);
 	if (us_Delay != 0x00)
-  { 
-    us_Delay--;
-  }
+		us_Delay--;
 	else
 		TIM_Cmd(TIM5, DISABLE);
 }

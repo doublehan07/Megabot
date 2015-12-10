@@ -12,31 +12,31 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F401RC</Device>
+          <Device>STM32F401RE</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <Cpu>IROM(0x08000000,0x40000) IRAM(0x20000000,0x10000) CPUTYPE("Cortex-M4") FPU2 CLOCK(84000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000-0x20017FFF) IROM(0x08000000-0x0805FFFF) CLOCK(25000000) CPUTYPE("Cortex-M4") FPU2</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32F4xx_256 -FS08000000 -FL040000 -FP0($$Device:STM32F401RC$Flash\STM32F4xx_256.FLM))</FlashDriverDll>
-          <DeviceId>7383</DeviceId>
-          <RegisterFile>$$Device:STM32F401RC$Device\Include\stm32f4xx.h</RegisterFile>
+          <StartupFile>"Startup\ST\STM32F4xx\startup_stm32f401xx.s" ("STM32F401xx Startup Code")</StartupFile>
+          <FlashDriverDll>UL2CM3(-O207 -S0 -C0 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F4xx_384 -FS08000000 -FL060000)</FlashDriverDll>
+          <DeviceId>7542</DeviceId>
+          <RegisterFile>stm32f4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
           <Linker></Linker>
           <OHString></OHString>
           <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
+          <SLE66CMisc>-DSTM32F401xx</SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32F401RC$SVD\STM32F40x.svd</SFDFile>
+          <SFDFile>SFD\ST\STM32F4xx\STM32F401x.SFR</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
           <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <RegisterFilePath>ST\STM32F4xx\</RegisterFilePath>
+          <DBRegisterFilePath>ST\STM32F4xx\</DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -102,11 +102,11 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments> -REMAP -MPU</SimDllArguments>
+          <SimDllArguments>-MPU -REMAP</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
+          <TargetDllArguments>-MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
         </DllOption>
@@ -128,6 +128,7 @@
             <RestoreFunctions>1</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
             <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
+            <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
             <UseTarget>1</UseTarget>
@@ -139,6 +140,8 @@
             <RestoreFunctions>0</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
             <RestoreTracepoints>0</RestoreTracepoints>
+            <RestoreSysVw>1</RestoreSysVw>
+            <UsePdscDebugDescription>1</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
           <TargetSelection>13</TargetSelection>
@@ -165,10 +168,10 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4103</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
+          <Flash2>BIN\UL2CM3.DLL</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
@@ -214,7 +217,7 @@
             <hadIRAM>1</hadIRAM>
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
-            <RvdsVP>0</RvdsVP>
+            <RvdsVP>2</RvdsVP>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -274,12 +277,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x18000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x60000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -304,7 +307,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x60000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -329,7 +332,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x18000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -353,11 +356,13 @@
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
+            <uC99>0</uC99>
+            <useXO>0</useXO>
             <VariousControls>
               <MiscControls>--gnu --no_rtti </MiscControls>
               <Define> TARGET_STM32F401RE,  TARGET_FF_ARDUINO,  __CORTEX_M4,  TARGET_FF_MORPHO,  __FPU_PRESENT=1,  TARGET_CORTEX_M,  TOOLCHAIN_ARM_MICRO,  MBED_BUILD_TIMESTAMP=1448522480.98,  __MBED__=1,  TARGET_NUCLEO_F401RE,  TARGET_M4,  TARGET_STM,  TARGET_STM32F4,  TOOLCHAIN_ARM,  ARM_MATH_CM4,  __ASSERT_MSG, </Define>
               <Undefine></Undefine>
-              <IncludePath>  .;  DW1000;  MM2WayRanging;  MMRanging;  PC;  mbed;  mbed/TARGET_NUCLEO_F401RE;  mbed/TARGET_NUCLEO_F401RE/TARGET_STM;  mbed/TARGET_NUCLEO_F401RE/TARGET_STM/TARGET_STM32F4;  mbed/TARGET_NUCLEO_F401RE/TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F401RE;  mbed/TARGET_NUCLEO_F401RE/TARGET_STM/TARGET_NUCLEO_F401RE;  mbed/TARGET_NUCLEO_F401RE/TOOLCHAIN_ARM_MICRO;  </IncludePath>
+              <IncludePath>  .;  DW1000;  MM2WayRanging;  MMRanging;  PC;  mbed;  mbed/TARGET_NUCLEO_F401RE;  mbed/TARGET_NUCLEO_F401RE/TARGET_STM;  mbed/TARGET_NUCLEO_F401RE/TARGET_STM/TARGET_STM32F4;  mbed/TARGET_NUCLEO_F401RE/TARGET_STM/TARGET_STM32F4/TARGET_NUCLEO_F401RE;  mbed/TARGET_NUCLEO_F401RE/TARGET_STM/TARGET_NUCLEO_F401RE;  mbed/TARGET_NUCLEO_F401RE/TOOLCHAIN_ARM_MICRO</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -369,6 +374,7 @@
             <SwStkChk>0</SwStkChk>
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
+            <useXO>0</useXO>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -385,6 +391,7 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x10000000</DataAddressRange>
+            <pXoBase></pXoBase>
             <ScatterFile>mbed/TARGET_NUCLEO_F401RE/TOOLCHAIN_ARM_MICRO/stm32f401xe.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
@@ -534,18 +541,16 @@
             
               mbed/TARGET_NUCLEO_F401RE/TOOLCHAIN_ARM_MICRO/mbed.ar
             
-            </Misc>
+</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings></DisabledWarnings>
           </LDads>
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        
         <Group>
           <GroupName>src</GroupName>
           <Files>
-            
             <File>
               <FileName>main.cpp</FileName>
               <FileType>8</FileType>
@@ -565,11 +570,35 @@
                   <StopOnExitCode>3</StopOnExitCode>
                   <CustomArgument></CustomArgument>
                   <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
                 </CommonProperty>
-                <FileArmAds/>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <useXO>2</useXO>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
               </FileOption>
             </File>
-            
             <File>
               <FileName>DW1000.cpp</FileName>
               <FileType>8</FileType>
@@ -589,11 +618,35 @@
                   <StopOnExitCode>3</StopOnExitCode>
                   <CustomArgument></CustomArgument>
                   <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
                 </CommonProperty>
-                <FileArmAds/>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <useXO>2</useXO>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
               </FileOption>
             </File>
-            
             <File>
               <FileName>MM2WayRanging.cpp</FileName>
               <FileType>8</FileType>
@@ -613,11 +666,35 @@
                   <StopOnExitCode>3</StopOnExitCode>
                   <CustomArgument></CustomArgument>
                   <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
                 </CommonProperty>
-                <FileArmAds/>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <useXO>2</useXO>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
               </FileOption>
             </File>
-            
             <File>
               <FileName>MMRanging.cpp</FileName>
               <FileType>8</FileType>
@@ -637,11 +714,35 @@
                   <StopOnExitCode>3</StopOnExitCode>
                   <CustomArgument></CustomArgument>
                   <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
                 </CommonProperty>
-                <FileArmAds/>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <useXO>2</useXO>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
               </FileOption>
             </File>
-            
             <File>
               <FileName>PC.cpp</FileName>
               <FileType>8</FileType>
@@ -661,14 +762,37 @@
                   <StopOnExitCode>3</StopOnExitCode>
                   <CustomArgument></CustomArgument>
                   <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
                 </CommonProperty>
-                <FileArmAds/>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <useXO>2</useXO>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
               </FileOption>
             </File>
-            
           </Files>
         </Group>
-        
       </Groups>
     </Target>
   </Targets>
