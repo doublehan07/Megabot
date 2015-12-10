@@ -72,11 +72,13 @@ void SPIInit(void)
 	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;//时钟空闲电平选择 SPI_CPOL_High，SPI_CPOL_Low
 	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;//数据捕捉跳变沿选择 SPI_CPHA_2Edge，SPI_CPHA_1Edge 
 	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;//NSS信号由硬件还是软件控制 SPI_NSS_Soft，SPI_NSS_Hard 
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_128;//时钟分频选择
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;//时钟分频选择
 	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;//数据大小端选择 SPI_FirstBit_MSB,SPI_FirstBit_LSB
 	SPI_InitStructure.SPI_CRCPolynomial = 7;//CRC值计算的多项式
 	SPI_Init(SPI1, &SPI_InitStructure);//写入配置信息
 	SPI_Cmd(SPI1, ENABLE);
+	SPI_SSOutputCmd(SPI1, DISABLE);
+	GPIO_WriteBit(GPIOA, GPIO_Pin_4, Bit_SET);
 }
 
 //先写个阻塞的，SPI速度较快，理论上应该不会有问题，且与mbed内的write函数效果相同
@@ -84,13 +86,15 @@ void SPIInit(void)
 uint8_t SPI_RW(uint8_t TxData)
 {
 	u16 retry = 0;
-	while(!(SPIx->SR&0x02))//TXE
+	while(!(SPIx->SR&SPI_I2S_FLAG_TXE))//TXE
 	{
 		retry++;
 		if (retry >= 0xFFFE) return 0;
 	}
+	SPIx->SR&=~SPI_I2S_FLAG_RXNE;
+	retry = 0;
 	SPIx->DR = TxData;
-	while(!(SPIx->SR&0x01))//RXNE
+	while(!(SPIx->SR&SPI_I2S_FLAG_RXNE))//RXNE
 	{
 		retry++;
 		if (retry >= 0xFFFE) return 0;
