@@ -18,7 +18,7 @@ void SPIInit(void)
 	GPIO_InitTypeDef GPIO_InitStructure;
 	SPI_InitTypeDef SPI_InitStructure;
 	
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOB, ENABLE);
 	
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1,ENABLE);
 	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
@@ -60,25 +60,27 @@ void SPIInit(void)
 //	//GPIO_PinAFConfig(GPIOC,GPIO_PinSource11,GPIO_AF_SPI3);
 //	//GPIO_PinAFConfig(GPIOC,GPIO_PinSource12,GPIO_AF_SPI3);
 	
-	//片选
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	//片选,PB6
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	
-	SPI_I2S_DeInit(SPI1);
+	RCC_APB2PeriphResetCmd(RCC_APB2Periph_SPI1,ENABLE);
+	RCC_APB2PeriphResetCmd(RCC_APB2Periph_SPI1,DISABLE);
+
 	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;//工作模式 SPI_Direction_2Lines_FullDuplex，SPI_Direction_2Lines_RxOnly等 
 	SPI_InitStructure.SPI_Mode = SPI_Mode_Master; //主从模式选择 SPI_Mode_Master，SPI_Mode_Slave
 	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;//数据位选择 SPI_DataSize_8b，SPI_DataSize_16b
 	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;//时钟空闲电平选择 SPI_CPOL_High，SPI_CPOL_Low
 	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;//数据捕捉跳变沿选择 SPI_CPHA_2Edge，SPI_CPHA_1Edge 
 	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;//NSS信号由硬件还是软件控制 SPI_NSS_Soft，SPI_NSS_Hard 
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;//时钟分频选择
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;//时钟分频选择
 	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;//数据大小端选择 SPI_FirstBit_MSB,SPI_FirstBit_LSB
 	SPI_InitStructure.SPI_CRCPolynomial = 7;//CRC值计算的多项式
 	SPI_Init(SPI1, &SPI_InitStructure);//写入配置信息
 	SPI_Cmd(SPI1, ENABLE);
-	SPI_SSOutputCmd(SPI1, DISABLE);
-	GPIO_WriteBit(GPIOA, GPIO_Pin_4, Bit_SET);
+	//SPI_SSOutputCmd(SPI1, DISABLE);
+	GPIO_WriteBit(GPIOB, GPIO_Pin_6, Bit_SET);
 }
 
 //先写个阻塞的，SPI速度较快，理论上应该不会有问题，且与mbed内的write函数效果相同
@@ -105,9 +107,9 @@ uint8_t SPI_RW(uint8_t TxData)
 void select() {
     //irq.disable_irq();
 		//假定使用SPI1，当然这只是普通的IO
-    GPIO_WriteBit(GPIOA, GPIO_Pin_4, Bit_RESET);
+    GPIO_WriteBit(GPIOB, GPIO_Pin_6, Bit_RESET);
 }
 void deselect() {
-    GPIO_WriteBit(GPIOA, GPIO_Pin_4, Bit_SET);
+    GPIO_WriteBit(GPIOB, GPIO_Pin_6, Bit_SET);
     //irq.enable_irq();
 }

@@ -48,13 +48,15 @@ static void wait_us(__IO uint32_t);
 
 /* Private functions ---------------------------------------------------------*/
 void DW1000_Init() {
-	uint16_t buffer16;
-	uint32_t buffer32;
+		uint16_t buffer16;
+		uint32_t buffer32;
 		//setCallbacks(NULL, NULL);
 	
 		deselect();
     SPIInit();             // with a 1MHz clock rate (worked up to 49MHz in our Test)
-    
+	
+    wait_us(500000);
+	
     resetAll();                         // we do a soft reset of the DW1000 everytime the driver starts
 
     // Configuration TODO: make method for that

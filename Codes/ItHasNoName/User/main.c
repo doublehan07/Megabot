@@ -35,6 +35,11 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
+		//for testing
+		u16 t;
+    writeRegister16(DW1000_AGC_CTRL, 0x04, 0x8870);
+		t = readRegister16(DW1000_AGC_CTRL, 0x04);
+		t++;
   }
 }
 
