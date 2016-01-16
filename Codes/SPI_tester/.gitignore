@@ -1,0 +1,12 @@
+*.o
+*.lib
+*.a
+*.elf
+*.bin
+*~
+*.__i
+*.bak
+*.LST
+*.OBJ
+
+*Administrator*
