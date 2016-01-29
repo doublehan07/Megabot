@@ -1,0 +1,110 @@
+/*
+  by haldak 1.29
+*/
+
+PShape Leader_Point, Coorperation_Point, Selected_Point, Unknown_Point, Known_Point;
+int window_width = 600, window_height = 400, NUMBER = 8;
+int[] Coordinates = new int[2 * NUMBER];
+boolean[] Ifchoose = new boolean[NUMBER];
+
+void setup()
+{
+  //Config Global Condition
+  size(600, 400, P2D);
+  background(255);
+  
+  //Leader Point Style
+  Leader_Point = createShape(ELLIPSE, 0, 0, 30, 30);
+  Leader_Point.setFill(#FF4040);
+  Leader_Point.setStroke(true);
+  
+  //Coorperation Point Style
+  Coorperation_Point = createShape(ELLIPSE, 0, 0, 30, 30);
+  Coorperation_Point.setFill(#AB82FF);
+  Coorperation_Point.setStroke(true);
+  
+  //Selected Point Style
+  Selected_Point = createShape(ELLIPSE, 0, 0, 30, 30);
+  Selected_Point.setFill(#FF83FA);
+  Selected_Point.setStroke(true);
+  
+  //Unknown Point Style
+  Unknown_Point = createShape(ELLIPSE, 0, 0, 30, 30);
+  Unknown_Point.setFill(#C2C2C2);
+  Unknown_Point.setStroke(true);
+  
+  //Known Point Style
+  Known_Point = createShape(ELLIPSE, 0, 0, 30, 30);
+  Known_Point.setFill(#FFEC8B);
+  Known_Point.setStroke(true);
+  
+  noLoop();
+}
+
+void draw()
+{
+  //Generate NUMBER(8) points without any conflicts(i.e. the same coordinates)
+  for(int i = 0; i < NUMBER; i++)
+  {
+    int tempx = int(random(window_width - 60)) + 30;
+    int tempy = int(random(window_height - 60)) + 30;
+    Coordinates[2 * i] = tempx;
+    Coordinates[2 * i + 1] = tempy;
+    for(int j = i - 1; j >= 0; j--)
+    {
+      if((abs(tempx - Coordinates[2 * j]) < 60) && (abs(tempy - Coordinates[2 * j + 1]) < 60))
+      {
+        j = -1; //break;
+        i--; //generate again
+      }
+    }
+  }
+  
+  //Initiate all points to Unknown State
+  for(int i = 0; i < NUMBER; i++)
+  {
+    shape(Unknown_Point, Coordinates[2 * i], Coordinates[2 * i + 1]);
+    Ifchoose[i] = false;
+  }
+  
+  //Set a leader point randomly
+  int templ = int(random(NUMBER));
+  shape(Leader_Point, Coordinates[2 * templ], Coordinates[2 * templ + 1]);
+  Ifchoose[templ] = true;
+  
+  //Select a triangle
+  int tempc1 = int(random(NUMBER));
+  while(Ifchoose[tempc1])
+  {
+    tempc1 = int(random(NUMBER));
+  }
+  shape(Coorperation_Point, Coordinates[2 * tempc1], Coordinates[2 * tempc1 + 1]);
+  Ifchoose[tempc1] = true;
+  stroke(#33ff00);
+  line(Coordinates[2 * templ], Coordinates[2 * templ + 1], Coordinates[2 * tempc1], Coordinates[2 * tempc1 + 1]);
+  int tempc2 = int(random(NUMBER));
+  while(Ifchoose[tempc2])
+  {
+    tempc2 = int(random(NUMBER));
+  }
+  shape(Coorperation_Point, Coordinates[2 * tempc2], Coordinates[2 * tempc2 + 1]);
+  Ifchoose[tempc2] = true;
+  stroke(#33ff00);
+  line(Coordinates[2 * templ], Coordinates[2 * templ + 1], Coordinates[2 * tempc2], Coordinates[2 * tempc2 + 1]);
+  line(Coordinates[2 * tempc1], Coordinates[2 * tempc1 + 1], Coordinates[2 * tempc2], Coordinates[2 * tempc2 + 1]);
+   
+  noLoop();
+  /*
+  //test shape for every kinds of points
+  shape(Leader_Point, 100, 320);
+  shape(Coorperation_Point, 180, 240);
+  shape(Coorperation_Point, 200, 370);
+  shape(Selected_Point, 270, 210);
+  shape(Known_Point, 275, 330);
+  shape(Unknown_Point, 320, 370);
+  shape(Unknown_Point, 410, 320);
+  shape(Unknown_Point, 550, 230);
+  shape(Unknown_Point, 520, 320);
+  shape(Unknown_Point, 570, 420);
+  */
+}
