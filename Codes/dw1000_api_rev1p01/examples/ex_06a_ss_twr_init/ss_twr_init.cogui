@@ -24,7 +24,7 @@
 </editor>
 <editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" partName="main.c" path="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/examples/ex_06a_ss_twr_init/main.c" title="main.c" tooltip="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/examples/ex_06a_ss_twr_init/main.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ss_twr_init/main.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="8756" selectionTopPixel="4150"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1045" selectionTopPixel="126"/>
 </editor>
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="port.c" partName="port.c" path="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/platform/port.c" title="port.c" tooltip="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/platform/port.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ss_twr_init/platform/port.c"/>
@@ -182,8 +182,14 @@
 <item historyLabel="port.c" index="2">
 <position info="not_deleted" x="22792" y="0"/>
 </item>
-<item active="true" historyLabel="main.c" index="1">
+<item historyLabel="main.c" index="1">
 <position info="not_deleted" x="4440" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="4519" y="0"/>
+</item>
+<item active="true" historyLabel="main.c" index="1">
+<position info="not_deleted" x="1286" y="8"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -192,6 +198,15 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="port.h" tooltip="ss_twr_init/platform/port.h">
+<persistable path="/ss_twr_init/platform/port.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="port.c" tooltip="ss_twr_init/platform/port.c">
+<persistable path="/ss_twr_init/platform/port.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="ss_twr_init/main.c">
+<persistable path="/ss_twr_init/main.c"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="port.h" tooltip="ss_twr_init/platform/port.h">
 <persistable path="/ss_twr_init/platform/port.h"/>
 </file>
