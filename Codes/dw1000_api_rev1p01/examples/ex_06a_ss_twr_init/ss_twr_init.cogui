@@ -14,6 +14,7 @@
 <part id="1"/>
 <part id="2"/>
 <part id="3"/>
+<part id="4"/>
 </presentation>
 </folder>
 </info>
@@ -22,7 +23,7 @@
 <input factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory">&#x0A;<org.coocox.welcome.ui.WelcomePage/>
 </input>
 </editor>
-<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" partName="main.c" path="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/examples/ex_06a_ss_twr_init/main.c" title="main.c" tooltip="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/examples/ex_06a_ss_twr_init/main.c" workbook="DefaultEditorWorkbook">
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" partName="main.c" path="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/examples/ex_06a_ss_twr_init/main.c" title="main.c" tooltip="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/examples/ex_06a_ss_twr_init/main.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ss_twr_init/main.c"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1045" selectionTopPixel="126"/>
 </editor>
@@ -33,6 +34,11 @@
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="port.h" partName="port.h" path="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/platform/port.h" title="port.h" tooltip="D:/Save/SaveHardwareC/32Study/Challenge/Codes/dw1000_api_rev1p01/platform/port.h" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/ss_twr_init/platform/port.h"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="6576" selectionTopPixel="0"/>
+</editor>
+<editor activePart="true" focus="true" id="org.coocox.builder.ui.editors.ConfigEditor" name="" partName="Configuration" title="Configuration" tooltip="" workbook="DefaultEditorWorkbook">
+<input factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory">
+<org.coocox.builder.ui.editors.ConfigEditor horizontalPosition="0" subTagIndex="1" verticalPosition="0"/>
+</input>
 </editor>
 </editors>
 <views>
@@ -56,7 +62,7 @@
 <viewState/>
 </view>
 </views>
-<perspectives activePart="org.eclipse.cdt.ui.editor.CEditor" activePerspective="org.coocox.builder.perspective.CoBuilder">
+<perspectives activePart="org.coocox.builder.ui.editors.ConfigEditor" activePerspective="org.coocox.builder.perspective.CoBuilder">
 <perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
 <descriptor class="org.coocox.builder.ui.PerspectiveCoBuilder" id="org.coocox.builder.perspective.CoBuilder" label="CooCox CoBuilder"/>
 <alwaysOnActionSet id="org.coocox.component.ui.actionSet"/>
@@ -144,6 +150,12 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/ss_twr_init/main.c"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/ss_twr_init/platform/port.c"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/ss_twr_init/platform/port.h"/>
+<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.builder.ui.editors.ConfigEditor">
+<org.coocox.builder.ui.editors.ConfigEditor horizontalPosition="0" subTagIndex="1" verticalPosition="0"/>
+</editor>
+<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.builder.ui.editors.ConfigEditor">
+<org.coocox.builder.ui.editors.ConfigEditor horizontalPosition="0" subTagIndex="1" verticalPosition="0"/>
+</editor>
 </editors>
 <item historyLabel="welcome" index="0"/>
 <item historyLabel="main.c" index="1">
@@ -188,9 +200,14 @@
 <item historyLabel="main.c" index="1">
 <position info="not_deleted" x="4519" y="0"/>
 </item>
-<item active="true" historyLabel="main.c" index="1">
+<item historyLabel="main.c" index="1">
 <position info="not_deleted" x="1286" y="8"/>
 </item>
+<item historyLabel="Configuration" index="4"/>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="1045" y="0"/>
+</item>
+<item active="true" historyLabel="Configuration" index="5"/>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
@@ -198,14 +215,10 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="port.h" tooltip="ss_twr_init/platform/port.h">
-<persistable path="/ss_twr_init/platform/port.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="port.c" tooltip="ss_twr_init/platform/port.c">
-<persistable path="/ss_twr_init/platform/port.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="ss_twr_init/main.c">
-<persistable path="/ss_twr_init/main.c"/>
+<file factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.builder.ui.editors.ConfigEditor" name="" tooltip="">
+<persistable>
+<org.coocox.builder.ui.editors.ConfigEditor horizontalPosition="0" subTagIndex="1" verticalPosition="0"/>
+</persistable>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="port.h" tooltip="ss_twr_init/platform/port.h">
 <persistable path="/ss_twr_init/platform/port.h"/>
@@ -242,6 +255,12 @@
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="ss_twr_init/main.c">
 <persistable path="/ss_twr_init/main.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="port.h" tooltip="ss_twr_init/platform/port.h">
+<persistable path="/ss_twr_init/platform/port.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="port.c" tooltip="ss_twr_init/platform/port.c">
+<persistable path="/ss_twr_init/platform/port.c"/>
 </file>
 </mruList>
 </workbench>

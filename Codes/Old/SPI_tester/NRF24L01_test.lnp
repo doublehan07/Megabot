@@ -1,0 +1,6 @@
+"STARTUP.obj",
+"SPI.obj",
+"DW1000.obj",
+"main.obj" 
+TO "NRF24L01_test" 
+RAMSIZE(256) 

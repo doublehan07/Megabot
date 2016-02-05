@@ -1,0 +1,209 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+F:\Çå»ª\ÌôÕ½±­\ItHasNoName\Project\project.uvproj
+Project File Date:  12/09/2015
+
+<h2>Output:</h2>
+Rebuild target 'Target 1'
+assembling startup_stm32f401xx.s...
+compiling stm32f4xx_it.c...
+compiling system_stm32f4xx.c...
+compiling stm32f4xx_gpio.c...
+compiling stm32f4xx_rcc.c...
+compiling stm32f4xx_tim.c...
+compiling stm32f4xx_flash.c...
+compiling misc.c...
+compiling stm32f4xx_spi.c...
+compiling main.c...
+compiling Init.c...
+..\User\Init.c(69): warning:  #550-D: variable "GPIO_InitStructure" was set but never used
+        GPIO_InitTypeDef GPIO_InitStructure;
+..\User\Init.c: 1 warning, 0 errors
+compiling SPI.c...
+..\DW1000\SPI.c(18): warning:  #550-D: variable "GPIO_InitStructure" was set but never used
+        GPIO_InitTypeDef GPIO_InitStructure;
+..\DW1000\SPI.c(19): warning:  #550-D: variable "SPI_InitStructure" was set but never used
+        SPI_InitTypeDef SPI_InitStructure;
+..\DW1000\SPI.c: 2 warnings, 0 errors
+compiling DW1000.c...
+linking...
+Program Size: Code=11968 RO-data=444 RW-data=52 ZI-data=1652  
+".\OutPuts\project.axf" - 0 Error(s), 3 Warning(s).
+</pre>
+</body>
+</html>
+00\DW1000.c: 2 warnings, 4 errors
+".\OutPuts\project.axf" - 4 Error(s), 2 Warning(s).
+Target not created
+nterfere.
+..\DW1000\DW1000.c(251): error:  #20: identifier "cs" is undefined
+      cs = 0;                 // set Cable Select pin low to start transmission
+..\DW1000\DW1000.c(254): error:  #20: identifier "cs" is undefined
+      cs = 1;                 // set Cable Select pin high to stop transmission
+..\DW1000\DW1000.c(255): error:  #20: identifier "irq" is undefined
+      irq.enable_irq();       // reenable the interrupt handler
+..\DW1000\DW1000.c: 2 warnings, 8 errors
+".\OutPuts\project.axf" - 8 Error(s), 2 Warning(s).
+Target not created
+irq();      // disable interrupts from DW1000 during SPI becaus this leads to crashes!      TODO: if you have other interrupt handlers attached on the micro controller, they could also interfere.
+..\DW1000\DW1000.c(263): error:  #20: identifier "cs" is undefined
+      cs = 0;                 // set Cable Select pin low to start transmission
+..\DW1000\DW1000.c(266): error:  #20: identifier "cs" is undefined
+      cs = 1;                 // set Cable Select pin high to stop transmission
+..\DW1000\DW1000.c(267): error:  #20: identifier "irq" is undefined
+      irq.enable_irq();       // reenable the interrupt handler
+..\DW1000\DW1000.c: 2 warnings, 14 errors
+".\OutPuts\project.axf" - 14 Error(s), 2 Warning(s).
+Target not created
+e interrupt handler
+..\DW1000\DW1000.c: 3 warnings, 14 errors
+".\OutPuts\project.axf" - 14 Error(s), 3 Warning(s).
+Target not created
+ning:  #1295-D: Deprecated declaration ISR - give arg types
+  void ISR();                                                                             // interrupt handling method (also calls according callback methods)
+..\DW1000\DW1000.h(77): warning:  #1295-D: Deprecated declaration getFramelength - give arg types
+  uint16_t getFramelength();                                                              // to get the framelength of the received frame from the PHY header
+..\DW1000\DW1000.h(89): warning:  #1295-D: Deprecated declaration select - give arg types
+  void select();                                                                          // selects the only slave for a transaction
+..\DW1000\DW1000.h(90): warning:  #1295-D: Deprecated declaration deselect - give arg types
+  void deselect();                                                                        // deselects the only slave after transaction
+..\DW1000\DW1000.c(103): warning:  #223-D: function "strlen" declared implicitly
+      sendFrame((uint8_t*)message, strlen(message)+1);
+..\DW1000\DW1000.c(156): warning:  #223-D: function "wait_us" declared implicitly
+      wait_us(150);
+..\DW1000\DW1000.c(168): warning:  #223-D: function "wait_us" declared implicitly
+      wait_us(10);                            // wait for PLL to lock
+..\DW1000\DW1000.c(180): error:  #20: identifier "callbackRX" is undefined
+          callbackRX.call();
+..\DW1000\DW1000.c(184): error:  #20: identifier "callbackTX" is undefined
+          callbackTX.call();
+..\DW1000\DW1000.c(233): error:  #29: expected an expression
+      for(int i=0; i<length; i++)                             // get data
+..\DW1000\DW1000.c(233): error:  #20: identifier "i" is undefined
+      for(int i=0; i<length; i++)                             // get data
+..\DW1000\DW1000.c(234): error:  #20: identifier "spi" is undefined
+          buffer[i] = spi.write(0x00);
+..\DW1000\DW1000.c(240): error:  #29: expected an expression
+      for(int i=0; i<length; i++)                             // put data
+..\DW1000\DW1000.c(240): error:  #20: identifier "i" is undefined
+      for(int i=0; i<length; i++)                             // put data
+..\DW1000\DW1000.c(241): error:  #20: identifier "spi" is undefined
+          spi.write(buffer[i]);
+..\DW1000\DW1000.c(249): error:  #20: identifier "spi" is undefined
+          spi.write(reg | DW1000_SUBADDRESS_FLAG);
+..\DW1000\DW1000.c(257): error:  #20: identifier "spi" is undefined
+          spi.write(reg);                                                         // say which register address we want to access
+..\DW1000\DW1000.c(262): error:  #20: identifier "irq" is undefined
+      irq.disable_irq();      // disable interrupts from DW1000 during SPI becaus this leads to crashes!      TODO: if you have other interrupt handlers attached on the micro controller, they could also interfere.
+..\DW1000\DW1000.c(263): error:  #20: identifier "cs" is undefined
+      cs = 0;                 // set Cable Select pin low to start transmission
+..\DW1000\DW1000.c(266): error:  #20: identifier "cs" is undefined
+      cs = 1;                 // set Cable Select pin high to stop transmission
+..\DW1000\DW1000.c(267): error:  #20: identifier "irq" is undefined
+      irq.enable_irq();       // reenable the interrupt handler
+..\DW1000\DW1000.c: 18 warnings, 14 errors
+".\OutPuts\project.axf" - 14 Error(s), 18 Warning(s).
+Target not created
+W1000_SYS_CTRL, 0, 0x40);                       // disable tranceiver go back to idle mode
+..\DW1000\DW1000.c(153): error:  #159: declaration is incompatible with previous "loadLDE" (declared at line 47)
+  void loadLDE() {                                            // initialise LDE algorithm LDELOAD User Manual p22
+..\DW1000\DW1000.c(154): warning:  #223-D: function "writeRegister16" declared implicitly
+      writeRegister16(DW1000_PMSC, 0, 0x0301);                        // set clock to XTAL so OTP is reliable
+..\DW1000\DW1000.c(156): warning:  #223-D: function "wait_us" declared implicitly
+      wait_us(150);
+..\DW1000\DW1000.c(161): warning:  #223-D: function "writeRegister8" declared implicitly
+      writeRegister8(DW1000_PMSC, 3, 0xE0);   // set RX reset
+..\DW1000\DW1000.c(165): error:  #159: declaration is incompatible with previous "resetAll" (declared at line 7)
+  void resetAll() {
+..\DW1000\DW1000.c(166): warning:  #223-D: function "writeRegister8" declared implicitly
+      writeRegister8(DW1000_PMSC, 0, 0x01);   // set clock to XTAL
+..\DW1000\DW1000.c(168): warning:  #223-D: function "wait_us" declared implicitly
+      wait_us(10);                            // wait for PLL to lock
+..\DW1000\DW1000.c(174): warning:  #223-D: function "writeRegister16" declared implicitly
+      writeRegister16(DW1000_SYS_MASK, 0, RX*0x4000 | TX*0x0080);  // RX good frame 0x4000, TX done 0x0080
+..\DW1000\DW1000.c(180): error:  #20: identifier "callbackRX" is undefined
+          callbackRX.call();
+..\DW1000\DW1000.c(181): warning:  #223-D: function "writeRegister16" declared implicitly
+          writeRegister16(DW1000_SYS_STATUS, 0, 0x6F00);              // clearing of receiving status bits
+..\DW1000\DW1000.c(184): error:  #20: identifier "callbackTX" is undefined
+          callbackTX.call();
+..\DW1000\DW1000.c(185): warning:  #223-D: function "writeRegister8" declared implicitly
+          writeRegister8(DW1000_SYS_STATUS, 0, 0xF8);                 // clearing of sending status bits
+..\DW1000\DW1000.c(189): error:  #159: declaration is incompatible with previous "getFramelength" (declared at line 107)
+  uint16_t getFramelength() {
+..\DW1000\DW1000.c(190): warning:  #223-D: function "readRegister16" declared implicitly
+      uint16_t framelength = readRegister16(DW1000_RX_FINFO, 0);      // get framelength
+..\DW1000\DW1000.c(196): error:  #159: declaration is incompatible with previous "readRegister8" (declared at line 116)
+  uint8_t readRegister8(uint8_t reg, uint16_t subaddress) {
+..\DW1000\DW1000.c(198): warning:  #223-D: function "readRegister" declared implicitly
+      readRegister(reg, subaddress, &result, 1);
+..\DW1000\DW1000.c(202): error:  #159: declaration is incompatible with previous "readRegister16" (declared at line 190)
+  uint16_t readRegister16(uint8_t reg, uint16_t subaddress) {
+..\DW1000\DW1000.c(204): warning:  #223-D: function "readRegister" declared implicitly
+      readRegister(reg, subaddress, (uint8_t*)&result, 2);
+..\DW1000\DW1000.c(208): error:  #159: declaration is incompatible with previous "readRegister40" (declared at line 91)
+  uint64_t readRegister40(uint8_t reg, uint16_t subaddress) {
+..\DW1000\DW1000.c(210): warning:  #223-D: function "readRegister" declared implicitly
+      readRegister(reg, subaddress, (uint8_t*)&result, 5);
+..\DW1000\DW1000.c(215): error:  #159: declaration is incompatible with previous "writeRegister8" (declared at line 34)
+  void writeRegister8(uint8_t reg, uint16_t subaddress, uint8_t buffer) {
+..\DW1000\DW1000.c(216): warning:  #223-D: function "writeRegister" declared implicitly
+      writeRegister(reg, subaddress, &buffer, 1);
+..\DW1000\DW1000.c(219): error:  #159: declaration is incompatible with previous "writeRegister16" (declared at line 24)
+  void writeRegister16(uint8_t reg, uint16_t subaddress, uint16_t buffer) {
+..\DW1000\DW1000.c(220): warning:  #223-D: function "writeRegister" declared implicitly
+      writeRegister(reg, subaddress, (uint8_t*)&buffer, 2);
+..\DW1000\DW1000.c(223): error:  #159: declaration is incompatible with previous "writeRegister32" (declared at line 25)
+  void writeRegister32(uint8_t reg, uint16_t subaddress, uint32_t buffer) {
+..\DW1000\DW1000.c(224): warning:  #223-D: function "writeRegister" declared implicitly
+      writeRegister(reg, subaddress, (uint8_t*)&buffer, 4);
+..\DW1000\DW1000.c(227): error:  #159: declaration is incompatible with previous "writeRegister40" (declared at line 137)
+  void writeRegister40(uint8_t reg, uint16_t subaddress, uint64_t buffer) {
+..\DW1000\DW1000.c(228): warning:  #223-D: function "writeRegister" declared implicitly
+      writeRegister(reg, subaddress, (uint8_t*)&buffer, 5);
+..\DW1000\DW1000.c(231): error:  #159: declaration is incompatible with previous "readRegister" (declared at line 63)
+  void readRegister(uint8_t reg, uint16_t subaddress, uint8_t *buffer, int length) {
+..\DW1000\DW1000.c(232): warning:  #223-D: function "setupTransaction" declared implicitly
+      setupTransaction(reg, subaddress, false);
+..\DW1000\DW1000.c(233): error:  #29: expected an expression
+      for(int i=0; i<length; i++)                             // get data
+..\DW1000\DW1000.c(233): error:  #20: identifier "i" is undefined
+      for(int i=0; i<length; i++)                             // get data
+..\DW1000\DW1000.c(234): error:  #20: identifier "spi" is undefined
+          buffer[i] = spi.write(0x00);
+..\DW1000\DW1000.c(235): warning:  #223-D: function "deselect" declared implicitly
+      deselect();
+..\DW1000\DW1000.c(238): error:  #159: declaration is incompatible with previous "writeRegister" (declared at line 74)
+  void writeRegister(uint8_t reg, uint16_t subaddress, uint8_t *buffer, int length) {
+..\DW1000\DW1000.c(239): warning:  #223-D: function "setupTransaction" declared implicitly
+      setupTransaction(reg, subaddress, true);
+..\DW1000\DW1000.c(240): error:  #29: expected an expression
+      for(int i=0; i<length; i++)                             // put data
+..\DW1000\DW1000.c(240): error:  #20: identifier "i" is undefined
+      for(int i=0; i<length; i++)                             // put data
+..\DW1000\DW1000.c(241): error:  #20: identifier "spi" is undefined
+          spi.write(buffer[i]);
+..\DW1000\DW1000.c(242): warning:  #223-D: function "deselect" declared implicitly
+      deselect();
+..\DW1000\DW1000.c(245): error:  #159: declaration is incompatible with previous "setupTransaction" (declared at line 232)
+  void setupTransaction(uint8_t reg, uint16_t subaddress, bool write) {
+..\DW1000\DW1000.c(247): warning:  #223-D: function "select" declared implicitly
+      select();
+..\DW1000\DW1000.c(249): error:  #20: identifier "spi" is undefined
+          spi.write(reg | DW1000_SUBADDRESS_FLAG);
+..\DW1000\DW1000.c(257): error:  #20: identifier "spi" is undefined
+          spi.write(reg);                                                         // say which register address we want to access
+..\DW1000\DW1000.c(261): error:  #159: declaration is incompatible with previous "select" (declared at line 247)
+  void select() {     // always called to start an SPI transmission
+..\DW1000\DW1000.c(262): error:  #20: identifier "irq" is undefined
+      irq.disable_irq();      // disable interrupts from DW1000 during SPI becaus this leads to crashes!      TODO: if you have other interrupt handlers attached on the micro controller, they could also interfere.
+..\DW1000\DW1000.c(263): error:  #20: identifier "cs" is undefined
+      cs = 0;                 // set Cable Select pin low to start transmission
+..\DW1000\DW1000.c(265): error:  #159: declaration is incompatible with previous "deselect" (declared at line 235)
+  void deselect() {   // always called to end an SPI transmission
+..\DW1000\DW1000.c: 53 warnings, 30 errors
+".\OutPuts\project.axf" - 30 Error(s), 53 Warning(s).
+Target not created
