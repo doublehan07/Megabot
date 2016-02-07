@@ -24,7 +24,7 @@ extern "C" {
 /* Define our wanted value of CLOCKS_PER_SEC so that we have a millisecond
  * tick timer. */
 #undef CLOCKS_PER_SEC
-#define CLOCKS_PER_SEC 1000
+#define CLOCKS_PER_SEC 											1000
 
 //void printf2(const char *format, ...);
 
@@ -38,47 +38,54 @@ int readfromspi_serial(uint16_t	headerLength,
                               uint32_t readlength,
                               uint8_t *readBuffer );
 
-#define writetospi  writetospi_serial
-#define readfromspi readfromspi_serial
+#define writetospi  												writetospi_serial
+#define readfromspi												  readfromspi_serial
 
 //SPI3 for DW1000
-#define SPI_DW1000_PRESCALER							SPI_BaudRatePrescaler_4 //DW的SPI 20M是极限
-#define SPI_DW1000												SPI3
-#define SPI_DW1000_AF											GPIO_AF_SPI3
-#define SPI_DW1000_GPIO										GPIOC
-#define SPI_DW1000_CS											GPIO_Pin_15
-#define SPI_DW1000_CS_GPIO								GPIOA
-#define SPI_DW1000_SCK										GPIO_Pin_10
-#define SPI_DW1000_MISO										GPIO_Pin_11
-#define SPI_DW1000_MOSI										GPIO_Pin_12
-#define SPI_DW1000_SCK_Source							GPIO_PinSource10
-#define SPI_DW1000_MISO_Source						GPIO_PinSource11
-#define SPI_DW1000_MOSI_Source						GPIO_PinSource12
+#define SPI_DW1000_PRESCALER								SPI_BaudRatePrescaler_4 //DW的SPI 20M是极限
+#define SPI_DW1000													SPI3
+#define SPI_DW1000_AF												GPIO_AF_SPI3
+#define SPI_DW1000_GPIO											GPIOC
+#define SPI_DW1000_CS												GPIO_Pin_15
+#define SPI_DW1000_CS_GPIO									GPIOA
+#define SPI_DW1000_SCK											GPIO_Pin_10
+#define SPI_DW1000_MISO											GPIO_Pin_11
+#define SPI_DW1000_MOSI											GPIO_Pin_12
+#define SPI_DW1000_SCK_Source								GPIO_PinSource10
+#define SPI_DW1000_MISO_Source							GPIO_PinSource11
+#define SPI_DW1000_MOSI_Source							GPIO_PinSource12
 
-#define DW1000_RSTn									GPIO_Pin_4
-#define DW1000_RSTn_GPIO						GPIOB
-#define DECARSTIRQ                  GPIO_Pin_4
-#define DECARSTIRQ_GPIO             GPIOB
-#define DECARSTIRQ_EXTI             EXTI_Line4
-#define DECARSTIRQ_EXTI_PORT        EXTI_PortSourceGPIOB
-#define DECARSTIRQ_EXTI_PIN         EXTI_PinSource4
-#define DECARSTIRQ_EXTI_IRQn        EXTI4_IRQn
+#define DW1000_RSTn													GPIO_Pin_4
+#define DW1000_RSTn_GPIO										GPIOB
+#define DECARSTIRQ               					  GPIO_Pin_4
+#define DECARSTIRQ_GPIO            				  GPIOB
+#define DECARSTIRQ_EXTI           				  EXTI_Line4
+#define DECARSTIRQ_EXTI_PORT      				  EXTI_PortSourceGPIOB
+#define DECARSTIRQ_EXTI_PIN       				  EXTI_PinSource4
+#define DECARSTIRQ_EXTI_IRQn      				  EXTI4_IRQn
 
-#define DECAIRQ                     GPIO_Pin_2
-#define DECAIRQ_GPIO                GPIOD
-#define DECAIRQ_EXTI                EXTI_Line2
-#define DECAIRQ_EXTI_PORT           EXTI_PortSourceGPIOD
-#define DECAIRQ_EXTI_PIN            EXTI_PinSource2
-#define DECAIRQ_EXTI_IRQn           EXTI2_IRQn
+#define DECAIRQ                 			  	  GPIO_Pin_2
+#define DECAIRQ_GPIO          							GPIOD
+#define DECAIRQ_EXTI            			 	    EXTI_Line2
+#define DECAIRQ_EXTI_PORT       			  	  EXTI_PortSourceGPIOD
+#define DECAIRQ_EXTI_PIN        			  	  EXTI_PinSource2
+#define DECAIRQ_EXTI_IRQn        			 	    EXTI2_IRQn
 
-#define port_SPI_DW1000_busy_sending()		(SPI_I2S_GetFlagStatus((SPI_DW1000),(SPI_I2S_FLAG_TXE))==(RESET))
-#define port_SPI_DW1000_no_data()				(SPI_I2S_GetFlagStatus((SPI_DW1000),(SPI_I2S_FLAG_RXNE))==(RESET))
-#define port_SPI_DW1000_send_data(x)			SPI_I2S_SendData((SPI_DW1000),(x))
-#define port_SPI_DW1000_receive_data()		SPI_I2S_ReceiveData(SPI_DW1000)
-#define port_SPI_DW1000_disable()				SPI_Cmd(SPI_DW1000,DISABLE)
-#define port_SPI_DW1000_enable()              SPI_Cmd(SPI_DW1000,ENABLE)
+#define port_SPI_DW1000_busy_sending()			(SPI_I2S_GetFlagStatus((SPI_DW1000),(SPI_I2S_FLAG_TXE))==(RESET))
+#define port_SPI_DW1000_no_data()						(SPI_I2S_GetFlagStatus((SPI_DW1000),(SPI_I2S_FLAG_RXNE))==(RESET))
+#define port_SPI_DW1000_send_data(x)				SPI_I2S_SendData((SPI_DW1000),(x))
+#define port_SPI_DW1000_receive_data()			SPI_I2S_ReceiveData(SPI_DW1000)
+#define port_SPI_DW1000_disable()						SPI_Cmd(SPI_DW1000,DISABLE)
+#define port_SPI_DW1000_enable()						SPI_Cmd(SPI_DW1000,ENABLE)
 #define port_SPI_DW1000_set_chip_select()		GPIO_SetBits(SPI_DW1000_CS_GPIO,SPI_DW1000_CS)
 #define port_SPI_DW1000_clear_chip_select()	GPIO_ResetBits(SPI_DW1000_CS_GPIO,SPI_DW1000_CS)
+
+//DRV8850-THEDC接口
+#define PHASE_LEFT													GPIO_Pin_13
+#define ENABLE_LEFT													GPIO_Pin_15
+#define PHASE_RIGHT													GPIO_Pin_12
+#define ENABLE_RIGHT												GPIO_Pin_14
+#define MOTOR_GPIO													GPIOB
 
 //#define TA_BOOT1                 	GPIO_Pin_2
 //#define TA_BOOT1_GPIO            	GPIOB
@@ -113,17 +120,14 @@ int readfromspi_serial(uint16_t	headerLength,
 
 
 ITStatus EXTI_GetITEnStatus(uint32_t x);
-
 #define port_GetEXT_IRQStatus()             EXTI_GetITEnStatus(DECAIRQ_EXTI_IRQn)
 #define port_DisableEXT_IRQ()               NVIC_DisableIRQ(DECAIRQ_EXTI_IRQn)
 #define port_EnableEXT_IRQ()                NVIC_EnableIRQ(DECAIRQ_EXTI_IRQn)
 #define port_CheckEXT_IRQ()                 GPIO_ReadInputDataBit(DECAIRQ_GPIO, DECAIRQ)
 int NVIC_DisableDECAIRQ(void);
-
 int is_IRQ_enabled(void);
 
 //int is_button_low(uint16_t GPIOpin);
-
 //#define is_button_high(x)			0
 //void led_on(led_t led);
 //void led_off(led_t led);
@@ -132,48 +136,19 @@ int is_IRQ_enabled(void);
 //#define is_gpio_out_low(x)			0
 //#define is_gpio_out_high(x)			0
 			
-/*! ------------------------------------------------------------------------------------------------------------------
- * @fn peripherals_init()
- *
- * @brief Initialise all peripherals.
- *
- * @param none
- *
- * @return none
- */
-void peripherals_init (void);
 
-void SPI_ChangeRate(uint16_t scalingfactor);
-void SPI_ConfigFastRate(uint16_t scalingfactor);
-
-/*! ------------------------------------------------------------------------------------------------------------------
- * @fn spi_set_rate_low()
- *
- * @brief Set SPI rate to less than 3 MHz to properly perform DW1000 initialisation.
- *
- * @param none
- *
- * @return none
- */
-void spi_set_rate_low (void);
-
-/*! ------------------------------------------------------------------------------------------------------------------
- * @fn spi_set_rate_high()
- *
- * @brief Set SPI rate as close to 20 MHz as possible for optimum performances.
- *
- * @param none
- *
- * @return none
- */
-void spi_set_rate_high (void);
-
-unsigned long portGetTickCnt(void);
-
-#define portGetTickCount() 			portGetTickCnt()
+void SPI_DW1000_ChangeRate(uint16_t scalingfactor);
+void SPI_DW1000_ConfigFastRate(uint16_t scalingfactor);
+void spi_DW1000_set_rate_low (void); //Set SPI rate to less than 3 MHz to properly perform DW1000 initialisation.
+void spi_DW1000_set_rate_high (void); //Set SPI rate as close to 20 MHz as possible for optimum performances.
 
 void reset_DW1000(void);
 void setup_DW1000RSTnIRQ(int enable);
+
+unsigned long portGetTickCnt(void);
+#define portGetTickCount() 			portGetTickCnt()
+
+void peripherals_init (void); //Initialise all peripherals.
 
 #ifdef __cplusplus
 }

@@ -16,7 +16,7 @@
 #define rcc_init(x)					RCC_Configuration(x)
 #define systick_init(x)				SysTick_Configuration(x)
 #define interrupt_init(x)			NVIC_Configuration(x)
-#define spi3_init(x)					SPI3_Configuration(x)
+#define spi3_init(x)					SPI_DW1000_Configuration(x)
 #define gpio_init(x)				GPIO_Configuration(x)
 //#define ethernet_init(x)			No_Configuration(x)
 //#define rtc_init(x)					No_Configuration(x)
@@ -196,10 +196,9 @@ int RCC_Configuration(void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);
 
 	/* Enable GPIOs clocks */
-//	RCC_AHB1PeriphClockCmd(
-//						RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB |
-//						RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD |
-//						RCC_AHB1Periph_GPIOE , ENABLE);
+	RCC_AHB1PeriphClockCmd(
+						RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB |
+						RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD , ENABLE);
 
 	return 0;
 }
@@ -240,7 +239,7 @@ int RCC_Configuration(void)
 //    return 0;
 //}
 
-void SPI_ChangeRate(uint16_t scalingfactor)
+void SPI_DW1000_ChangeRate(uint16_t scalingfactor)
 {
 	uint16_t tmpreg = 0;
 
@@ -266,9 +265,9 @@ void SPI_ChangeRate(uint16_t scalingfactor)
  *
  * @return none
  */
-void spi_set_rate_low (void)
+void spi_DW1000_set_rate_low (void)
 {
-    SPI_ChangeRate(SPI_BaudRatePrescaler_32);
+    SPI_DW1000_ChangeRate(SPI_BaudRatePrescaler_16);
 }
 
 /*! ------------------------------------------------------------------------------------------------------------------
@@ -280,12 +279,12 @@ void spi_set_rate_low (void)
  *
  * @return none
  */
-void spi_set_rate_high (void)
+void spi_DW1000_set_rate_high (void)
 {
-    SPI_ChangeRate(SPI_BaudRatePrescaler_4);
+    SPI_DW1000_ChangeRate(SPI_BaudRatePrescaler_2);
 }
 
-void SPI_ConfigFastRate(uint16_t scalingfactor)
+void SPI_DW1000_ConfigFastRate(uint16_t scalingfactor)
 {
 	SPI_InitTypeDef SPI_InitStructure;
 
@@ -311,7 +310,7 @@ void SPI_ConfigFastRate(uint16_t scalingfactor)
 	SPI_Cmd(SPI_DW1000, ENABLE);
 }
 
-int SPI3_Configuration(void)
+int SPI_DW1000_Configuration(void)
 {
 	SPI_InitTypeDef SPI_InitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -361,7 +360,7 @@ int SPI3_Configuration(void)
 	// Set CS high
 	GPIO_SetBits(SPI_DW1000_CS_GPIO, SPI_DW1000_CS);
 
-    return 0;
+  return 0;
 }
 
 int GPIO_Configuration(void)
@@ -371,7 +370,6 @@ int GPIO_Configuration(void)
 	/* Configure all unused GPIO port pins in Analog Input mode (floating input
 	* trigger OFF), this will reduce the power consumption and increase the device
 	* immunity against EMI/EMC */
-
 	// Set all GPIO pins as analog inputs
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
@@ -382,32 +380,14 @@ int GPIO_Configuration(void)
 	GPIO_Init(GPIOD, &GPIO_InitStructure);
 	GPIO_Init(GPIOE, &GPIO_InitStructure);
 
-	//Enable GPIO used for User button
-//	GPIO_InitStructure.GPIO_Pin = TA_BOOT1;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_Init(TA_BOOT1_GPIO, &GPIO_InitStructure);
+	// Enable GPIO used for controlling motor
+	GPIO_InitStructure.GPIO_Pin = PHASE_LEFT | ENABLE_LEFT | PHASE_RIGHT | ENABLE_RIGHT;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(MOTOR_GPIO, &GPIO_InitStructure);
 
-	//Enable GPIO used for Response Delay setting
-//	GPIO_InitStructure.GPIO_Pin = TA_RESP_DLY | TA_SW1_3 | TA_SW1_4 | TA_SW1_5 | TA_SW1_6 | TA_SW1_7 | TA_SW1_8;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_Init(TA_RESP_DLY_GPIO, &GPIO_InitStructure);
-
-	//Enable GPIO used for SW1 switch setting
-//	GPIO_InitStructure.GPIO_Pin = TA_SW1_3 | TA_SW1_4 | TA_SW1_5 | TA_SW1_6 | TA_SW1_7 | TA_SW1_8;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_Init(TA_SW1_GPIO, &GPIO_InitStructure);
-
-	// Enable GPIO used for LEDs
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_6 | GPIO_Pin_7;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-//	GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-    return 0;
+  return 0;
 }
 
 
@@ -431,7 +411,7 @@ void reset_DW1000(void)
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(DW1000_RSTn_GPIO, &GPIO_InitStructure);
 
-    deca_sleep(2);
+  deca_sleep(2);
 }
 
 
