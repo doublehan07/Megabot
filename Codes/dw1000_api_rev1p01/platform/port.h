@@ -19,7 +19,7 @@
 extern "C" {
 #endif
 
-#include "stm32f10x.h"
+#include "stm32f40x.h"
 
 /* Define our wanted value of CLOCKS_PER_SEC so that we have a millisecond
  * tick timer. */
