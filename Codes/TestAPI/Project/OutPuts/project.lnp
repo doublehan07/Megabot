@@ -1,0 +1,18 @@
+--cpu Cortex-M4.fp
+".\outputs\startup_stm32f401xx.o"
+".\outputs\stm32f4xx_it.o"
+".\outputs\system_stm32f4xx.o"
+".\outputs\stm32f4xx_gpio.o"
+".\outputs\stm32f4xx_rcc.o"
+".\outputs\stm32f4xx_tim.o"
+".\outputs\stm32f4xx_flash.o"
+".\outputs\misc.o"
+".\outputs\stm32f4xx_spi.o"
+".\outputs\main.o"
+".\outputs\init.o"
+".\outputs\spi.o"
+".\outputs\dw1000.o"
+--strict --scatter ".\OutPuts\project.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\OutPuts\project.map" -o .\OutPuts\project.axf
