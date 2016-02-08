@@ -371,14 +371,15 @@ int GPIO_Configuration(void)
 	* trigger OFF), this will reduce the power consumption and increase the device
 	* immunity against EMI/EMC */
 	// Set all GPIO pins as analog inputs
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
-	GPIO_Init(GPIOD, &GPIO_InitStructure);
-	GPIO_Init(GPIOE, &GPIO_InitStructure);
+//这样SW会无法下载程序的！以后再优化吧
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
+//	GPIO_Init(GPIOD, &GPIO_InitStructure);
+//	GPIO_Init(GPIOE, &GPIO_InitStructure);
 
 	// Enable GPIO used for controlling motor
 	GPIO_InitStructure.GPIO_Pin = PHASE_LEFT | ENABLE_LEFT | PHASE_RIGHT | ENABLE_RIGHT;
