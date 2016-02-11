@@ -202,7 +202,37 @@ int main(void)
 *    this is indicated by an error code returned by dwt_starttx() API call. Here it is not tested, as the values of the delays between frames have
 *    been carefully defined to avoid this situation.	
 				*/
-        tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
+				//static uint8 tx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x21, 0, 0};
+        tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb; //tx_poll_msg[2] = 0
+/*
+ * 2. The messages here are similar to those used in the DecaRanging ARM application (shipped with EVK1000 kit). They comply with the IEEE
+ *    802.15.4 standard MAC data frame encoding and they are following the ISO/IEC:24730-62:2013 standard. The messages used are:
+ *     - a poll message sent by the initiator to trigger the ranging exchange.
+ *     - a response message sent by the responder allowing the initiator to go on with the process
+ *     - a final message sent by the initiator to complete the exchange and provide all information needed by the responder to compute the
+ *       time-of-flight (distance) estimate.
+ *    The first 10 bytes of those frame are common and are composed of the following fields:
+ *     - byte 0/1: frame control (0x8841 to indicate a data frame using 16-bit addressing).
+ *     - byte 2: sequence number, incremented for each new frame.
+ *     - byte 3/4: PAN ID (0xDECA).
+ *     - byte 5/6: destination address, see NOTE 3 below.
+ *     - byte 7/8: source address, see NOTE 3 below.
+ *     - byte 9: function code (specific values to indicate which message it is in the ranging process).
+ *    The remaining bytes are specific to each message as follows:
+ *    Poll message:
+ *     - no more data
+ *    Response message:
+ *     - byte 10: activity code (0x02 to tell the initiator to go on with the ranging exchange).
+ *     - byte 11/12: activity parameter, not used here for activity code 0x02.
+ *    Final message:
+ *     - byte 10 -> 13: poll message transmission timestamp.
+ *     - byte 14 -> 17: response message reception timestamp.
+ *     - byte 18 -> 21: final message transmission timestamp.
+ *    All messages end with a 2-byte checksum automatically set by DW1000.	
+ * 3. Source and destination addresses are hard coded constants in this example to keep it simple but for a real product every device should have a
+ *    unique ID. Here, 16-bit addressing is used to keep the messages as short as possible but, in an actual application, this should be done only
+ *    after an exchange of specific messages used to define those short addresses for each device participating to the ranging exchange.
+*/
         dwt_writetxdata(sizeof(tx_poll_msg), tx_poll_msg, 0);
         dwt_writetxfctrl(sizeof(tx_poll_msg), 0);
 
@@ -238,7 +268,9 @@ int main(void)
 
             /* Check that the frame is the expected response from the companion "DS TWR responder" example.
              * As the sequence number field of the frame is not relevant, it is cleared to simplify the validation of the frame. */
-            rx_buffer[ALL_MSG_SN_IDX] = 0;
+            rx_buffer[ALL_MSG_SN_IDX] = 0; //rx_buffer[2] = 0
+						//static uint8 tx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x21, 0, 0};
+						//static uint8 rx_resp_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'V', 'E', 'W', 'A', 0x10, 0x02, 0, 0, 0, 0};
             if (memcmp(rx_buffer, rx_resp_msg, ALL_MSG_COMMON_LEN) == 0)
             {
                 uint32 final_tx_time;
@@ -265,9 +297,10 @@ int main(void)
 *     more than 2**32 device time units (which is around 67 ms) which means that the calculation of the round-trip delays (needed in the
 *     time-of-flight computation) can be handled by a 32-bit subtraction.								
 								*/
-                final_msg_set_ts(&tx_final_msg[FINAL_MSG_POLL_TX_TS_IDX], poll_tx_ts);
-                final_msg_set_ts(&tx_final_msg[FINAL_MSG_RESP_RX_TS_IDX], resp_rx_ts);
-                final_msg_set_ts(&tx_final_msg[FINAL_MSG_FINAL_TX_TS_IDX], final_tx_ts);
+								//static uint8 tx_final_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                final_msg_set_ts(&tx_final_msg[FINAL_MSG_POLL_TX_TS_IDX], poll_tx_ts); //tx_final_msg[10] = poll_tx_ts
+                final_msg_set_ts(&tx_final_msg[FINAL_MSG_RESP_RX_TS_IDX], resp_rx_ts); //tx_final_msg[14] = resp_rx_ts
+                final_msg_set_ts(&tx_final_msg[FINAL_MSG_FINAL_TX_TS_IDX], final_tx_ts); //tx_final_msg[18] = final_tx_ts
 
                 /* Write and send final message. See NOTE 7 below. 
 * 7. dwt_writetxdata() takes the full size of the message as a parameter but only copies (size - 2) bytes as the check-sum at the end of the frame is
@@ -278,7 +311,7 @@ int main(void)
 *    this is indicated by an error code returned by dwt_starttx() API call. Here it is not tested, as the values of the delays between frames have
 *    been carefully defined to avoid this situation.									
 								*/
-                tx_final_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
+                tx_final_msg[ALL_MSG_SN_IDX] = frame_seq_nb; //tx_final_msg[2] = frame_seq_nb
                 dwt_writetxdata(sizeof(tx_final_msg), tx_final_msg, 0);
                 dwt_writetxfctrl(sizeof(tx_final_msg), 0);
                 dwt_starttx(DWT_START_TX_DELAYED);
