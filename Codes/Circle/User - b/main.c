@@ -13,6 +13,8 @@
 #include "deca_sleep.h"
 #include "port.h"
 
+#define DISTANCE_REQUIRMENT 60
+
 /* Default communication configuration. We use here EVK1000's default mode (mode 3). */
 static dwt_config_t config = {
     2,               /* Channel number. */
@@ -87,6 +89,7 @@ static uint64 final_rx_ts;
 static double tof;
 static double distance = 0;
 static uint16_t distance_cm;
+static uint16_t dis_compare;
 
 /* Declaration of static functions. */
 uint16_t Receptor_Communication(void);
@@ -96,6 +99,8 @@ static void final_msg_get_ts(const uint8 *ts_field, uint32 *ts);
 
 int main(void)
 {
+		uint16_t abs_value;
+	
     /* Start with board specific hardware init. */
     peripherals_init();
 
@@ -118,6 +123,72 @@ int main(void)
     while (1)
     {
 			distance_cm = Receptor_Communication();
+			
+//			abs_value = distance_cm - DISTANCE_REQUIRMENT;
+//			abs_value = abs_value > 0 ? abs_value : -abs_value;
+//			if(abs_value > 10)
+//			{
+//				if(distance_cm < DISTANCE_REQUIRMENT)
+//				{
+//					if(distance_cm > dis_compare) //keep going
+//					{
+//						if(get_motor_direction(MOTOR_LEFT)) //backward
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
+//						}	
+//						else
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
+//						}
+//						motor_setspeed(MOTOR_ALL, 600);
+//					}
+//					else //reverse state
+//					{
+//						if(get_motor_direction(MOTOR_LEFT)) //backward
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
+//						}	
+//						else
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
+//						}
+//						motor_setspeed(MOTOR_ALL, 600);
+//					}
+//				}
+//				else
+//				{
+//					if(distance_cm < dis_compare) //keep going
+//					{
+//						if(get_motor_direction(MOTOR_LEFT)) //backward
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
+//						}	
+//						else
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
+//						}
+//						motor_setspeed(MOTOR_ALL, 600);
+//					}
+//					else //reverse state
+//					{
+//						if(get_motor_direction(MOTOR_LEFT)) //backward
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
+//						}	
+//						else
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
+//						}
+//						motor_setspeed(MOTOR_ALL, 600);
+//					}
+//				}
+//			}
+//			else
+//			{
+//					//motor_setspeed(MOTOR_ALL, 300);
+//					//motor_move(MOTOR_ALL, MOTOR_FORWARD);
+//				motor_setspeed(MOTOR_ALL, 0);
+//			}
     }
 }
 

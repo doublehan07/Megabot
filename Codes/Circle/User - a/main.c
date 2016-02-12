@@ -6,11 +6,14 @@
   */
 	
 #include <string.h>
+#include <math.h>
 
 #include "deca_device_api.h"
 #include "deca_regs.h"
 #include "deca_sleep.h"
 #include "port.h"
+
+static uint16_t DISTANCE_REQUIRMENT = 30;
 
 /* Inter-ranging delay period, in milliseconds. */
 #define RNG_DELAY_MS 1000
@@ -78,6 +81,7 @@ static uint64 resp_rx_ts;
 static uint64 final_tx_ts;
 static double distance;
 static uint16_t distance_cm;
+static uint16_t dis_compare;
 
 /* Declaration of static functions. */
 uint16_t Initiator_Communication(void);
@@ -87,6 +91,8 @@ static void final_msg_set_ts(uint8 *ts_field, uint64 ts);
 
 int main(void)
 {
+		uint16_t abs_value;
+	
     /* Start with board specific hardware init. */
     peripherals_init();
 
@@ -107,18 +113,89 @@ int main(void)
 		 */
     dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
     dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
+	
+		motor_setspeed(MOTOR_ALL, 0);
+		motor_move(MOTOR_ALL, MOTOR_FORWARD);
 
     /* Loop forever initiating ranging exchanges. */
     while (1)
     {
 			distance_cm = Initiator_Communication();
-			distance = distance_cm / 100.0;
-    }
+			//distance = distance_cm / 100.0; debug - purpose
+			
+			abs_value = distance_cm - DISTANCE_REQUIRMENT;
+			abs_value = abs_value > 0 ? abs_value : -abs_value;
+			
+			if(abs_value > 10)
+			{
+				if(distance_cm < DISTANCE_REQUIRMENT)
+				{
+//					if(distance_cm > dis_compare) //keep going
+//					{
+//						if(get_motor_direction(MOTOR_LEFT)) //backward
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
+//						}	
+//						else
+//						{
+							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
+//						}
+						motor_setspeed(MOTOR_ALL, 100);
+//					}
+//					else //reverse state
+//					{
+//						if(get_motor_direction(MOTOR_LEFT)) //backward
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
+//						}	
+//						else
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
+//						}
+//						motor_setspeed(MOTOR_ALL, 600);
+//					}
+				}
+				else
+				{
+//					if(distance_cm < dis_compare) //keep going
+//					{
+//						if(get_motor_direction(MOTOR_LEFT)) //backward
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
+//						}	
+//						else
+//						{
+							motor_move(MOTOR_ALL, MOTOR_FORWARD);
+//						}
+						motor_setspeed(MOTOR_ALL, 100);
+//					}
+//					else //reverse state
+//					{
+//						if(get_motor_direction(MOTOR_LEFT)) //backward
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
+//						}	
+//						else
+//						{
+//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
+//						}
+//						motor_setspeed(MOTOR_ALL, 600);
+//					}
+				}
+			}
+			else
+			{
+					//motor_setspeed(MOTOR_ALL, 300);
+					//motor_move(MOTOR_ALL, MOTOR_FORWARD);
+				motor_setspeed(MOTOR_ALL, 0);
+			}
+		}
 }
 
 uint16_t Initiator_Communication(void)
 {
 	uint16_t dist = 0;
+	dis_compare = distance_cm;
 	/* Write frame data to DW1000 and prepare transmission. See NOTE 7 below. */
 	//static uint8 tx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x21, 0, 0};
   tx_poll_msg[ALL_MSG_SN_IDX] = frame_seq_nb; //tx_poll_msg[2] = 0

@@ -444,6 +444,20 @@ void motor_setspeed(Motor_Selected selec, int16_t speed)
 	}
 }
 
+uint16_t motor_getspeed(Motor_Selected selec)
+{
+	uint16_t speed = 0;
+	if(selec == MOTOR_LEFT)
+	{
+		speed = PWM_TIM -> ENABLE_LEFT_PWMO;
+	}
+	else
+	{
+		speed = PWM_TIM -> ENABLE_RIGHT_PWMO;
+	}
+	return speed;
+}
+
 void motor_move(Motor_Selected selec, Motor_Direction direc)
 {
 	if(selec == MOTOR_LEFT)
@@ -452,15 +466,11 @@ void motor_move(Motor_Selected selec, Motor_Direction direc)
 		{
 			//PHASE_LEFT_off
 			GPIO_ResetBits(MOTOR_GPIO , PHASE_LEFT);
-			//ENABLE_LEFT_on
-			GPIO_SetBits(MOTOR_GPIO , ENABLE_LEFT);
 		}
 		else
 		{
 			//PHASE_LEFT_on;
 			GPIO_SetBits(MOTOR_GPIO , PHASE_LEFT);
-			//ENABLE_LEFT_on
-			GPIO_SetBits(MOTOR_GPIO , ENABLE_LEFT);
 		}
 	}
 	else if(selec == MOTOR_RIGHT)
@@ -469,15 +479,11 @@ void motor_move(Motor_Selected selec, Motor_Direction direc)
 		{
 			//PHASE_RIGHT_off;
 			GPIO_ResetBits(MOTOR_GPIO , PHASE_RIGHT);
-			//ENABLE_RIGHT_on
-			GPIO_SetBits(MOTOR_GPIO , ENABLE_RIGHT);
 		}
 		else
 		{
 			//PHASE_RIGHT_on;
 			GPIO_SetBits(MOTOR_GPIO , PHASE_RIGHT);
-			//ENABLE_RIGHT_on
-			GPIO_SetBits(MOTOR_GPIO , ENABLE_RIGHT);
 		}
 	}
 	else
@@ -486,27 +492,33 @@ void motor_move(Motor_Selected selec, Motor_Direction direc)
 		{
 			//PHASE_RIGHT_off;
 			GPIO_ResetBits(MOTOR_GPIO , PHASE_RIGHT);
-			//ENABLE_RIGHT_on
-			GPIO_SetBits(MOTOR_GPIO , ENABLE_RIGHT);
 			
 			//PHASE_LEFT_off
 			GPIO_ResetBits(MOTOR_GPIO , PHASE_LEFT);
-			//ENABLE_LEFT_on
-			GPIO_SetBits(MOTOR_GPIO , ENABLE_LEFT);
 		}
 		else
 		{
 			//PHASE_RIGHT_on;
 			GPIO_SetBits(MOTOR_GPIO , PHASE_RIGHT);
-			//ENABLE_RIGHT_on
-			GPIO_SetBits(MOTOR_GPIO , ENABLE_RIGHT);
 			
 			//PHASE_LEFT_on;
 			GPIO_SetBits(MOTOR_GPIO , PHASE_LEFT);
-			//ENABLE_LEFT_on
-			GPIO_SetBits(MOTOR_GPIO , ENABLE_LEFT);
 		}
 	}
+}
+
+uint8_t get_motor_direction(Motor_Selected selec)
+{
+	uint8_t flag = 0;
+	if(selec == MOTOR_LEFT)
+	{
+		flag = GPIO_ReadOutputDataBit(MOTOR_GPIO, PHASE_LEFT);
+	}
+	else
+	{
+		flag = GPIO_ReadOutputDataBit(MOTOR_GPIO, PHASE_RIGHT);
+	}
+	return flag;
 }
 
 int Timer1_Motor_Configuration(void)
@@ -529,7 +541,7 @@ int Timer1_Motor_Configuration(void)
 	TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable;		//TIM1CH1N-TIM1CH4N使能
 	TIM_OCInitStructure.TIM_Pulse = PWM_Period;												//每次捕获的比较值
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;					//有效电平为低电平（由于使用的是反相输出）
-	TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_Low; 				//输出同相,TIM_OCNPolarity_High时输出反相
+	TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_High; 				//输出同相,TIM_OCNPolarity_High时输出反相
 	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Reset;			//TIM1CH1-TIM1CH4输出状态
 	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCNIdleState_Set;			//TIM1CH1N-TIM1CH4N输出状态
 

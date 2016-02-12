@@ -1,5 +1,6 @@
 .\outputs\main.o: ..\User - a\main.c
 .\outputs\main.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\outputs\main.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 .\outputs\main.o: ..\decadriver\deca_device_api.h
 .\outputs\main.o: ..\decadriver\deca_regs.h
 .\outputs\main.o: ..\decadriver\deca_version.h

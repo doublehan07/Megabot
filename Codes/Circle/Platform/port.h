@@ -118,7 +118,9 @@ typedef enum
 }Motor_Selected;
 
 void motor_setspeed(Motor_Selected selec, int16_t speed);
+uint16_t motor_getspeed(Motor_Selected selec);
 void motor_move(Motor_Selected selec, Motor_Direction direc);
+uint8_t get_motor_direction(Motor_Selected selec); //forward = 0
 
 
 //#define port_GET_stack_pointer()		__get_MSP()
