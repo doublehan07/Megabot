@@ -1,45 +1,38 @@
-/*! ----------------------------------------------------------------------------
- * @file	port.c
- * @brief	HW specific definitions and functions for portability
- *
- * @attention
- *
- * Copyright 2013 (c) DecaWave Ltd, Dublin, Ireland.
- *
- * All rights reserved.
- *
- * @author DecaWave
- */
+/**
+  ******************************************************************************
+  * 接口定义
+  ******************************************************************************
+  */
+ 
 #include "deca_sleep.h"
 #include "port.h"
 
-#define rcc_init(x)					RCC_Configuration(x)
+#define rcc_init(x)						RCC_Configuration(x)
 #define systick_init(x)				SysTick_Configuration(x)
 #define interrupt_init(x)			NVIC_Configuration(x)
+#define gpio_init(x)					GPIO_Configuration(x)
 #define spi3_init(x)					SPI_DW1000_Configuration(x)
-#define gpio_init(x)				GPIO_Configuration(x)
-//#define ethernet_init(x)			No_Configuration(x)
-//#define rtc_init(x)					No_Configuration(x)
-//#define fs_init(x)					No_Configuration(x)
-//#define usb_init(x)					No_Configuration(x)
-//#define lcd_init(x)					No_Configuration(x)
-//#define touch_screen_init(x)		No_Configuration(x)
+#define timer1_init(x)				Timer1_Motor_Configuration(x)
 //#define usart_init(x)				USART_Configuration(x)
 
 /* System tick 32 bit variable defined by the platform */
 extern __IO unsigned long time32_incr;
 
+/* PWM Max Value */
+static uint16_t PWM_Period = 1000;
+
 /* Internal functions prototypes. */
 static void spi_peripheral_init(void);
+
+//System Configuration
+unsigned long portGetTickCnt(void)
+{
+	return time32_incr;
+}
 
 int No_Configuration(void)
 {
 	return -1;
-}
-
-unsigned long portGetTickCnt(void)
-{
-	return time32_incr;
 }
 
 int SysTick_Configuration(void)
@@ -56,22 +49,6 @@ int SysTick_Configuration(void)
 
 	return 0;
 }
-
-int NVIC_DisableDECAIRQ(void)
-{
-	EXTI_InitTypeDef EXTI_InitStructure;
-
-	/* Configure EXTI line */
-	EXTI_InitStructure.EXTI_Line = DECAIRQ_EXTI;
-	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;	//MPW3 IRQ polarity is high by default
-	EXTI_InitStructure.EXTI_LineCmd = DISABLE;
-	EXTI_Init(&EXTI_InitStructure);
-
-	return 0;
-}
-
-
 int NVIC_Configuration(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -115,32 +92,6 @@ int NVIC_Configuration(void)
 	//NVIC_Init(&NVIC_InitStructure);
 
 	return 0;
-}
-
-/**
-  * @brief  Checks whether the specified EXTI line is enabled or not.
-  * @param  EXTI_Line: specifies the EXTI line to check.
-  *   This parameter can be:
-  *     @arg EXTI_Linex: External interrupt line x where x(0..19)
-  * @retval The "enable" state of EXTI_Line (SET or RESET).
-  */
-ITStatus EXTI_GetITEnStatus(uint32_t EXTI_Line)
-{
-  ITStatus bitstatus = RESET;
-  uint32_t enablestatus = 0;
-  /* Check the parameters */
-  assert_param(IS_GET_EXTI_LINE(EXTI_Line));
-
-  enablestatus =  EXTI->IMR & EXTI_Line;
-  if (enablestatus != (uint32_t)RESET)
-  {
-    bitstatus = SET;
-  }
-  else
-  {
-    bitstatus = RESET;
-  }
-  return bitstatus;
 }
 
 int RCC_Configuration(void)
@@ -194,6 +145,9 @@ int RCC_Configuration(void)
 
 	/* Enable SPI3 clock for DW1000*/
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);
+	
+	/* Enable Timer1 clock for motor controlling*/
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
 
 	/* Enable GPIOs clocks */
 	RCC_AHB1PeriphClockCmd(
@@ -203,41 +157,82 @@ int RCC_Configuration(void)
 	return 0;
 }
 
-//int USART_Configuration(void)
-//{
-//#if 0
-//	USART_InitTypeDef USART_InitStructure;
-//	GPIO_InitTypeDef GPIO_InitStructure;
+int GPIO_Configuration(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
 
-//	// USARTx setup
-//	USART_InitStructure.USART_BaudRate = 115200;
-//	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-//	USART_InitStructure.USART_StopBits = USART_StopBits_1;
-//	USART_InitStructure.USART_Parity = USART_Parity_No;
-//	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-//	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+	/* Configure all unused GPIO port pins in Analog Input mode (floating input
+	* trigger OFF), this will reduce the power consumption and increase the device
+	* immunity against EMI/EMC */
+	// Set all GPIO pins as analog inputs
+//这样SW会无法下载程序的！以后再优化吧
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
+//	GPIO_Init(GPIOD, &GPIO_InitStructure);
+//	GPIO_Init(GPIOE, &GPIO_InitStructure);
 
-//	USART_Init(USARTx, &USART_InitStructure);
+	// Enable GPIO used for controlling motor
+	GPIO_InitStructure.GPIO_Pin = PHASE_LEFT | PHASE_RIGHT;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	
+	GPIO_Init(MOTOR_GPIO, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = ENABLE_LEFT | ENABLE_RIGHT;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_Init(MOTOR_GPIO, &GPIO_InitStructure);
+	
+	GPIO_PinAFConfig(MOTOR_GPIO, ENABLE_LEFT_Source, ENABLE_OutAF);
+	GPIO_PinAFConfig(MOTOR_GPIO, ENABLE_RIGHT_Source, ENABLE_OutAF);
+	
+  return 0;
+}
 
-//	// USARTx TX pin setup
-//	GPIO_InitStructure.GPIO_Pin = USARTx_TX;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+/**
+  * @brief  Checks whether the specified EXTI line is enabled or not.
+  * @param  EXTI_Line: specifies the EXTI line to check.
+  *   This parameter can be:
+  *     @arg EXTI_Linex: External interrupt line x where x(0..19)
+  * @retval The "enable" state of EXTI_Line (SET or RESET).
+  */
+ITStatus EXTI_GetITEnStatus(uint32_t EXTI_Line)
+{
+  ITStatus bitstatus = RESET;
+  uint32_t enablestatus = 0;
+  /* Check the parameters */
+  assert_param(IS_GET_EXTI_LINE(EXTI_Line));
 
-//	GPIO_Init(USARTx_GPIO, &GPIO_InitStructure);
+  enablestatus =  EXTI->IMR & EXTI_Line;
+  if (enablestatus != (uint32_t)RESET)
+  {
+    bitstatus = SET;
+  }
+  else
+  {
+    bitstatus = RESET;
+  }
+  return bitstatus;
+}
 
-//	// USARTx RX pin setup
-//	GPIO_InitStructure.GPIO_Pin = USARTx_RX;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//DW1000 Configuration
+int NVIC_DisableDECAIRQ(void)
+{
+	EXTI_InitTypeDef EXTI_InitStructure;
 
-//	GPIO_Init(USARTx_GPIO, &GPIO_InitStructure);
+	/* Configure EXTI line */
+	EXTI_InitStructure.EXTI_Line = DECAIRQ_EXTI;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;	//MPW3 IRQ polarity is high by default
+	EXTI_InitStructure.EXTI_LineCmd = DISABLE;
+	EXTI_Init(&EXTI_InitStructure);
 
-//	// Enable USARTx
-//	USART_Cmd(USARTx, ENABLE);
-//#endif
-//    return 0;
-//}
+	return 0;
+}
 
 void SPI_DW1000_ChangeRate(uint16_t scalingfactor)
 {
@@ -256,30 +251,13 @@ void SPI_DW1000_ChangeRate(uint16_t scalingfactor)
 	SPI_DW1000->CR1 = tmpreg;
 }
 
-/*! ------------------------------------------------------------------------------------------------------------------
- * @fn spi_set_rate_low()
- *
- * @brief Set SPI rate to less than 3 MHz to properly perform DW1000 initialisation.
- *
- * @param none
- *
- * @return none
- */
-void spi_DW1000_set_rate_low (void)
+void spi_DW1000_set_rate_low (void) //Set SPI rate to less than 3 MHz to properly perform DW1000 initialisation.
 {
     SPI_DW1000_ChangeRate(SPI_BaudRatePrescaler_16);
 }
 
-/*! ------------------------------------------------------------------------------------------------------------------
- * @fn spi_set_rate_high()
- *
- * @brief Set SPI rate as close to 20 MHz as possible for optimum performances.
- *
- * @param none
- *
- * @return none
- */
-void spi_DW1000_set_rate_high (void)
+
+void spi_DW1000_set_rate_high (void) //Set SPI rate as close to 20 MHz as possible for optimum performances.
 {
     SPI_DW1000_ChangeRate(SPI_BaudRatePrescaler_2);
 }
@@ -363,35 +341,6 @@ int SPI_DW1000_Configuration(void)
   return 0;
 }
 
-int GPIO_Configuration(void)
-{
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	/* Configure all unused GPIO port pins in Analog Input mode (floating input
-	* trigger OFF), this will reduce the power consumption and increase the device
-	* immunity against EMI/EMC */
-	// Set all GPIO pins as analog inputs
-//这样SW会无法下载程序的！以后再优化吧
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
-//	GPIO_Init(GPIOB, &GPIO_InitStructure);
-//	GPIO_Init(GPIOC, &GPIO_InitStructure);
-//	GPIO_Init(GPIOD, &GPIO_InitStructure);
-//	GPIO_Init(GPIOE, &GPIO_InitStructure);
-
-	// Enable GPIO used for controlling motor
-	GPIO_InitStructure.GPIO_Pin = PHASE_LEFT | ENABLE_LEFT | PHASE_RIGHT | ENABLE_RIGHT;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(MOTOR_GPIO, &GPIO_InitStructure);
-
-  return 0;
-}
-
-
 void reset_DW1000(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -469,212 +418,158 @@ void setup_DW1000RSTnIRQ(int enable)
 	}
 }
 
-//int is_button_low(uint16_t GPIOpin)
-//{
-//	int result = 1;
-
-//	if (GPIO_ReadInputDataBit(TA_BOOT1_GPIO, TA_BOOT1))
-//		result = 0;
-
-//	return result;
-//}
-
-////when switch (S1) is 'on' the pin is low
-//int is_switch_on(uint16_t GPIOpin)
-//{
-//	int result = 1;
-
-//	if (GPIO_ReadInputDataBit(TA_SW1_GPIO, GPIOpin))
-//		result = 0;
-
-//	return result;
-//}
-
-
-//void led_off (led_t led)
-//{
-//	switch (led)
-//	{
-//	case LED_PC6:
-//		GPIO_ResetBits(GPIOC, GPIO_Pin_6);
-//		break;
-//	case LED_PC7:
-//		GPIO_ResetBits(GPIOC, GPIO_Pin_7);
-//		break;
-//	case LED_PC8:
-//		GPIO_ResetBits(GPIOC, GPIO_Pin_8);
-//		break;
-//	case LED_PC9:
-//		GPIO_ResetBits(GPIOC, GPIO_Pin_9);
-//		break;
-//	case LED_ALL:
-//		GPIO_ResetBits(GPIOC, GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_6 | GPIO_Pin_7);
-//		break;
-//	default:
-//		// do nothing for undefined led number
-//		break;
-//	}
-//}
-
-//void led_on (led_t led)
-//{
-//	switch (led)
-//	{
-//	case LED_PC6:
-//		GPIO_SetBits(GPIOC, GPIO_Pin_6);
-//		break;
-//	case LED_PC7:
-//		GPIO_SetBits(GPIOC, GPIO_Pin_7);
-//		break;
-//	case LED_PC8:
-//		GPIO_SetBits(GPIOC, GPIO_Pin_8);
-//		break;
-//	case LED_PC9:
-//		GPIO_SetBits(GPIOC, GPIO_Pin_9);
-//		break;
-//	case LED_ALL:
-//		GPIO_SetBits(GPIOC, GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_6 | GPIO_Pin_7);
-//		break;
-//	default:
-//		// do nothing for undefined led number
-//		break;
-//	}
-//}
-
-//#ifdef USART_SUPPORT
-
-///**
-//  * @brief  Configures COM port.
-//  * @param  USART_InitStruct: pointer to a USART_InitTypeDef structure that
-//  *   contains the configuration information for the specified USART peripheral.
-//  * @retval None
-//  */
-//void usartinit(void)
-//{
-//	USART_InitTypeDef USART_InitStructure;
-//	GPIO_InitTypeDef GPIO_InitStructure;
-
-//	/* USARTx configured as follow:
-//		  - BaudRate = 115200 baud
-//		  - Word Length = 8 Bits
-//		  - One Stop Bit
-//		  - No parity
-//		  - Hardware flow control disabled (RTS and CTS signals)
-//		  - Receive and transmit enabled
-//	*/
-//	USART_InitStructure.USART_BaudRate = 115200 ;
-//	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-//	USART_InitStructure.USART_StopBits = USART_StopBits_1;
-//	USART_InitStructure.USART_Parity = USART_Parity_No;
-//	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-//	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-
-//	/* Enable GPIO clock */
-//	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
-
-//	//For EVB1000 -> USART2_REMAP = 0
-
-//	/* Enable the USART2 Pins Software Remapping */
-//	GPIO_PinRemapConfig(GPIO_Remap_USART2, DISABLE);
-//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
-
-
-//	/* Configure USART Tx as alternate function push-pull */
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-//	/* Configure USART Rx as input floating */
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-//	/* USART configuration */
-//	USART_Init(USART2, &USART_InitStructure);
-
-//	/* Enable USART */
-//	USART_Cmd(USART2, ENABLE);
-//}
-
-//void USART_putc(char c)
-//{
-//	//while(!(USART2->SR & 0x00000040));
-//	//USART_SendData(USART2,c);
-//	/* e.g. write a character to the USART */
-//	USART_SendData(USART2, c);
-
-//	/* Loop until the end of transmission */
-//	while (USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)	;
-//}
-
-//void USART_puts(const char *s)
-//{
-//	int i;
-//	for(i=0; s[i]!=0; i++)
-//	{
-//		USART_putc(s[i]);
-//	}
-//}
-
-//#include <stdio.h>
-//#include <stdarg.h>
-//#include <stdlib.h>
-//void printf2(const char *format, ...)
-//{
-//	va_list list;
-//	va_start(list, format);
-
-//	int len = vsnprintf(0, 0, format, list);
-//	char *s;
-
-//	s = (char *)malloc(len + 1);
-//	vsprintf(s, format, list);
-
-//	USART_puts(s);
-
-//	free(s);
-//	va_end(list);
-//	return;
-//}
-
-
-//#endif
-
-
 int is_IRQ_enabled(void)
 {
 	return ((   NVIC->ISER[((uint32_t)(DECAIRQ_EXTI_IRQn) >> 5)]
 	           & (uint32_t)0x01 << (DECAIRQ_EXTI_IRQn & (uint8_t)0x1F)  ) ? 1 : 0) ;
 }
 
-/*! ------------------------------------------------------------------------------------------------------------------
- * @fn spi_peripheral_init()
- *
- * @brief Initialise all SPI peripherals at once.
- *
- * @param none
- *
- * @return none
- */
-static void spi_peripheral_init(void)
+//Motor Configuration
+void motor_setspeed(Motor_Selected selec, int16_t speed)
 {
-    spi3_init();
+	speed = speed > 0 ? speed : -speed;
+	speed = speed > 1000 ? 1000 : speed;
+	if(selec == MOTOR_LEFT)
+	{
+		PWM_TIM -> ENABLE_LEFT_PWMO = speed;
+	}
+	else if(selec == MOTOR_RIGHT)
+	{
+		PWM_TIM -> ENABLE_RIGHT_PWMO = speed;
+	}
+	else
+	{
+		PWM_TIM -> ENABLE_LEFT_PWMO = speed;
+		PWM_TIM -> ENABLE_RIGHT_PWMO = speed;
+	}
 }
 
-/*! ------------------------------------------------------------------------------------------------------------------
- * @fn peripherals_init()
- *
- * @brief Initialise all peripherals.
- *
- * @param none
- *
- * @return none
- */
-void peripherals_init (void)
+uint16_t motor_getspeed(Motor_Selected selec)
+{
+	uint16_t speed = 0;
+	if(selec == MOTOR_LEFT)
+	{
+		speed = PWM_TIM -> ENABLE_LEFT_PWMO;
+	}
+	else
+	{
+		speed = PWM_TIM -> ENABLE_RIGHT_PWMO;
+	}
+	return speed;
+}
+
+void motor_move(Motor_Selected selec, Motor_Direction direc)
+{
+	if(selec == MOTOR_LEFT)
+	{
+		if(direc == MOTOR_FORWARD)
+		{
+			//PHASE_LEFT_off
+			GPIO_ResetBits(MOTOR_GPIO , PHASE_LEFT);
+		}
+		else
+		{
+			//PHASE_LEFT_on;
+			GPIO_SetBits(MOTOR_GPIO , PHASE_LEFT);
+		}
+	}
+	else if(selec == MOTOR_RIGHT)
+	{
+		if(direc == MOTOR_FORWARD)
+		{
+			//PHASE_RIGHT_off;
+			GPIO_ResetBits(MOTOR_GPIO , PHASE_RIGHT);
+		}
+		else
+		{
+			//PHASE_RIGHT_on;
+			GPIO_SetBits(MOTOR_GPIO , PHASE_RIGHT);
+		}
+	}
+	else
+	{
+		if(direc == MOTOR_FORWARD)
+		{
+			//PHASE_RIGHT_off;
+			GPIO_ResetBits(MOTOR_GPIO , PHASE_RIGHT);
+			
+			//PHASE_LEFT_off
+			GPIO_ResetBits(MOTOR_GPIO , PHASE_LEFT);
+		}
+		else
+		{
+			//PHASE_RIGHT_on;
+			GPIO_SetBits(MOTOR_GPIO , PHASE_RIGHT);
+			
+			//PHASE_LEFT_on;
+			GPIO_SetBits(MOTOR_GPIO , PHASE_LEFT);
+		}
+	}
+}
+
+uint8_t get_motor_direction(Motor_Selected selec)
+{
+	uint8_t flag = 0;
+	if(selec == MOTOR_LEFT)
+	{
+		flag = GPIO_ReadOutputDataBit(MOTOR_GPIO, PHASE_LEFT);
+	}
+	else
+	{
+		flag = GPIO_ReadOutputDataBit(MOTOR_GPIO, PHASE_RIGHT);
+	}
+	return flag;
+}
+
+int Timer1_Motor_Configuration(void)
+{
+	//Set Timer1 as PWM output timer for motor controlling - ENABLE_LEFT / ENABLE_RIGHT
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	
+	//定时器初始化
+	TIM_TimeBaseStructure.TIM_Prescaler = 72 - 1; 							//定时器预分频 APB2 /(TIM_Prescaler + 1) = 1M
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; //向上计数模式
+	TIM_TimeBaseStructure.TIM_Period = PWM_Period - 1; 					//自动重装值 (TIM_Period + 1) = 1k
+	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; 		//设置时钟分割: TDTS = Tck_tim
+  TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
+  TIM_TimeBaseInit(TIM1,&TIM_TimeBaseStructure);
+	
+	//计时输出
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;									//选择模式PWM1，小于比较值时有效
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;		//TIM1CH1-TIM1CH4失能
+	TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable;		//TIM1CH1N-TIM1CH4N使能
+	TIM_OCInitStructure.TIM_Pulse = PWM_Period;												//每次捕获的比较值
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;					//有效电平为低电平（由于使用的是反相输出）
+	TIM_OCInitStructure.TIM_OCNPolarity = TIM_OCNPolarity_High; 				//输出同相,TIM_OCNPolarity_High时输出反相
+	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Reset;			//TIM1CH1-TIM1CH4输出状态
+	TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCNIdleState_Set;			//TIM1CH1N-TIM1CH4N输出状态
+
+	TIM_OC2Init(TIM1, &TIM_OCInitStructure); //TIM2N
+	TIM_OC3Init(TIM1, &TIM_OCInitStructure); //TIM3N
+
+	TIM_Cmd(TIM1, ENABLE);
+	TIM_CtrlPWMOutputs(TIM1, ENABLE);
+	
+	return 0;
+}
+
+static void spi_peripheral_init(void) //Initialise all SPI peripherals at once.
+{
+	spi3_init();
+}
+
+static void timer_peripheral_init(void) ////Initialise all Timers at once.
+{
+	timer1_init();
+}
+
+void peripherals_init (void) //Initialise all peripherals.
 {
 	rcc_init();
-	gpio_init();
 	systick_init();
+	gpio_init();
+	timer_peripheral_init();
+	interrupt_init();
 	spi_peripheral_init();
 }

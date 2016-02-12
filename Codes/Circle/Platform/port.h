@@ -1,15 +1,8 @@
-/*! ----------------------------------------------------------------------------
- * @file	port.h
- * @brief	HW specific definitions and functions for portability
- *
- * @attention
- *
- * Copyright 2013 (c) DecaWave Ltd, Dublin, Ireland.
- *
- * All rights reserved.
- *
- * @author DecaWave
- */
+/**
+  ******************************************************************************
+  * 接口定义
+  ******************************************************************************
+  */
 
 
 #ifndef PORT_H_
@@ -80,62 +73,13 @@ int readfromspi_serial(uint16_t	headerLength,
 #define port_SPI_DW1000_set_chip_select()		GPIO_SetBits(SPI_DW1000_CS_GPIO,SPI_DW1000_CS)
 #define port_SPI_DW1000_clear_chip_select()	GPIO_ResetBits(SPI_DW1000_CS_GPIO,SPI_DW1000_CS)
 
-//DRV8850-THEDC接口
-#define PHASE_LEFT													GPIO_Pin_13
-#define ENABLE_LEFT													GPIO_Pin_15
-#define PHASE_RIGHT													GPIO_Pin_12
-#define ENABLE_RIGHT												GPIO_Pin_14
-#define MOTOR_GPIO													GPIOB
-
-//#define TA_BOOT1                 	GPIO_Pin_2
-//#define TA_BOOT1_GPIO            	GPIOB
-
-//#define TA_RESP_DLY                 GPIO_Pin_0
-//#define TA_RESP_DLY_GPIO            GPIOC
-
-//#define TA_SW1_3					GPIO_Pin_0
-//#define TA_SW1_4					GPIO_Pin_1
-//#define TA_SW1_5					GPIO_Pin_2
-//#define TA_SW1_6					GPIO_Pin_3
-//#define TA_SW1_7					GPIO_Pin_4
-//#define TA_SW1_8					GPIO_Pin_5
-//#define TA_SW1_GPIO                 GPIOC
-
-//#define S1_SWITCH_ON  (1)
-//#define S1_SWITCH_OFF (0)
-//when switch (S1) is 'on' the pin is low
-//int is_switch_on(uint16_t GPIOpin);
-
-//#define port_IS_TAG_pressed()		is_switch_on(TA_SW1_4)
-//#define port_IS_LONGDLY_pressed()	is_dlybutton_low()
-
-//#define USARTx						USART2
-
-//#define port_USARTx_busy_sending()	0 //(USART_GetFlagStatus((USARTx),(USART_FLAG_TXE))==(RESET))
-//#define port_USARTx_no_data()		0 //(USART_GetFlagStatus((USARTx),(USART_FLAG_RXNE))==(RESET))
-//#define port_USARTx_send_data(x)	  //USART_SendData((USARTx),(uint8_t)(x))
-//#define port_USARTx_receive_data()	0 //USART_ReceiveData(USARTx)
-
-//#define port_GET_stack_pointer()		__get_MSP()
-
-
 ITStatus EXTI_GetITEnStatus(uint32_t x);
 #define port_GetEXT_IRQStatus()             EXTI_GetITEnStatus(DECAIRQ_EXTI_IRQn)
 #define port_DisableEXT_IRQ()               NVIC_DisableIRQ(DECAIRQ_EXTI_IRQn)
 #define port_EnableEXT_IRQ()                NVIC_EnableIRQ(DECAIRQ_EXTI_IRQn)
 #define port_CheckEXT_IRQ()                 GPIO_ReadInputDataBit(DECAIRQ_GPIO, DECAIRQ)
 int NVIC_DisableDECAIRQ(void);
-int is_IRQ_enabled(void);
-
-//int is_button_low(uint16_t GPIOpin);
-//#define is_button_high(x)			0
-//void led_on(led_t led);
-//void led_off(led_t led);
-//#define gpio_set(x)				0
-//#define gpio_reset(x)				0
-//#define is_gpio_out_low(x)			0
-//#define is_gpio_out_high(x)			0
-			
+int is_IRQ_enabled(void);	
 
 void SPI_DW1000_ChangeRate(uint16_t scalingfactor);
 void SPI_DW1000_ConfigFastRate(uint16_t scalingfactor);
@@ -144,6 +88,42 @@ void spi_DW1000_set_rate_high (void); //Set SPI rate as close to 20 MHz as possi
 
 void reset_DW1000(void);
 void setup_DW1000RSTnIRQ(int enable);
+
+//DRV8850-THEDC接口
+#define PHASE_LEFT													GPIO_Pin_13
+#define ENABLE_LEFT													GPIO_Pin_15 //TIM1_CH3N
+#define ENABLE_LEFT_Source									GPIO_PinSource15
+#define ENABLE_LEFT_PWMO										CCR3
+
+#define PHASE_RIGHT													GPIO_Pin_12
+#define ENABLE_RIGHT												GPIO_Pin_14 //TIM1_CH2N
+#define ENABLE_RIGHT_Source									GPIO_PinSource14
+#define ENABLE_RIGHT_PWMO										CCR2
+
+#define ENABLE_OutAF												GPIO_AF_TIM1
+#define PWM_TIM															TIM1
+#define MOTOR_GPIO													GPIOB
+
+typedef enum
+{
+	MOTOR_FORWARD = 0,
+	MOTOR_BACKWARD = 1
+}Motor_Direction;
+
+typedef enum
+{
+	MOTOR_LEFT = 0,
+	MOTOR_RIGHT = 1,
+	MOTOR_ALL = 2
+}Motor_Selected;
+
+void motor_setspeed(Motor_Selected selec, int16_t speed);
+uint16_t motor_getspeed(Motor_Selected selec);
+void motor_move(Motor_Selected selec, Motor_Direction direc);
+uint8_t get_motor_direction(Motor_Selected selec); //forward = 0
+
+
+//#define port_GET_stack_pointer()		__get_MSP()
 
 unsigned long portGetTickCnt(void);
 #define portGetTickCount() 			portGetTickCnt()

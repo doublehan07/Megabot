@@ -1,7 +1,5 @@
 #代码说明
 
-update by haldak 1.23
+update by haldak 2.9
 
-需要移植的是\Codes\dw1000_api_rev1p01\examples目录下的ex06a。发送端为ex_06a_ss_twr_init，接收端为ex_06b_ss_twr_resp
-
-另外比起移植例程，更重要的是能够在keil下使用decadriver平台的api，以及platform的deca_mutex,deca_sleep.deca_spi似乎也可以移植一下的样子
+/Circle目录下的代码可以用了
