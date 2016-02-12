@@ -1,92 +1,58 @@
 #ifndef __MOTOR_H
 #define __MOTOR_H
-#include "stm32f4xx_gpio.h"
-#include "stm32f4xx_rcc.h"
-#include <stdbool.h>
-#include "usart.h"
-#include "pid.h"
-//#include "adc.h"
-#include "adc_dma.h"
-#include <stdio.h>
 
-#define PHASE1_on() GPIO_SetBits(GPIOA,GPIO_Pin_7) 
-#define PHASE1_off() GPIO_ResetBits(GPIOA,GPIO_Pin_7) 
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f4xx.h"
 
-#define PHASE2_on() GPIO_SetBits(GPIOE,GPIO_Pin_12) 
-#define PHASE2_off() GPIO_ResetBits(GPIOE,GPIO_Pin_12) 
+/* Exported types ------------------------------------------------------------*/
+typedef enum
+{
+	MOTOR_SLEEP = 0,
+	MOTOR_AWAKE = 1
+}Motor_State;
 
-#define nSLEEP1_on() GPIO_SetBits(GPIOA,GPIO_Pin_6) 
-#define nSLEEP1_off() GPIO_ResetBits(GPIOA,GPIO_Pin_6) 
+typedef enum
+{
+	MOTOR_SLOW_DECAY_L = 0,
+	MOTOR_SLOW_DECAY_H = 1,
+	MOTOR_FAST_DECAY = 2
+}Motor_Decay;
 
-#define nSLEEP2_on() GPIO_SetBits(GPIOB,GPIO_Pin_1) 
-#define nSLEEP2_off() GPIO_ResetBits(GPIOB,GPIO_Pin_1) 
+typedef enum
+{
+	MOTOR_LEFT = 0,
+	MOTOR_RIGHT = 1,
+	MOTOR_ALL = 2
+}Motor_Selected;
 
-//extern uint16_t ADC1ConvertedValue[2];
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+//Motor Controller
+#define nFAULT_LEFT								GPIO_Pin_5
+#define nFAULT_LEFT_PORT					GPIOC
+#define MODE1_LEFT								GPIO_Pin_4
+#define MODE1_LEFT_PORT						GPIOC
+#define MODE2_LEFT								GPIO_Pin_0
+#define MODE2_LEFT_PORT						GPIOB
+#define nSLEEP_LEFT								GPIO_Pin_6
+#define nSLEEP_LEFT_PORT					GPIOA
 
-//typedef void (*FunType)(void);
+#define Vpropi_LEFT								GPIO_Pin_4	 //ADC4
+#define Vpropi_LEFT_PORT					GPIOA
 
-//FunType fp ;
+#define nFAULT_RIGHT							GPIO_Pin_14
+#define nFAULT_RIGHT_PORT					GPIOE
+#define MODE1_RIGHT								GPIO_Pin_13
+#define MODE1_RIGHT_PORT					GPIOE
+#define MODE2_RIGHT								GPIO_Pin_15
+#define MODE2_RIGHT_PORT					GPIOE
+#define nSLEEP_RIGHT							GPIO_Pin_1
+#define nSLEEP_RIGHT_PORT					GPIOB
 
-//init motor drv8801
-//void motor_config(FunType);
-void motor_config(void);
-//set speed
-//void motor_setSpeed(uint32_t);
-//set direction
-//void motor_setDirection(bool);
+#define Vpropi_RIGHT							GPIO_Pin_5 //ADC5
+#define Vpropi_RIGHT_PORT					GPIOA
 
-void motor_sleep(void);
-
-void motor_wake(void);
-
-//enable
-//void motor_enable(void);
-//brake
-void motor_brake(void);
-
-
-void motor_setLeftSpeed(int32_t speed);
-
-void motor_setRightSpeed(int32_t speed);
-
-void motor_left_forward(void);
-
-void motor_right_forward(void);
-
-void motor_left_backward(void);
-
-void motor_right_backward(void);
-
-void motor_forward(uint32_t speed);
-
-void motor_backward(uint32_t speed);
-
-void motor_turn_left(int speed , int delta_speed);
-
-void motor_turn_right(int speed , int delta_speed);
-
-void left_fast_decay(void);
-
-void right_fast_decay(void);
-
-void fast_decay(void);
-
-void left_slow_decay(void);
-
-void right_slow_decay(void);
-
-void slow_left_high(void);
-
-void slow_right_high(void);
-
-void slow_left_low(void);
-
-void slow_right_low(void);
-
-void slow_decay(void);
-
-uint16_t get_left_adcVal(void);
-
-uint16_t get_right_adcVal(void);
-
+/* Exported functions ------------------------------------------------------- */
+int Motor_State_Conf(Motor_State cond); //第一个需要调用的函数，控制8801工作或者休眠
+int Motor_Decay_Conf(Motor_Selected selec, Motor_Decay decay); //Modify Motor Decat State
 #endif

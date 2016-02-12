@@ -23,11 +23,11 @@ void PeriphInit(void)
 {
 	RCCInit();
 	GPIOInit();
-	TimerInit();
+	//TimerInit();
 	NVIC_Configuration();
 }
 
-//系统时钟：最高84MHz
+//系统时钟：最高84MHz。注意，由于电设板子没有外部晶振，用内部HSI 16M时钟源
 void RCCInit(void)
 {
 	RCC_DeInit();
@@ -63,19 +63,38 @@ void RCCInit(void)
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 100);
 }
 
-//此处可以只初始化通用IO，每个模块专用的IO留着各部分初始化时再做即可
 void GPIOInit(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+  RCC_AHB1PeriphClockCmd(	RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB | \
+													RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOE , ENABLE);
   
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;//可以使用位或同时初始化多个IO
+	//For Motor Controller
+	//nFAULT is a ic state flag, input
+  GPIO_InitStructure.GPIO_Pin = nFAULT_LEFT;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//GPIO_Mode_IN GPIO_Mode_OUT
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//GPIO_OType_OD
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//GPIO_PuPd_NOPULL GPIO_PuPd_DOWN
-  //GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;				//GPIO_Mode_OUT GPIO_Mode_AF
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;				//GPIO_PuPd_NOPULL GPIO_PuPd_DOWN
+  GPIO_Init(nFAULT_LEFT_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = nFAULT_RIGHT;
+	GPIO_Init(nFAULT_RIGHT_PORT, &GPIO_InitStructure);
+	
+	//MODE1, MODE2, nSLEEP are controllers, output
+	GPIO_InitStructure.GPIO_Pin = MODE1_LEFT;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;					//GPIO_Mode_IN GPIO_Mode_AF
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;				//GPIO_OType_OD
+	GPIO_Init(MODE1_LEFT_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = MODE2_LEFT | nSLEEP_RIGHT;
+	GPIO_Init(MODE2_LEFT_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = nSLEEP_LEFT;
+	GPIO_Init(nSLEEP_LEFT_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = MODE1_RIGHT | MODE2_RIGHT;
+	GPIO_Init(MODE1_RIGHT_PORT, &GPIO_InitStructure);
 }
 
 void TimerInit(void)
@@ -83,7 +102,7 @@ void TimerInit(void)
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 
   //RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2|RCC_APB1Periph_TIM3|RCC_APB1Periph_TIM4, ENABLE);
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
+  //RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
 	
   TIM_TimeBaseStructure.TIM_Period =99;//从0计数到99，即10kHz
   TIM_TimeBaseStructure.TIM_Prescaler = RCC_Clocks.HCLK_Frequency/1000000 - 1;
@@ -98,37 +117,19 @@ void TimerInit(void)
   TIM_TimeBaseStructure.TIM_Prescaler = 0;
   TIM_TimeBaseInit(TIM5, &TIM_TimeBaseStructure);
   TIM_ITConfig(TIM5, TIM_IT_Update, ENABLE);
-	TIM_Cmd(TIM5, DISABLE);
+	//TIM_Cmd(TIM5, DISABLE);
 }
 
 //中断配置
 void NVIC_Configuration(void)
 {
-  NVIC_InitTypeDef NVIC_InitStructure;
+  //NVIC_InitTypeDef NVIC_InitStructure;
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//2+2模式
 	
-  NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;//抢占优先级
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;//响应优先级
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  //NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+  //NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;//抢占优先级
+  //NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;//响应优先级
+  //NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   //NVIC_Init(&NVIC_InitStructure);
-
-  /*NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
-
-  NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);*/
-	
-	NVIC_InitStructure.NVIC_IRQChannel = TIM5_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
 }
 

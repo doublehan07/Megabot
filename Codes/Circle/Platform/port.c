@@ -544,7 +544,7 @@ int Timer1_Motor_Configuration(void)
 
 static void spi_peripheral_init(void) //Initialise all SPI peripherals at once.
 {
-    spi3_init();
+	spi3_init();
 }
 
 static void timer_peripheral_init(void) ////Initialise all Timers at once.
@@ -556,7 +556,8 @@ void peripherals_init (void) //Initialise all peripherals.
 {
 	rcc_init();
 	systick_init();
-	timer_peripheral_init();
 	gpio_init();
+	timer_peripheral_init();
+	interrupt_init();
 	spi_peripheral_init();
 }
