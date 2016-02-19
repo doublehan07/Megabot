@@ -1,10 +1,12 @@
-Output: Report Project Hierarchy
-Type  : ReportHierarchy
-From  : Variant [[No Variations]] of Project [PCB_V1.PrjPCB]
-   Generated File[PCB1.REP]
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [PCB_V1.PrjPCB]
+   Generated File[PCB1-Plated.TXT]
+   Generated File[PCB1.LDP]
+   Generated File[PCB1.DRR]
 
 
-Files Generated   : 1
+Files Generated   : 3
 Documents Printed : 0
 
-Finished Output Generation At 18:56:57 On 2016/2/13
+Finished Output Generation At 15:35:51 On 2016/2/16
