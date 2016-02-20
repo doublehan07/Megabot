@@ -13,29 +13,23 @@
 #include "deca_sleep.h"
 #include "port.h"
 
-#define DISTANCE_REQUIRMENT 60
-
-/* Default communication configuration. We use here EVK1000's default mode (mode 3). */
+/* Channel2 , PRF16M , Preamble length = 64 , Preamble code = 3 , 6.8M , standard SFD , SFD = 8 symbol times long */
 static dwt_config_t config = {
     2,               /* Channel number. */
-    DWT_PRF_64M,     /* Pulse repetition frequency. */
-    DWT_PLEN_1024,   /* Preamble length. */
-    DWT_PAC32,       /* Preamble acquisition chunk size. Used in RX only. */
-    9,               /* TX preamble code. Used in TX only. */
-    9,               /* RX preamble code. Used in RX only. */
-    1,               /* Use non-standard SFD (Boolean) */
-    DWT_BR_110K,     /* Data rate. */
+    DWT_PRF_16M,     /* Pulse repetition frequency. */
+    DWT_PLEN_64,   	 /* Preamble length. */
+    DWT_PAC8,        /* Preamble acquisition chunk size. Used in RX only. */
+    3,               /* TX preamble code. Used in TX only. */
+    3,               /* RX preamble code. Used in RX only. */
+    0,         		   /* Use non-standard SFD (Boolean) */
+    DWT_BR_6M8,      /* Data rate. */
     DWT_PHRMODE_STD, /* PHY header mode. */
-    (1025 + 64 - 32) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    (64 + 1 + 8 - 8) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
 
-/* Default antenna delay values for 64 MHz PRF. See NOTE 1 below. 
- * 1. The sum of the values is the TX to RX antenna delay, experimentally determined by a calibration process. Here we use a hard coded typical value
- *    but, in a real application, each device should have its own antenna delay properly calibrated to get the best possible precision when performing
- *    range measurements.
-*/
-#define TX_ANT_DLY 16436
-#define RX_ANT_DLY 16436
+/* Antenna delay values for 16 MHz PRF. */
+#define TX_ANT_DLY 16436 //Need to be corrected
+#define RX_ANT_DLY 16436 //Need to be corrected
 
 /* Frames used in the ranging process. See NOTE 2 below. */
 static uint8 rx_poll_msg[] = {0x41, 0x88, 0, 0xCA, 0xDE, 'W', 'A', 'V', 'E', 0x21, 0, 0};
@@ -62,7 +56,7 @@ static uint8 rx_buffer[RX_BUF_LEN];
 static uint32 status_reg = 0;
 
 /* UWB microsecond (uus) to device time unit (dtu, around 15.65 ps) conversion factor.
- * 1 uus = 512 / 499.2 µs and 1 µs = 499.2 * 128 dtu. */
+ * 1 uus = 512 / 499.2 us and 1 us = 499.2 * 128 dtu. */
 #define UUS_TO_DWT_TIME 65536
 
 /* Delay between frames, in UWB microseconds. See NOTE 4 below. */
@@ -89,7 +83,6 @@ static uint64 final_rx_ts;
 static double tof;
 static double distance = 0;
 static uint16_t distance_cm;
-static uint16_t dis_compare;
 
 /* Declaration of static functions. */
 uint16_t Receptor_Communication(void);
@@ -99,102 +92,40 @@ static void final_msg_get_ts(const uint8 *ts_field, uint32 *ts);
 
 int main(void)
 {
-		uint16_t abs_value;
+		uint32_t baudrate = 9600;
 	
-    /* Start with board specific hardware init. */
-    peripherals_init();
+		/* Start with board specific hardware init. */
+    peripherals_init(baudrate);
 
     /* Reset and initialise DW1000.
-     * For initialisation, DW1000 clocks must be temporarily set to crystal speed. After initialisation SPI rate can be increased for optimum
-     * performance. */
+     * For initialisation, DW1000 clocks must be temporarily set to crystal speed. After initialisation SPI rate can be increased for 
+		 * optimum performance. */
     reset_DW1000(); /* Target specific drive of RSTn line into DW1000 low for a period. */
     spi_DW1000_set_rate_low();
     dwt_initialise(DWT_LOADUCODE);
     spi_DW1000_set_rate_high();
 
-    /* Configure DW1000. See NOTE 6 below. */
+    /* Configure DW1000. */
     dwt_configure(&config);
 
-    /* Apply default antenna delay value. See NOTE 1 below. */
+    /* Apply antenna delay value. */
     dwt_setrxantennadelay(RX_ANT_DLY);
     dwt_settxantennadelay(TX_ANT_DLY);
+	
+		/* No frame filter will be used. */
+		dwt_enableframefilter(DWT_FF_NOTYPE_EN);
 
     /* Loop forever responding to ranging requests. */
     while (1)
     {
 			distance_cm = Receptor_Communication();
-			
-//			abs_value = distance_cm - DISTANCE_REQUIRMENT;
-//			abs_value = abs_value > 0 ? abs_value : -abs_value;
-//			if(abs_value > 10)
-//			{
-//				if(distance_cm < DISTANCE_REQUIRMENT)
-//				{
-//					if(distance_cm > dis_compare) //keep going
-//					{
-//						if(get_motor_direction(MOTOR_LEFT)) //backward
-//						{
-//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
-//						}	
-//						else
-//						{
-//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
-//						}
-//						motor_setspeed(MOTOR_ALL, 600);
-//					}
-//					else //reverse state
-//					{
-//						if(get_motor_direction(MOTOR_LEFT)) //backward
-//						{
-//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
-//						}	
-//						else
-//						{
-//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
-//						}
-//						motor_setspeed(MOTOR_ALL, 600);
-//					}
-//				}
-//				else
-//				{
-//					if(distance_cm < dis_compare) //keep going
-//					{
-//						if(get_motor_direction(MOTOR_LEFT)) //backward
-//						{
-//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
-//						}	
-//						else
-//						{
-//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
-//						}
-//						motor_setspeed(MOTOR_ALL, 600);
-//					}
-//					else //reverse state
-//					{
-//						if(get_motor_direction(MOTOR_LEFT)) //backward
-//						{
-//							motor_move(MOTOR_ALL, MOTOR_FORWARD);
-//						}	
-//						else
-//						{
-//							motor_move(MOTOR_ALL, MOTOR_BACKWARD);
-//						}
-//						motor_setspeed(MOTOR_ALL, 600);
-//					}
-//				}
-//			}
-//			else
-//			{
-//					//motor_setspeed(MOTOR_ALL, 300);
-//					//motor_move(MOTOR_ALL, MOTOR_FORWARD);
-//				motor_setspeed(MOTOR_ALL, 0);
-//			}
     }
 }
 
 uint16_t Receptor_Communication(void)
 {
 	uint16_t dist = distance;
+	
 	/* Clear reception timeout to start next ranging process. */
 	dwt_setrxtimeout(0);
 

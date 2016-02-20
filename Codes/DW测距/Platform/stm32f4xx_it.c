@@ -166,12 +166,13 @@ void SysTick_Handler(void)
   * @}
   */ 
 
-void USART6_IRQHandler(void)
+void USART6_IRQHandler(void) //串口收发
 {
-		if(USART_GetFlagStatus(USART_CHANNEL, USART_FLAG_RXNE) == SET)
+		if(USART_GetITStatus(USART_CHANNEL, USART_IT_RXNE) != RESET)
 		{
-
+				//接收到上位机指令处理
 		}
+		//USART不用手动清除标志位
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
