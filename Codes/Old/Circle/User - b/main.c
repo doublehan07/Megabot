@@ -18,15 +18,15 @@
 /* Default communication configuration. We use here EVK1000's default mode (mode 3). */
 static dwt_config_t config = {
     2,               /* Channel number. */
-    DWT_PRF_64M,     /* Pulse repetition frequency. */
-    DWT_PLEN_1024,   /* Preamble length. */
-    DWT_PAC32,       /* Preamble acquisition chunk size. Used in RX only. */
-    9,               /* TX preamble code. Used in TX only. */
-    9,               /* RX preamble code. Used in RX only. */
-    1,               /* Use non-standard SFD (Boolean) */
-    DWT_BR_110K,     /* Data rate. */
+    DWT_PRF_16M,     /* Pulse repetition frequency. */
+    DWT_PLEN_64,  	 /* Preamble length. */
+    DWT_PAC8,    	   /* Preamble acquisition chunk size. Used in RX only. */
+    3,               /* TX preamble code. Used in TX only. */
+    3,               /* RX preamble code. Used in RX only. */
+    0,         		   /* Use non-standard SFD (Boolean) */
+    DWT_BR_6M8,      /* Data rate. */
     DWT_PHRMODE_STD, /* PHY header mode. */
-    (1025 + 64 - 32) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    (64 + 1 + 8 - 8) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
 
 /* Default antenna delay values for 64 MHz PRF. See NOTE 1 below. 

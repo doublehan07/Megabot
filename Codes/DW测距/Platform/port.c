@@ -42,7 +42,7 @@ int SysTick_Configuration(void)
 		/* Capture error */
 		while (1);
 	}
-	NVIC_SetPriority (SysTick_IRQn, 5);
+	NVIC_SetPriority (SysTick_IRQn, 0x05); //抢占优先级1，响应优先级1
 
 	return 0;
 }
@@ -113,16 +113,16 @@ int RCC_Configuration(void)
 		/* HSE=8MHz
 		 * HCLK=72MHz, PCLK2=72MHz, PCLK1=36MHz 						*/
 		/****************************************************************/
-		/* HCLK = SYSCLK = 72MHz - AHB */
+		/* HCLK = SYSCLK = 84MHz - AHB */
 		RCC_HCLKConfig(RCC_SYSCLK_Div1);  
-		/* PCLK2 = HCLK = 72MHz APB2 */
+		/* PCLK2 = HCLK = 84MHz APB2 */
 		RCC_PCLK2Config(RCC_HCLK_Div1); 
-		/* PCLK1 = HCLK/2 = 36MHz APB1 */
+		/* PCLK1 = HCLK/2 = 42MHz APB1 */
 		RCC_PCLK1Config(RCC_HCLK_Div2);
 
 		/* Configure PLLs *********************************************************/
-		/* PLLCLK = HSE(8M)/8*288/4 = 72 MHz */
-		RCC_PLLConfig(RCC_PLLSource_HSE, 8, 288, 4, 8);
+		/* PLLCLK = HSE(8M)/8*288/4 = 84 MHz */
+		RCC_PLLConfig(RCC_PLLSource_HSE, 8, 168, 2, 7);
 		/* Enable PLL */ 
 		RCC_PLLCmd(ENABLE);
 

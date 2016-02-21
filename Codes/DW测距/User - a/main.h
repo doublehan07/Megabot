@@ -47,24 +47,16 @@
 #define RNG_DELAY_MS 1000
 
 /* Antenna delay values for 16 MHz PRF. */
-#define TX_ANT_DLY 16436 //Need to be changed
-#define RX_ANT_DLY 16436 //Need to be changed
+#define TX_ANT_DLY 16497 //Experiment value
+#define RX_ANT_DLY 16497 //Experiment value
 
 /* UWB microsecond (uus) to device time unit (dtu, around 15.65 ps) conversion factor.
  * 1 uus = 512 / 499.2 us and 1 us = 499.2 * 128 dtu. */
 #define UUS_TO_DWT_TIME 65536
 
-/* Delay between frames, in UWB microseconds. */
-/* This is the delay from the end of the frame transmission to the enable of the receiver
- * as programmed for the DW1000's wait for response feature. */
-#define POLL_TX_TO_RESP_RX_DLY_UUS 150
-
 /* This is the delay from Frame RX timestamp to TX reply timestamp used for calculating/setting the DW1000's delayed TX function.
- * This includes the frame length of approximately 2.66 ms with above configuration. */
-#define RESP_RX_TO_FINAL_TX_DLY_UUS 3100
-
-/* Receive response timeout. */
-#define RESP_RX_TIMEOUT_UUS 2700
+ * This includes the frame length of approximately ??? ms with above configuration. */
+#define RESP_RX_TO_FINAL_TX_DLY_UUS 2500
 
 /* Speed of light in air, in metres per second. */
 #define SPEED_OF_LIGHT 299702547

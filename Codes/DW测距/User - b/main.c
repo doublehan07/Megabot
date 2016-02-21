@@ -23,11 +23,11 @@ static dwt_config_t config = {
 
 //Target ID | Our ID | Times | TimeStamp | CRC | CRC
 #define OurID	0x02
-static uint8_t tx_reply_msg[] = {0x00, OurID, 0x01, 0, 0, 0, 0, 0x0D, 0x0A};
+static uint8_t tx_reply_msg[] = {0x00, OurID, 0x01, 0x0D, 0x0A};
 static uint8_t tx_final_msg[] = {0x00, OurID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 
 /* Buffer to store received response message. */
-#define RX_BUF_LEN 5
+#define RX_BUF_LEN 17
 #define TS1_FIELD_INDEX 3
 #define TS2_FIELD_INDEX 7
 #define TS3_FIELD_INDEX 11
@@ -120,7 +120,7 @@ void Receptor_Communication(void)
 		/* Check that the frame is the expected message from Source Device(TargetID). */
 		if(rx_buffer[0] == OurID && rx_buffer[2] == 0x01)
 		{
-			uint32_t resp_tx_time, temp_send_msg;
+			uint32_t resp_tx_time;
 			uint8_t i;
 			
 			TargetID = rx_buffer[1];
@@ -133,16 +133,11 @@ void Receptor_Communication(void)
 			dwt_setdelayedtrxtime(resp_tx_time);
 
 			/* Set expected delay and timeout for final message reception. */
-			dwt_setrxaftertxdelay(RESP_TX_TO_FINAL_RX_DLY_UUS);
-			dwt_setrxtimeout(FINAL_RX_TIMEOUT_UUS);
+			dwt_setrxaftertxdelay(0);
+			dwt_setrxtimeout(3700);
 			
 			//ÐÞ¸Ätx_reply_msg
-			temp_send_msg = (uint32_t)rx_DeviceB_1;
-			for(i = 0; i < 4; i++)
-			{
-				tx_reply_msg[TS1_FIELD_INDEX + i] = (uint8_t)temp_send_msg;
-				temp_send_msg >>= 8;
-			}			
+			tx_reply_msg[0] = TargetID;
 
 			/* Write and send the response message. */
 			dwt_writetxdata(sizeof(tx_reply_msg), tx_reply_msg, 0);
@@ -212,19 +207,12 @@ void Receptor_Communication(void)
 												
 					/* Send distance to Source Device */
 					//ÐÞ¸Ätx_final_msg
-					temp_send_msg = (uint32_t)tx_DeviceB_2;
-					for(i = 0; i < 4; i++)
+					for(i = 0; i < 8; i++)
 					{
-						tx_final_msg[TS1_FIELD_INDEX + i] = (uint8_t)temp_send_msg;
-						temp_send_msg >>= 8;
+						tx_final_msg[TS1_FIELD_INDEX + i] = (uint8_t)tof_dtu;
+						tof_dtu >>= 8;
 					}
-					
-					temp_send_msg = (uint32_t)rx_DeviceB_3;
-					for(i = 0; i < 4; i++)
-					{
-						tx_final_msg[TS1_FIELD_INDEX + i] = (uint8_t)temp_send_msg;
-						temp_send_msg >>= 8;
-					}		
+					tx_final_msg[0] = TargetID;
 					
 					dwt_writetxdata(sizeof(tx_final_msg), tx_final_msg, 0);
 					dwt_writetxfctrl(sizeof(tx_final_msg), 0);

@@ -42,17 +42,8 @@ static uint64_t tx_DeviceA_1;
 static uint64_t rx_DeviceA_2;
 static uint64_t tx_DeviceA_3;
 
-static uint32_t rx_DeviceB_1;
-static uint32_t tx_DeviceB_2;
-static uint32_t rx_DeviceB_3;
-
 /* Hold copies of computed time of flight and distance here for reference, so reader can examine it at a breakpoint. */
 static double tof = 0.0;
-static double Treply1 = 0.0;
-static double Treply2 = 0.0;
-static double Tround2 = 0.0;
-static double Tround1 = 0.0;
-static double Tprop = 0.0;
 static double distance = 0.0;
 static uint16_t distance_cm = 0;
 
@@ -82,29 +73,26 @@ int main(void)
     while (1)
     {
 			Initiator_Communication(0x02);
-			//distance = distance_cm / 100.0; debug - purpose
 		}
 }
 
 void Initiator_Communication(uint8_t TargetID)
 {	
- /* Set expected response's delay and timeout. 
-  * As this example only handles one incoming frame with always the same delay and timeout, those values can be set here once for all. 
-	*/
-  dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
-  dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
-	
 	/* Clear good RX frame event and TX frame sent in the DW1000 status register. */
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG | SYS_STATUS_TXFRS);
 	
 	/* Write frame data to DW1000 and prepare transmission. */	
 	tx_request_begin_range_msg[0] = TargetID;
+	tx_second_range_msg[0] = TargetID;
 	
-	dwt_writetxdata(sizeof(tx_request_begin_range_msg), tx_request_begin_range_msg, 0);
-	dwt_writetxfctrl(sizeof(tx_request_begin_range_msg), 0);
-
+	/* Set expected delay and timeout for final message reception. */
+	dwt_setrxaftertxdelay(0);
+  dwt_setrxtimeout(2700);
+	
 	/* Start transmission, indicating that a response is expected so that reception is enabled automatically after the frame 
 	 * is sent and the delay set by dwt_setrxaftertxdelay() has elapsed. */
+	dwt_writetxdata(sizeof(tx_request_begin_range_msg), tx_request_begin_range_msg, 0);
+	dwt_writetxfctrl(sizeof(tx_request_begin_range_msg), 0);
 	dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
 
 	/* We assume that the transmission is achieved correctly */
@@ -112,7 +100,7 @@ void Initiator_Communication(uint8_t TargetID)
 	
 	/* Reception of a frame or error/timeout. */
 	while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))
-	{ };
+	{	};
 
 	if (status_reg & SYS_STATUS_RXFCG)
 	{
@@ -146,13 +134,6 @@ void Initiator_Communication(uint8_t TargetID)
 			//把Tround1和Treply2告诉Target Device(Treply2加上antenna delay)
 			tx_DeviceA_3 = (((uint64_t)(final_tx_time & 0xFFFFFFFE)) << 8) + TX_ANT_DLY; 
 			
-			/* 解析本次数据包中的rx_DeviceB_1 */
-			rx_DeviceB_1 = 0;
-			for(i = 0; i < 4; i++)
-			{
-				rx_DeviceB_1 += rx_buffer[TS1_FIELD_INDEX + i] << (i * 8);
-			}
-			
 			//修改tx_second_range_msg
 			temp_send_msg = (uint32_t)tx_DeviceA_1;
 			for(i = 0; i < 4; i++)
@@ -175,6 +156,10 @@ void Initiator_Communication(uint8_t TargetID)
 				temp_send_msg >>= 8;
 			}
 
+			/* Set expected delay and timeout for final message reception. */
+			dwt_setrxaftertxdelay(0);
+			dwt_setrxtimeout(5000);
+			
 			/* Write and send final message. */
 			dwt_writetxdata(sizeof(tx_second_range_msg), tx_second_range_msg, 0);
 			dwt_writetxfctrl(sizeof(tx_second_range_msg), 0);
@@ -203,30 +188,13 @@ void Initiator_Communication(uint8_t TargetID)
 				if(rx_buffer[0] == OurID && rx_buffer[1] == TargetID && rx_buffer[2] == 0x02)
 				{
 					//get distance
-					int64_t tof_dtu;
-					
-					/* 解析本次数据包中的rx_DeviceB_1 */
-					tx_DeviceB_2 = 0;
-					for(i = 0; i < 4; i++)
+					/* 解析本次数据包中的tof_dtu */
+					int64_t tof_dtu = 0;
+					for(i = 0; i < 8; i++)
 					{
-						tx_DeviceB_2 += rx_buffer[TS1_FIELD_INDEX + i] << (i * 8);
+						tof_dtu += rx_buffer[TS1_FIELD_INDEX + i] << (i * 8);
 					}
-						
-					rx_DeviceB_3 = 0;
-					for(i = 0; i < 4; i++)
-					{
-						rx_DeviceB_3 += rx_buffer[TS1_FIELD_INDEX + i] << (i * 8);
-					}
-					
-					Treply1 = (double)(tx_DeviceB_2 - rx_DeviceB_1);
-					Treply2 = (double)(tx_DeviceA_3 - rx_DeviceA_2);
-					Tround1 = (double)(rx_DeviceA_2 - tx_DeviceA_1);
-					Tround2 = (double)(rx_DeviceB_3 - tx_DeviceB_2);
-					
-					Tprop = (Treply1 * Treply2 - Tround2 * Tround1) / (Treply1 + Treply2 + Tround1 + Tround2);
-					Tprop = Tprop > 0 ? Tprop : -Tprop;
-					
-					tof_dtu = (int64_t)Tprop;
+
 					tof = tof_dtu * DWT_TIME_UNITS;
 					distance = tof * SPEED_OF_LIGHT;
 					distance_cm = (uint16_t)(distance * 100);
@@ -280,7 +248,7 @@ static uint64_t get_tx_timestamp_u64(void)
  *        /!\ This function assumes that length of time-stamps is 40 bits, for both TX and RX!
  *
  * @param  none
- *
+ *·
  * @return  64-bit value of the read time-stamp.
  */
 static uint64_t get_rx_timestamp_u64(void)
