@@ -42,6 +42,7 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
+
 /* Inter-ranging delay period, in milliseconds. */
 #define RNG_DELAY_MS 1000
 
@@ -69,6 +70,7 @@
 uint16_t Initiator_Communication(uint8_t TargetID);
 static uint64_t get_tx_timestamp_u64(void);
 static uint64_t get_rx_timestamp_u64(void);
+static void final_msg_get_ts(const uint8_t *ts_field, uint32_t *ts);
 
 #endif /* __MAIN_H */
 

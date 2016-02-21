@@ -35,10 +35,14 @@ static uint32 status_reg = 0;
 
 /* Time-stamps of frames transmission/reception, expressed in device time units.
  * As they are 40-bit wide, we need to define a 64-bit int type to handle them. */
+#define TimeStampLength 5
 static uint64_t poll_tx_ts;
 static uint64_t resp_rx_ts;
 static uint64_t final_tx_ts;
-//static double distance;
+
+/* Hold copies of computed time of flight and distance here for reference, so reader can examine it at a breakpoint. */
+static double tof;
+static double distance = 0;
 static uint16_t distance_cm;
 
 int main(void)
@@ -63,12 +67,6 @@ int main(void)
 		/* No frame filter will be used. */
 		dwt_enableframefilter(DWT_FF_NOTYPE_EN);
 
-    /* Set expected response's delay and timeout. 
-     * As this example only handles one incoming frame with always the same delay and timeout, those values can be set here once for all. 
-		 */
-    dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
-    dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
-
     /* Loop forever initiating ranging exchanges. */
     while (1)
     {
@@ -80,6 +78,12 @@ int main(void)
 uint16_t Initiator_Communication(uint8_t TargetID)
 {
 	uint16_t dist = 0;
+	
+ /* Set expected response's delay and timeout. 
+  * As this example only handles one incoming frame with always the same delay and timeout, those values can be set here once for all. 
+	*/
+  dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
+  dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
 	
 	/* Clear good RX frame event and TX frame sent in the DW1000 status register. */
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG | SYS_STATUS_TXFRS);
@@ -103,7 +107,7 @@ uint16_t Initiator_Communication(uint8_t TargetID)
 
 	if (status_reg & SYS_STATUS_RXFCG)
 	{
-		uint32 frame_len;
+		uint32_t frame_len;
 
 		/* Clear good RX frame event and TX frame sent in the DW1000 status register. */
 		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG | SYS_STATUS_TXFRS);
@@ -118,7 +122,7 @@ uint16_t Initiator_Communication(uint8_t TargetID)
 		/* Check that the frame is the expected response from Target Device(TargetID). */
 		if(rx_buffer[0] == TargetID)
 		{
-			uint32 final_tx_time;
+			uint32_t final_tx_time;
 
 			/* Retrieve poll transmission and response reception timestamp. */
 			poll_tx_ts = get_tx_timestamp_u64(); //∂¡»°tx_request_begin_range_msg ±º‰¥¡
@@ -230,4 +234,25 @@ static uint64_t get_rx_timestamp_u64(void)
         ts |= ts_tab[i];
     }
     return ts;
+}
+
+/*! ------------------------------------------------------------------------------------------------------------------
+ * @fn final_msg_get_ts()
+ *
+ * @brief Read a given timestamp value from the final message. In the timestamp fields of the final message, the least
+ *        significant byte is at the lower address.
+ *
+ * @param  ts_field  pointer on the first byte of the timestamp field to read
+ *         ts  timestamp value
+ *
+ * @return none
+ */
+static void final_msg_get_ts(const uint8_t *ts_field, uint32_t *ts)
+{
+    uint8_t i;
+    *ts = 0;
+    for (i = 0; i < FINAL_MSG_TS_LEN; i++)
+    {
+        *ts += ts_field[i] << (i * 8);
+    }
 }

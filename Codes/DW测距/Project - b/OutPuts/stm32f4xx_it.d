@@ -28,3 +28,4 @@
 .\outputs\stm32f4xx_it.o: ..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_usart.h
 .\outputs\stm32f4xx_it.o: ..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_wwdg.h
 .\outputs\stm32f4xx_it.o: ..\STM32F4xx_StdPeriph_Driver\inc\misc.h
+.\outputs\stm32f4xx_it.o: ..\platform\port.h

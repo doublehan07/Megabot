@@ -9,6 +9,7 @@
 ".\outputs\stm32f4xx_exti.o"
 ".\outputs\stm32f4xx_rtc.o"
 ".\outputs\stm32f4xx_syscfg.o"
+".\outputs\stm32f4xx_usart.o"
 ".\outputs\main.o"
 ".\outputs\deca_mutex.o"
 ".\outputs\deca_sleep.o"
