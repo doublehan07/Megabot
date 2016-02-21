@@ -21,13 +21,16 @@ static dwt_config_t config = {
     (64 + 1 + 8 - 8) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
 
-//Target ID | Our ID | Time | CRC | CRC
+//Target ID | Our ID | Times | TimeStamp | CRC | CRC
 #define OurID	0x01
-static uint8_t tx_request_begin_range_msg[] = {0x00, OurID, 0x00, 0x00, 0x00};
-static uint8_t tx_second_range_msg[] = {0x00, OurID, 0x00, 0x00, 0x00};
+static uint8_t tx_request_begin_range_msg[] = {0x00, OurID, 0x01, 0x0D, 0x0A};
+static uint8_t tx_second_range_msg[] = {0x00, OurID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 
 /* Buffer to store received response message. */
-#define RX_BUF_LEN 5
+#define RX_BUF_LEN 17
+#define TS1_FIELD_INDEX 3
+#define TS2_FIELD_INDEX 7
+#define TS3_FIELD_INDEX 11
 static uint8 rx_buffer[RX_BUF_LEN];
 
 /* Hold copy of status register state here for reference, so reader can examine it at a breakpoint. */
@@ -35,15 +38,23 @@ static uint32 status_reg = 0;
 
 /* Time-stamps of frames transmission/reception, expressed in device time units.
  * As they are 40-bit wide, we need to define a 64-bit int type to handle them. */
-#define TimeStampLength 5
-static uint64_t poll_tx_ts;
-static uint64_t resp_rx_ts;
-static uint64_t final_tx_ts;
+static uint64_t tx_DeviceA_1;
+static uint64_t rx_DeviceA_2;
+static uint64_t tx_DeviceA_3;
+
+static uint32_t rx_DeviceB_1;
+static uint32_t tx_DeviceB_2;
+static uint32_t rx_DeviceB_3;
 
 /* Hold copies of computed time of flight and distance here for reference, so reader can examine it at a breakpoint. */
-static double tof;
-static double distance = 0;
-static uint16_t distance_cm;
+static double tof = 0.0;
+static double Treply1 = 0.0;
+static double Treply2 = 0.0;
+static double Tround2 = 0.0;
+static double Tround1 = 0.0;
+static double Tprop = 0.0;
+static double distance = 0.0;
+static uint16_t distance_cm = 0;
 
 int main(void)
 {
@@ -70,15 +81,13 @@ int main(void)
     /* Loop forever initiating ranging exchanges. */
     while (1)
     {
-			distance_cm = Initiator_Communication(0x02);
+			Initiator_Communication(0x02);
 			//distance = distance_cm / 100.0; debug - purpose
 		}
 }
 
-uint16_t Initiator_Communication(uint8_t TargetID)
-{
-	uint16_t dist = 0;
-	
+void Initiator_Communication(uint8_t TargetID)
+{	
  /* Set expected response's delay and timeout. 
   * As this example only handles one incoming frame with always the same delay and timeout, those values can be set here once for all. 
 	*/
@@ -120,25 +129,53 @@ uint16_t Initiator_Communication(uint8_t TargetID)
 		}
 
 		/* Check that the frame is the expected response from Target Device(TargetID). */
-		if(rx_buffer[0] == TargetID)
+		if(rx_buffer[0] == OurID && rx_buffer[1] == TargetID && rx_buffer[2] == 0x01)
 		{
-			uint32_t final_tx_time;
+			uint32_t final_tx_time, temp_send_msg;
+			uint8_t i;
 
 			/* Retrieve poll transmission and response reception timestamp. */
-			poll_tx_ts = get_tx_timestamp_u64(); //读取tx_request_begin_range_msg时间戳
-			resp_rx_ts = get_rx_timestamp_u64(); //读取rx_first_response_range_msg时间戳
+			tx_DeviceA_1 = get_tx_timestamp_u64(); //读取tx_request_begin_range_msg时间戳
+			rx_DeviceA_2 = get_rx_timestamp_u64(); //读取rx_first_response_range_msg时间戳
 
 			/* Compute final message transmission time. */
-			final_tx_time = (resp_rx_ts + (RESP_RX_TO_FINAL_TX_DLY_UUS * UUS_TO_DWT_TIME)) >> 8; //计算tx_second_range_msg时间戳
+			final_tx_time = (rx_DeviceA_2 + (RESP_RX_TO_FINAL_TX_DLY_UUS * UUS_TO_DWT_TIME)) >> 8; //计算tx_second_range_msg时间戳
 			dwt_setdelayedtrxtime(final_tx_time);
 
 			/* Final TX timestamp is the transmission time we programmed plus the TX antenna delay. */
 			//把Tround1和Treply2告诉Target Device(Treply2加上antenna delay)
-			final_tx_ts = (((uint64_t)(final_tx_time & 0xFFFFFFFE)) << 8) + TX_ANT_DLY; 
+			tx_DeviceA_3 = (((uint64_t)(final_tx_time & 0xFFFFFFFE)) << 8) + TX_ANT_DLY; 
+			
+			/* 解析本次数据包中的rx_DeviceB_1 */
+			rx_DeviceB_1 = 0;
+			for(i = 0; i < 4; i++)
+			{
+				rx_DeviceB_1 += rx_buffer[TS1_FIELD_INDEX + i] << (i * 8);
+			}
 			
 			//修改tx_second_range_msg
+			temp_send_msg = (uint32_t)tx_DeviceA_1;
+			for(i = 0; i < 4; i++)
+			{
+				tx_second_range_msg[TS1_FIELD_INDEX + i] = (uint8_t)temp_send_msg;
+				temp_send_msg >>= 8;
+			}
+			
+			temp_send_msg = (uint32_t)rx_DeviceA_2;
+			for(i = 0; i < 4; i++)
+			{
+				tx_second_range_msg[TS2_FIELD_INDEX + i] = (uint8_t)temp_send_msg;
+				temp_send_msg >>= 8;
+			}
+			
+			temp_send_msg = (uint32_t)tx_DeviceA_3;
+			for(i = 0; i < 4; i++)
+			{
+				tx_second_range_msg[TS3_FIELD_INDEX + i] = (uint8_t)temp_send_msg;
+				temp_send_msg >>= 8;
+			}
 
-			/* Write and send final message. See NOTE 7 below. */
+			/* Write and send final message. */
 			dwt_writetxdata(sizeof(tx_second_range_msg), tx_second_range_msg, 0);
 			dwt_writetxfctrl(sizeof(tx_second_range_msg), 0);
 			dwt_starttx(DWT_START_TX_DELAYED | DWT_RESPONSE_EXPECTED);
@@ -163,10 +200,36 @@ uint16_t Initiator_Communication(uint8_t TargetID)
 				}
 
 				/* Check that the frame is the expected response from Target Device(TargetID). */
-				if(rx_buffer[0] == TargetID)
+				if(rx_buffer[0] == OurID && rx_buffer[1] == TargetID && rx_buffer[2] == 0x02)
 				{
 					//get distance
-					dist = 0;		
+					int64_t tof_dtu;
+					
+					/* 解析本次数据包中的rx_DeviceB_1 */
+					tx_DeviceB_2 = 0;
+					for(i = 0; i < 4; i++)
+					{
+						tx_DeviceB_2 += rx_buffer[TS1_FIELD_INDEX + i] << (i * 8);
+					}
+						
+					rx_DeviceB_3 = 0;
+					for(i = 0; i < 4; i++)
+					{
+						rx_DeviceB_3 += rx_buffer[TS1_FIELD_INDEX + i] << (i * 8);
+					}
+					
+					Treply1 = (double)(tx_DeviceB_2 - rx_DeviceB_1);
+					Treply2 = (double)(tx_DeviceA_3 - rx_DeviceA_2);
+					Tround1 = (double)(rx_DeviceA_2 - tx_DeviceA_1);
+					Tround2 = (double)(rx_DeviceB_3 - tx_DeviceB_2);
+					
+					Tprop = (Treply1 * Treply2 - Tround2 * Tround1) / (Treply1 + Treply2 + Tround1 + Tround2);
+					Tprop = Tprop > 0 ? Tprop : -Tprop;
+					
+					tof_dtu = (int64_t)Tprop;
+					tof = tof_dtu * DWT_TIME_UNITS;
+					distance = tof * SPEED_OF_LIGHT;
+					distance_cm = (uint16_t)(distance * 100);
 				}
 			}
 			else
@@ -184,8 +247,6 @@ uint16_t Initiator_Communication(uint8_t TargetID)
 
 	/* Execute a delay between ranging exchanges. */
 	deca_sleep(RNG_DELAY_MS);
-	
-	return dist;
 }
 
 /*! ------------------------------------------------------------------------------------------------------------------
@@ -202,7 +263,7 @@ static uint64_t get_tx_timestamp_u64(void)
 {
     uint8_t ts_tab[5];
     uint64_t ts = 0;
-    int i;
+    int8_t i;
     dwt_readtxtimestamp(ts_tab);
     for (i = 4; i >= 0; i--)
     {
@@ -226,7 +287,7 @@ static uint64_t get_rx_timestamp_u64(void)
 {
     uint8_t ts_tab[5];
     uint64_t ts = 0;
-    int i;
+    int8_t i;
     dwt_readrxtimestamp(ts_tab);
     for (i = 4; i >= 0; i--)
     {
@@ -234,25 +295,4 @@ static uint64_t get_rx_timestamp_u64(void)
         ts |= ts_tab[i];
     }
     return ts;
-}
-
-/*! ------------------------------------------------------------------------------------------------------------------
- * @fn final_msg_get_ts()
- *
- * @brief Read a given timestamp value from the final message. In the timestamp fields of the final message, the least
- *        significant byte is at the lower address.
- *
- * @param  ts_field  pointer on the first byte of the timestamp field to read
- *         ts  timestamp value
- *
- * @return none
- */
-static void final_msg_get_ts(const uint8_t *ts_field, uint32_t *ts)
-{
-    uint8_t i;
-    *ts = 0;
-    for (i = 0; i < FINAL_MSG_TS_LEN; i++)
-    {
-        *ts += ts_field[i] << (i * 8);
-    }
 }

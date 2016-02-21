@@ -70,10 +70,9 @@
 #define SPEED_OF_LIGHT 299702547
 
 /* Exported functions ------------------------------------------------------- */
-uint16_t Receptor_Communication(void);
+void Receptor_Communication(void);
 static uint64_t get_tx_timestamp_u64(void);
 static uint64_t get_rx_timestamp_u64(void);
-static void final_msg_get_ts(const uint8_t *ts_field, uint64_t *ts);
 
 #endif /* __MAIN_H */
 

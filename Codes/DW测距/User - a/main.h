@@ -66,11 +66,13 @@
 /* Receive response timeout. */
 #define RESP_RX_TIMEOUT_UUS 2700
 
+/* Speed of light in air, in metres per second. */
+#define SPEED_OF_LIGHT 299702547
+
 /* Exported functions ------------------------------------------------------- */
-uint16_t Initiator_Communication(uint8_t TargetID);
+void Initiator_Communication(uint8_t TargetID);
 static uint64_t get_tx_timestamp_u64(void);
 static uint64_t get_rx_timestamp_u64(void);
-static void final_msg_get_ts(const uint8_t *ts_field, uint32_t *ts);
 
 #endif /* __MAIN_H */
 

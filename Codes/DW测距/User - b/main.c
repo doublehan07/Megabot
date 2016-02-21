@@ -21,13 +21,16 @@ static dwt_config_t config = {
     (64 + 1 + 8 - 8) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
 
-//Target ID | Our ID | Time | CRC | CRC
+//Target ID | Our ID | Times | TimeStamp | CRC | CRC
 #define OurID	0x02
-static uint8_t tx_reply_msg[] = {0x00, OurID, 0x00, 0x00, 0x00};
-static uint8_t tx_final_msg[] = {0x00, OurID, 0x00, 0x00, 0x00};
+static uint8_t tx_reply_msg[] = {0x00, OurID, 0x01, 0, 0, 0, 0, 0x0D, 0x0A};
+static uint8_t tx_final_msg[] = {0x00, OurID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 
 /* Buffer to store received response message. */
 #define RX_BUF_LEN 5
+#define TS1_FIELD_INDEX 3
+#define TS2_FIELD_INDEX 7
+#define TS3_FIELD_INDEX 11
 static uint8 rx_buffer[RX_BUF_LEN];
 
 /* Hold copy of status register state here for reference, so reader can examine it at a breakpoint. */
@@ -35,15 +38,24 @@ static uint32 status_reg = 0;
 
 /* Timestamps of frames transmission/reception.
  * As they are 40-bit wide, we need to define a 64-bit int type to handle them. */
-#define TimeStampLength 5
-static uint64_t poll_rx_ts;
-static uint64_t resp_tx_ts;
-static uint64_t final_rx_ts;
+#define TimeStampLength 17
+static uint64_t rx_DeviceB_1;
+static uint64_t tx_DeviceB_2;
+static uint64_t rx_DeviceB_3;
+
+static uint32_t tx_DeviceA_1;
+static uint32_t rx_DeviceA_2;
+static uint32_t tx_DeviceA_3;
 
 /* Hold copies of computed time of flight and distance here for reference, so reader can examine it at a breakpoint. */
-static double tof;
-static double distance = 0;
-static uint16_t distance_cm;
+static double tof = 0.0;
+static double Treply1 = 0.0;
+static double Treply2 = 0.0;
+static double Tround1 = 0.0;
+static double Tround2 = 0.0;
+static double Tprop = 0.0;
+static double distance = 0.0;
+static uint16_t distance_cm = 0;
 
 int main(void)
 {
@@ -73,13 +85,12 @@ int main(void)
     /* Loop forever responding to ranging requests. */
     while (1)
     {
-			distance_cm = Receptor_Communication();
+			Receptor_Communication();
     }
 }
 
-uint16_t Receptor_Communication(void)
+void Receptor_Communication(void)
 {
-	uint16_t dist = distance;
 	uint8_t TargetID;
 	
 	/* Clear reception timeout to start next ranging process. */
@@ -107,17 +118,18 @@ uint16_t Receptor_Communication(void)
 		}
 
 		/* Check that the frame is the expected message from Source Device(TargetID). */
-		if(rx_buffer[0] == OurID)
+		if(rx_buffer[0] == OurID && rx_buffer[2] == 0x01)
 		{
-			uint32_t resp_tx_time;
+			uint32_t resp_tx_time, temp_send_msg;
+			uint8_t i;
 			
 			TargetID = rx_buffer[1];
 
 			/* Retrieve poll reception timestamp. */
-			poll_rx_ts = get_rx_timestamp_u64(); //读取rx_deviceB_first_msg时间戳
+			rx_DeviceB_1 = get_rx_timestamp_u64(); //读取rx_deviceB_first_msg时间戳
 
 			/* Set send time for response. */
-			resp_tx_time = (poll_rx_ts + (POLL_RX_TO_RESP_TX_DLY_UUS * UUS_TO_DWT_TIME)) >> 8; //计算tx_reply_msg时间戳
+			resp_tx_time = (rx_DeviceB_1 + (POLL_RX_TO_RESP_TX_DLY_UUS * UUS_TO_DWT_TIME)) >> 8; //计算tx_reply_msg时间戳
 			dwt_setdelayedtrxtime(resp_tx_time);
 
 			/* Set expected delay and timeout for final message reception. */
@@ -125,6 +137,12 @@ uint16_t Receptor_Communication(void)
 			dwt_setrxtimeout(FINAL_RX_TIMEOUT_UUS);
 			
 			//修改tx_reply_msg
+			temp_send_msg = (uint32_t)rx_DeviceB_1;
+			for(i = 0; i < 4; i++)
+			{
+				tx_reply_msg[TS1_FIELD_INDEX + i] = (uint8_t)temp_send_msg;
+				temp_send_msg >>= 8;
+			}			
 
 			/* Write and send the response message. */
 			dwt_writetxdata(sizeof(tx_reply_msg), tx_reply_msg, 0);
@@ -151,38 +169,63 @@ uint16_t Receptor_Communication(void)
 				}
 
 				/* Check that the frame is the expected message from Source Device(TargetID). */
-				if(rx_buffer[0] == OurID && rx_buffer[1] == TargetID)
+				if(rx_buffer[0] == OurID && rx_buffer[1] == TargetID && rx_buffer[2] == 0x02)
 				{
-					uint64_t poll_tx_ts, resp_rx_ts, final_tx_ts;
-					uint32_t poll_rx_ts_32, resp_tx_ts_32, final_rx_ts_32;
-					double Ra, Rb, Da, Db;
 					int64_t tof_dtu;
 
 					/* Retrieve response transmission and final reception timestamps. */
-					resp_tx_ts = get_tx_timestamp_u64(); //读取tx_reply_msg时间戳
-					final_rx_ts = get_rx_timestamp_u64(); //读取rx_final_msg时间戳
+					tx_DeviceB_2 = get_tx_timestamp_u64(); //读取tx_reply_msg时间戳
+					rx_DeviceB_3= get_rx_timestamp_u64(); //读取rx_final_msg时间戳
 
 					/* Get timestamps embedded in the final message. */
-					//poll_tx_ts
-					//resp_rx_ts
-					//final_tx_ts
+					tx_DeviceA_1 = 0;
+					for(i = 0; i < 4; i++)
+					{
+						tx_DeviceA_1 += rx_buffer[TS1_FIELD_INDEX + i] << (i * 8);
+					}
+					
+					rx_DeviceA_2 = 0;
+					for(i = 0; i < 4; i++)
+					{
+						rx_DeviceA_2 += rx_buffer[TS2_FIELD_INDEX + i] << (i * 8);
+					}
+					
+					tx_DeviceA_3 = 0;
+					for(i = 0; i < 4; i++)
+					{
+						tx_DeviceA_3 += rx_buffer[TS3_FIELD_INDEX + i] << (i * 8);
+					}
 
-					/* Compute time of flight. 32-bit subtractions give correct answers even if clock has wrapped. */
-					poll_rx_ts_32 = (uint32_t)poll_rx_ts;
-					resp_tx_ts_32 = (uint32_t)resp_tx_ts;
-					final_rx_ts_32 = (uint32_t)final_rx_ts;
-					Ra = (double)(resp_rx_ts - poll_tx_ts);
-					Rb = (double)(final_rx_ts_32 - resp_tx_ts_32);
-					Da = (double)(final_tx_ts - resp_rx_ts);
-					Db = (double)(resp_tx_ts_32 - poll_rx_ts_32);
-					tof_dtu = (int64_t)((Ra * Rb - Da * Db) / (Ra + Rb + Da + Db));
-
+					/* Compute time of flight. 32-bit subtractions give correct answers even if clock has wrapped. */					
+					Treply1 = (double)(tx_DeviceB_2 - rx_DeviceB_1);
+					Treply2 = (double)(tx_DeviceA_3 - rx_DeviceA_2);
+					Tround1 = (double)(rx_DeviceA_2 - tx_DeviceA_1);
+					Tround2 = (double)(rx_DeviceB_3 - tx_DeviceB_2);
+					
+					Tprop = (Treply1 * Treply2 - Tround2 * Tround1) / (Treply1 + Treply2 + Tround1 + Tround2);
+					Tprop = Tprop > 0 ? Tprop : -Tprop;
+					
+					tof_dtu = (int64_t)Tprop;
 					tof = tof_dtu * DWT_TIME_UNITS;
 					distance = tof * SPEED_OF_LIGHT;
-					dist = (uint16_t)(distance * 100);
+					distance_cm = (uint16_t)(distance * 100);
 												
-					/* Send distance to initiator */
+					/* Send distance to Source Device */
 					//修改tx_final_msg
+					temp_send_msg = (uint32_t)tx_DeviceB_2;
+					for(i = 0; i < 4; i++)
+					{
+						tx_final_msg[TS1_FIELD_INDEX + i] = (uint8_t)temp_send_msg;
+						temp_send_msg >>= 8;
+					}
+					
+					temp_send_msg = (uint32_t)rx_DeviceB_3;
+					for(i = 0; i < 4; i++)
+					{
+						tx_final_msg[TS1_FIELD_INDEX + i] = (uint8_t)temp_send_msg;
+						temp_send_msg >>= 8;
+					}		
+					
 					dwt_writetxdata(sizeof(tx_final_msg), tx_final_msg, 0);
 					dwt_writetxfctrl(sizeof(tx_final_msg), 0);
 					dwt_starttx(DWT_START_TX_IMMEDIATE);
@@ -200,7 +243,6 @@ uint16_t Receptor_Communication(void)
 		/* Clear RX error events in the DW1000 status register. */
 		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
 	}
-	return dist;
 }
 
 /*! ------------------------------------------------------------------------------------------------------------------
@@ -217,7 +259,7 @@ static uint64_t get_tx_timestamp_u64(void)
 {
     uint8_t ts_tab[5];
     uint64_t ts = 0;
-    uint8_t i;
+    int8_t i;
     dwt_readtxtimestamp(ts_tab);
     for (i = 4; i >= 0; i--)
     {
@@ -241,7 +283,7 @@ static uint64_t get_rx_timestamp_u64(void)
 {
     uint8_t ts_tab[5];
     uint64_t ts = 0;
-    uint8_t i;
+    int8_t i;
     dwt_readrxtimestamp(ts_tab);
     for (i = 4; i >= 0; i--)
     {
@@ -249,25 +291,4 @@ static uint64_t get_rx_timestamp_u64(void)
         ts |= ts_tab[i];
     }
     return ts;
-}
-
-/*! ------------------------------------------------------------------------------------------------------------------
- * @fn final_msg_get_ts()
- *
- * @brief Read a given timestamp value from the final message. In the timestamp fields of the final message, the least
- *        significant byte is at the lower address.
- *
- * @param  ts_field  pointer on the first byte of the timestamp field to read
- *         ts  timestamp value
- *
- * @return none
- */
-static void final_msg_get_ts(const uint8_t *ts_field, uint64_t *ts)
-{
-    uint8_t i;
-    *ts = 0;
-    for (i = 0; i < TimeStampLength; i++)
-    {
-        *ts += ts_field[i] << (i * 8);
-    }
 }
