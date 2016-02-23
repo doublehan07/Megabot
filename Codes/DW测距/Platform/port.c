@@ -374,6 +374,21 @@ int USART6_SENDING_DATA_Configration(uint32_t baudrate)
 	return 0;
 }	
 
+//Systick Delay: Systick time * nTime
+void Delay(__IO uint32_t nTime)
+{ 
+  uwTimingDelay = nTime;
+	
+  while(uwTimingDelay != 0);
+}
+
+//每次SysTick会调用
+void TimingDelay_Decrement(void)
+{
+
+}
+
+
 //Peripheral init
 static void spi_peripheral_init(void) //Initialise all SPI peripherals at once.
 {

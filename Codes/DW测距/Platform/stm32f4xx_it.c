@@ -140,10 +140,18 @@ void PendSV_Handler(void)
   */
 /* Tick timer count. */
 volatile unsigned long time32_incr;
-
+__IO uint32_t uwTimingDelay;
 void SysTick_Handler(void)
 {
     time32_incr++;
+		if(time32_incr >= 0xFFFFFFFF) //防止50天后溢出
+		{
+				time32_incr = 0;
+		}
+		if (uwTimingDelay != 0x00) //Delay使用
+		{  
+				uwTimingDelay--;
+		}
 }
 
 /******************************************************************************/

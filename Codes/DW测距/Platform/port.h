@@ -98,6 +98,8 @@ void reset_DW1000(void);
 
 unsigned long portGetTickCnt(void);
 #define portGetTickCount() 			portGetTickCnt()
+extern __IO uint32_t uwTimingDelay;
+void Delay(__IO uint32_t nTime);
 
 void peripherals_init(uint32_t baudrate); //Initialise all peripherals.
 

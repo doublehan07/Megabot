@@ -127,6 +127,9 @@ int main(void)
      * As this example only handles one incoming frame with always the same delay and timeout, those values can be set here once for all. */
     dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
     dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
+		
+		/* Enable TX/RX leds*/
+		dwt_setleds(2); //LEDs will flash once after enable.
 
     /* Loop forever initiating ranging exchanges. */
     while (1)

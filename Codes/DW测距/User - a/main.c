@@ -68,11 +68,20 @@ int main(void)
 	
 		/* No frame filter will be used. */
 		dwt_enableframefilter(DWT_FF_NOTYPE_EN);
+	
+		/* Set GPIO3-LED_BLUE, GPIO0-LED_RED as output*/
+		dwt_setGPIOdirection(GDM0, 0);
+		dwt_setGPIOdirection(GDM3, 0);
 
     /* Loop forever initiating ranging exchanges. */
     while (1)
     {
 			Initiator_Communication(0x02);
+			
+			/* Debug purpose. Test for ranging speed. */
+			dwt_setGPIOvalue(GDM3, GDP3);
+			Delay(100); //100ms
+			dwt_setGPIOvalue(GDM3, 0);
 		}
 }
 
@@ -198,12 +207,18 @@ void Initiator_Communication(uint8_t TargetID)
 					tof = tof_dtu * DWT_TIME_UNITS;
 					distance = tof * SPEED_OF_LIGHT;
 					distance_cm = (uint16_t)(distance * 100);
+					
+					/* Debug purpose. Test for getting correct distance value speed. */
+					dwt_setGPIOvalue(GDM0, GDP0);
 				}
 			}
 			else
 			{
 				/* Clear RX error events in the DW1000 status register. */
 				dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
+				
+				/* Debug purpose. Test for getting correct distance value speed. */
+				dwt_setGPIOvalue(GDM0, 0);
 			}
 		}
 	}
@@ -211,10 +226,10 @@ void Initiator_Communication(uint8_t TargetID)
 	{
 		/* Clear RX error events in the DW1000 status register. */
 		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
+		
+		/* Debug purpose. Test for getting correct distance value speed. */
+		dwt_setGPIOvalue(GDM0, 0);
 	}
-
-	/* Execute a delay between ranging exchanges. */
-	deca_sleep(RNG_DELAY_MS);
 }
 
 /*! ------------------------------------------------------------------------------------------------------------------

@@ -116,6 +116,9 @@ int main(void)
 	
 		motor_setspeed(MOTOR_ALL, 0);
 		motor_move(MOTOR_ALL, MOTOR_FORWARD);
+		
+		/* Enable TX/RX leds*/
+		dwt_setleds(1); //LEDs will flash once after enable.
 
     /* Loop forever initiating ranging exchanges. */
     while (1)
