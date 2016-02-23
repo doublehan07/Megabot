@@ -139,7 +139,7 @@ void PendSV_Handler(void)
   * @retval None
   */
 /* Tick timer count. */
-__IO uint32_t time32_incr;
+volatile unsigned long time32_incr;
 __IO uint32_t uwTimingDelay;
 void SysTick_Handler(void)
 {
@@ -148,7 +148,6 @@ void SysTick_Handler(void)
 		{
 				time32_incr = 0;
 		}
-		
 		if (uwTimingDelay != 0x00) //Delay使用
 		{  
 				uwTimingDelay--;
@@ -175,26 +174,11 @@ void SysTick_Handler(void)
   * @}
   */ 
 
-__IO uint8_t usart_rx_buffer[2];
-__IO uint8_t Usart_RX_flag = RESET;
 void USART6_IRQHandler(void) //串口收发
 {
-		uint8_t temp;
 		if(USART_GetITStatus(USART_CHANNEL, USART_IT_RXNE) != RESET)
 		{
 				//接收到上位机指令处理
-				//与上位机通信格式：0x0A | 1-bit type | 1-bit id | 0xFC
-				temp = USART_ReceiveData(USART_CHANNEL);
-				if(temp == 0x0A)
-				{
-						usart_rx_buffer[0] = USART_ReceiveData(USART_CHANNEL);
-						usart_rx_buffer[1] = USART_ReceiveData(USART_CHANNEL);
-						temp = USART_ReceiveData(USART_CHANNEL);
-						if(temp == 0xFC)
-						{
-								Usart_RX_flag = SET;
-						}
-				}
 		}
 		//USART不用手动清除标志位
 }

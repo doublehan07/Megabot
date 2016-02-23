@@ -1,10 +1,10 @@
 /**
   ******************************************************************************
-  * @file    Project/STM32F4xx_StdPeriph_Templates/stm32f4xx_it.h 
+  * @file    Project/STM32F4xx_StdPeriph_Templates/main.h 
   * @author  MCD Application Team
   * @version V1.6.1
   * @date    21-October-2015
-  * @brief   This file contains the headers of the interrupt handlers.
+  * @brief   Header for main.c module
   ******************************************************************************
   * @attention
   *
@@ -24,43 +24,46 @@
   *
   ******************************************************************************
   */
-
+  
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F4xx_IT_H
-#define __STM32F4xx_IT_H
-
-#ifdef __cplusplus
- extern "C" {
-#endif 
+#ifndef __MAIN_H
+#define __MAIN_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
+#include "deca_device_api.h"
+#include "deca_regs.h"
+#include "deca_sleep.h"
 #include "port.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-extern __IO uint32_t uwTimingDelay;
-extern __IO uint8_t usart_rx_buffer[2];
-extern __IO uint8_t Usart_RX_flag;
 /* Exported macro ------------------------------------------------------------*/
+
+/* Inter-ranging delay period, in milliseconds. */
+#define RNG_DELAY_MS 1000
+
+/* Antenna delay values for 16 MHz PRF. */
+#define TX_ANT_DLY 16497 //Experiment value
+#define RX_ANT_DLY 16497 //Experiment value
+
+/* UWB microsecond (uus) to device time unit (dtu, around 15.65 ps) conversion factor.
+ * 1 uus = 512 / 499.2 us and 1 us = 499.2 * 128 dtu. */
+#define UUS_TO_DWT_TIME 65536
+
+/* Delay between frames, in UWB microseconds. */
+/* This is the delay from Frame RX timestamp to TX reply timestamp used for calculating/setting the DW1000's delayed TX function. 
+ * This includes the frame length of approximately ??? ms with above configuration. */
+#define POLL_RX_TO_RESP_TX_DLY_UUS 2000
+
+/* Speed of light in air, in metres per second. */
+#define SPEED_OF_LIGHT 299702547
+
 /* Exported functions ------------------------------------------------------- */
+void Receptor_Communication(void);
+static uint64_t get_tx_timestamp_u64(void);
+static uint64_t get_rx_timestamp_u64(void);
 
-void NMI_Handler(void);
-void HardFault_Handler(void);
-void MemManage_Handler(void);
-void BusFault_Handler(void);
-void UsageFault_Handler(void);
-void SVC_Handler(void);
-void DebugMon_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-	 
-void USART6_IRQHandler(void); //´®¿ÚÊÕ·¢
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* __STM32F4xx_IT_H */
+#endif /* __MAIN_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

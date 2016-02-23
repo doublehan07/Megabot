@@ -94,8 +94,6 @@ void reset_DW1000(void);
 #define USART_CHANNEL												USART6
 #define USART_IRQN													USART6_IRQn
 
-void Usart_TX_SendData(uint8_t *pointer, uint8_t length);
-
 //#define port_GET_stack_pointer()		__get_MSP()
 
 unsigned long portGetTickCnt(void);

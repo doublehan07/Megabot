@@ -374,17 +374,6 @@ int USART6_SENDING_DATA_Configration(uint32_t baudrate)
 	return 0;
 }	
 
-void Usart_TX_SendData(uint8_t *pointer, uint8_t length)
-{
-		uint8_t counter;
-		for(counter = 0; counter < length; counter++)
-		{
-				while(RESET == USART_GetFlagStatus(USART_CHANNEL, USART_FLAG_TXE));
-				USART_SendData(USART_CHANNEL, *pointer);
-				pointer++;
-		}
-}
-
 //Systick Delay: Systick time * nTime
 void Delay(__IO uint32_t nTime)
 { 
