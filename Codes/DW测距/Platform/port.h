@@ -35,6 +35,8 @@ int readfromspi_serial(uint16_t	headerLength,
 #define readfromspi												  readfromspi_serial
 
 //SPI3 for DW1000
+#define SPI_DW1000_RCC_CLOCK								RCC_APB1Periph_SPI3															
+															
 #define SPI_DW1000_PRESCALER								SPI_BaudRatePrescaler_4 //DW的SPI 20M是极限
 #define SPI_DW1000													SPI3
 #define SPI_DW1000_AF												GPIO_AF_SPI3
@@ -91,8 +93,11 @@ void reset_DW1000(void);
 #define STM_RX															GPIO_Pin_7
 #define STM_UART_PORT												GPIOC
 #define ENABLE_USART												GPIO_AF_USART6
+#define AF_TX																GPIO_PinSource6
+#define AF_RX																GPIO_PinSource7
 #define USART_CHANNEL												USART6
 #define USART_IRQN													USART6_IRQn
+#define USART_RCC_CLOCK											RCC_APB2Periph_USART6
 
 void Usart_TX_SendData(uint8_t *pointer, uint8_t length);
 

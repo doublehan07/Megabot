@@ -71,6 +71,7 @@ uint8_t Initiator_Communication(uint8_t TargetID);
 uint16_t Receptor_Communication(void);
 static uint64_t get_tx_timestamp_u64(void);
 static uint64_t get_rx_timestamp_u64(void);
+void Ranging_Stategy(void);
 
 #endif /* __MAIN_H */
 

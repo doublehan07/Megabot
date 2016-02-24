@@ -23,12 +23,12 @@ static dwt_config_t config = {
 
 //Target ID | Our ID | Times | TimeStamp | CRC | CRC
 #define OurID	0x01
-#define USART_TX_DATA_LENGTH 5
+#define USART_TX_DATA_LENGTH 6
 static uint8_t tx_request_begin_range_msg[] = {0x00, OurID, 0x01, 0x0D, 0x0A};
 static uint8_t tx_second_range_msg[] = {0x00, OurID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 static uint8_t tx_reply_msg[] = {0x00, OurID, 0x01, 0x0D, 0x0A};
 static uint8_t tx_final_msg[] = {0x00, OurID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
-static uint8_t usart_tx_data[] = {0x0A, 0x00, 0x00, 0x00, 0xFC}; //0x0A | TargetID | 2-bit dist | 0xFC
+static uint8_t usart_tx_data[] = {0x0A, 0xCF, 0x00, 0x00, 0x00, 0xFC}; //0x0A | 0xCF | TargetID | 2-bit dist | 0xFC
 
 /* Buffer to store received response message. */
 #define RX_BUF_LEN 17
@@ -68,8 +68,7 @@ __IO static uint8_t ADMS = 0;
 
 int main(void)
 {
-		uint16_t temp = 0;
-		uint32_t baudrate = 9600;
+		uint32_t baudrate = 115200;
 	
     /* Start with board specific hardware init. */
     peripherals_init(baudrate);
@@ -90,135 +89,143 @@ int main(void)
 		dwt_enableframefilter(DWT_FF_NOTYPE_EN);
 	
 		/* Set GPIO3-LED_BLUE, GPIO0-LED_RED as output*/
-//		dwt_setGPIOdirection(GDM0, 0);
-//		dwt_setGPIOdirection(GDM3, 0);
+		dwt_setGPIOdirection(GDM0, 0);
+		dwt_setGPIOdirection(GDM3, 0);
 
     /* Loop forever initiating ranging exchanges. */
     while (1)
     {
-			if(Usart_RX_flag == SET) //当上位机发来信息
-			{
-					Usart_RX_flag = RESET; //clear pending bit
-					
-					//处理usart_rx_buffer[2]
-					if(usart_rx_buffer[0] == 0x01) //0x01 - 与指定id进行通信
-					{
-							if(ADMS == RESET) //测一次距离就输出模式
-							{
-									uint8_t counter_receive_times;
-									uint8_t get_dist_flag = RESET;
-									for(counter_receive_times = 0; counter_receive_times < 5; counter_receive_times++)
-									{
-											if(Initiator_Communication(usart_rx_buffer[1]))
-											{
-													get_dist_flag = SET;
-													break;
-											}
-									}
-									if(get_dist_flag)
-									{
-											usart_tx_data[1] = usart_rx_buffer[1];					//TargetID
-											usart_tx_data[2] = (uint8_t)distance_cm; 				//distance
-											usart_tx_data[3] = (uint8_t)(distance_cm >> 8); //distance
-											Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
-									}
-									else
-									{
-											usart_tx_data[1] = usart_rx_buffer[1];	//TargetID
-											usart_tx_data[2] = 0xFF; 								//error: 0xFFFF
-											usart_tx_data[3] = 0xFF;								//error: 0xFFFF
-											Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
-									}
-							}
-							else //测5次距离处理输出模式
-							{
-									uint8_t receive_times, accumulator_times = 0, success_times = 0;
-									uint16_t temp, dist = 0;
-									uint32_t accumulator = 0;
-								
-									uint16_t dist_buffer[4] = {0, 0, 0, 0};
-									uint8_t dist_flag[4] = {0, 0, 0, 0};
-									
-									//测距-max4次
-									for(receive_times = 0; receive_times < 4; receive_times++)
-									{
-											if(Initiator_Communication(usart_rx_buffer[1]))
-											{
-													dist_buffer[receive_times] = distance_cm;
-													dist_flag[success_times] = receive_times;
-													success_times++;
-											}
-									}
-									
-									//做差滤掉非正常值
-									for(receive_times = 0; receive_times < success_times - 1; receive_times++)
-									{
-											temp = dist_buffer[dist_flag[receive_times]] - dist_buffer[dist_flag[receive_times + 1]];
-											if(temp < FTRT)
-											{
-													accumulator += dist_buffer[dist_flag[receive_times]];
-													accumulator_times++;
-											}
-									}
-									
-									//输出结果
-									if(accumulator_times == 0)
-									{
-											usart_tx_data[1] = usart_rx_buffer[1];	//TargetID
-											usart_tx_data[2] = 0xFF; 								//error: 0xFFFF
-											usart_tx_data[3] = 0xFF;								//error: 0xFFFF
-											Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
-									}
-									else
-									{
-											dist = accumulator / accumulator_times;
-										
-											temp = dist_buffer[dist_flag[success_times - 1]] - dist;
-											temp = temp > 0 ? temp : -temp;
-											if(temp < FTRT)
-											{
-													dist = (accumulator + dist_buffer[dist_flag[success_times - 1]]) / (accumulator_times + 1);
-											}
-											
-											usart_tx_data[1] = usart_rx_buffer[1];		//TargetID
-											usart_tx_data[2] = (uint8_t)dist; 				//distance
-											usart_tx_data[3] = (uint8_t)(dist >> 8);	//distance
-											Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
-									}								
-							}
-					}
-					else if(usart_rx_buffer[0] == 0x02) //0x02 - 修改测距模式
-					{
-							if(usart_rx_buffer[1] == 0x01)
-							{
-									ADMS = 0;
-							}
-							else
-							{
-									ADMS = 1;
-							}
-					}
-					else //其他情况
-					{
-							
-					}
-			}
-			
-			//进入接收模式
-			temp = Receptor_Communication();
-			if((uint8_t)temp == SET)
-			{
-					usart_tx_data[1] = (temp >> 8);									//TargetID
-					usart_tx_data[2] = (uint8_t)distance_cm; 				//distance
-					usart_tx_data[3] = (uint8_t)(distance_cm >> 8); //distance
-					Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
-			}
-			
-			/* Debug purpose. Test for ranging speed. */
-//			dwt_setGPIOvalue(GDM3, GDP3);
-//			Delay(100); //100ms
-//			dwt_setGPIOvalue(GDM3, 0);
+				Ranging_Stategy();
 		}
+}
+
+void Ranging_Stategy(void)
+{
+		uint16_t temp = 0;
+		if(Usart_RX_flag == SET) //当上位机发来信息
+		{
+				USART_ITConfig(USART_CHANNEL, USART_IT_RXNE, DISABLE);
+				Usart_RX_flag = RESET; //clear pending bit
+							
+				//处理usart_rx_buffer[2]
+				if(usart_rx_buffer[0] == 0x01) //0x01 - 与指定id进行通信
+				{
+						if(ADMS == RESET) //测一次距离就输出模式
+						{
+								uint8_t counter_receive_times;
+								uint8_t get_dist_flag = RESET;
+								for(counter_receive_times = 0; counter_receive_times < 5; counter_receive_times++)
+								{
+										if(Initiator_Communication(usart_rx_buffer[1]))
+										{
+												get_dist_flag = SET;
+												break;
+										}
+								}
+								if(get_dist_flag)
+								{
+										usart_tx_data[2] = usart_rx_buffer[1];					//TargetID
+										usart_tx_data[3] = (uint8_t)distance_cm; 				//distance
+										usart_tx_data[4] = (uint8_t)(distance_cm >> 8); //distance
+										Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
+								}
+								else
+								{
+										usart_tx_data[2] = usart_rx_buffer[1];	//TargetID
+										usart_tx_data[3] = 0xFF; 								//error: 0xFFFF
+										usart_tx_data[4] = 0xFF;								//error: 0xFFFF
+										Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
+								}
+						}
+						else //测5次距离处理输出模式
+						{
+								uint8_t receive_times, accumulator_times = 0, success_times = 0;
+								uint16_t temp, dist = 0;
+								uint32_t accumulator = 0;
+										
+								uint16_t dist_buffer[4] = {0, 0, 0, 0};
+								uint8_t dist_flag[4] = {0, 0, 0, 0};
+											
+								//测距-max4次
+								for(receive_times = 0; receive_times < 4; receive_times++)
+								{
+										if(Initiator_Communication(usart_rx_buffer[1]))
+										{
+												dist_buffer[receive_times] = distance_cm;
+												dist_flag[success_times] = receive_times;
+												success_times++;
+										}
+								}
+											
+								//做差滤掉非正常值
+								for(receive_times = 0; receive_times < success_times - 1; receive_times++)
+								{
+										temp = dist_buffer[dist_flag[receive_times]] - dist_buffer[dist_flag[receive_times + 1]];
+										if(temp < FTRT)
+										{
+												accumulator += dist_buffer[dist_flag[receive_times]];
+												accumulator_times++;
+										}
+								}
+											
+								//输出结果
+								if(accumulator_times == 0)
+								{
+										usart_tx_data[2] = usart_rx_buffer[1];	//TargetID
+										usart_tx_data[3] = 0xFF; 								//error: 0xFFFF
+										usart_tx_data[4] = 0xFF;								//error: 0xFFFF
+										Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
+								}
+								else
+								{
+										dist = accumulator / accumulator_times;
+												
+										temp = dist_buffer[dist_flag[success_times - 1]] - dist;
+										temp = temp > 0 ? temp : -temp;
+										if(temp < FTRT)
+										{
+												dist = (accumulator + dist_buffer[dist_flag[success_times - 1]]) / (accumulator_times + 1);
+										}
+													
+										usart_tx_data[2] = usart_rx_buffer[1];		//TargetID
+										usart_tx_data[3] = (uint8_t)dist; 				//distance
+										usart_tx_data[4] = (uint8_t)(dist >> 8);	//distance
+										Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
+								}								
+						}
+				}
+				else if(usart_rx_buffer[0] == 0x02) //0x02 - 修改测距模式
+				{
+						if(usart_rx_buffer[1] == 0x01)
+						{
+								ADMS = 0;
+						}
+						else
+						{
+								ADMS = 1;
+						}
+				}
+				else //其他情况
+				{
+									
+				}
+				USART_ITConfig(USART_CHANNEL, USART_IT_RXNE, ENABLE);
+		}
+					
+		//进入接收模式
+		temp = Receptor_Communication();
+		if((uint8_t)temp == SET)
+		{
+				usart_tx_data[2] = (temp >> 8);									//TargetID
+				usart_tx_data[3] = (uint8_t)distance_cm; 				//distance
+				usart_tx_data[4] = (uint8_t)(distance_cm >> 8); //distance
+				Usart_TX_SendData(usart_tx_data, USART_TX_DATA_LENGTH);
+		}
+			
+		/* Debug purpose. Test for ranging speed. */
+//		dwt_setGPIOvalue(GDM3, GDP3);
+//		Delay(100); //100ms
+//		dwt_setGPIOvalue(GDM3, 0);
 }
 
 uint8_t Initiator_Communication(uint8_t TargetID)
@@ -247,7 +254,12 @@ uint8_t Initiator_Communication(uint8_t TargetID)
 	
 	/* Reception of a frame or error/timeout. */
 	while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))
-	{	};
+	{	
+			if(Usart_RX_flag == SET)
+			{
+					return 0xFF;
+			}
+	}
 
 	if (status_reg & SYS_STATUS_RXFCG)
 	{
@@ -280,6 +292,11 @@ uint8_t Initiator_Communication(uint8_t TargetID)
 			/* Final TX timestamp is the transmission time we programmed plus the TX antenna delay. */
 			//把Tround1和Treply2告诉Target Device(Treply2加上antenna delay)
 			tx_DeviceA_3 = (((uint64_t)(final_tx_time & 0xFFFFFFFE)) << 8) + TX_ANT_DLY; 
+			
+			if(Usart_RX_flag == SET)
+			{
+					return 0xFF;
+			}
 			
 			//修改tx_second_range_msg
 			temp_send_msg = (uint32_t)tx_DeviceA_1;
@@ -317,7 +334,12 @@ uint8_t Initiator_Communication(uint8_t TargetID)
 	
 			/* Reception of a frame or error/timeout. */
 			while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))
-			{ };
+			{
+					if(Usart_RX_flag == SET)
+					{
+							return 0xFF;
+					}				
+			}
 															
 			if (status_reg & SYS_STATUS_RXFCG)
 			{
@@ -385,7 +407,12 @@ uint16_t Receptor_Communication(void)
 
 	/* Eeception of a frame or error/timeout. */
 	while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))
-	{ };
+	{ 
+			if(Usart_RX_flag == SET)
+			{
+					return 0xFFFF;
+			}
+	}
 
 	if (status_reg & SYS_STATUS_RXFCG)
 	{
@@ -433,7 +460,12 @@ uint16_t Receptor_Communication(void)
 	
 			/* Reception of a frame or error/timeout. */
 			while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))
-			{ };
+			{ 
+					if(Usart_RX_flag == SET)
+					{
+							return 0xFFFF;
+					}
+			}
 
 			if (status_reg & SYS_STATUS_RXFCG)
 			{
@@ -456,6 +488,11 @@ uint16_t Receptor_Communication(void)
 					tx_DeviceB_2 = get_tx_timestamp_u64(); //读取tx_reply_msg时间戳
 					rx_DeviceB_3= get_rx_timestamp_u64(); //读取rx_final_msg时间戳
 
+					if(Usart_RX_flag == SET)
+					{
+							return 0xFFFF;
+					}
+					
 					/* Get timestamps embedded in the final message. */
 					tx_DeviceA_1 = 0;
 					for(i = 0; i < 4; i++)
