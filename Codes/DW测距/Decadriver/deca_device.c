@@ -2929,13 +2929,13 @@ void dwt_setrxtimeout(uint16 time)
 {
     uint8 temp ;
 
-    dwt_readfromdevice(SYS_CFG_ID,3,1,&temp) ; // Read register
+    dwt_readfromdevice(SYS_CFG_ID,3,1,&temp) ; // Read register RXWTOE
 
     if(time > 0)
     {
         dwt_write16bitoffsetreg(RX_FWTO_ID, 0x0, time) ;
 
-        temp |= (uint8)(SYS_CFG_RXWTOE>>24);
+        temp |= (uint8)(SYS_CFG_RXWTOE>>24); //Set RXWTOE bit = 1
         // OR in 32bit value (1 bit set), I know this is in high byte.
         dw1000local.sysCFGreg |= SYS_CFG_RXWTOE;
 
@@ -2943,9 +2943,9 @@ void dwt_setrxtimeout(uint16 time)
     }
     else
     {
-        temp &= ~((uint8)(SYS_CFG_RXWTOE>>24));
+        temp &= ~((uint8)(SYS_CFG_RXWTOE>>24)); //让第五位为0
         // AND in inverted 32bit value (1 bit clear), I know this is in high byte.
-        dw1000local.sysCFGreg &= ~(SYS_CFG_RXWTOE);
+        dw1000local.sysCFGreg &= ~(SYS_CFG_RXWTOE); //让RXWTOE位为0
 
         dwt_writetodevice(SYS_CFG_ID,3,1,&temp) ;
 

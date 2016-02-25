@@ -75,7 +75,7 @@ int main(void)
 
     reset_DW1000(); /* Target specific drive of RSTn line into DW1000 low for a period. */
     spi_DW1000_set_rate_low();
-    dwt_initialise(DWT_LOADUCODE);
+    dwt_initialise(DWT_LOADUCODE); //Do not load any data from OTP.
     spi_DW1000_set_rate_high();
 
     /* Configure DW1000. */
@@ -90,6 +90,8 @@ int main(void)
 	
 		/* Set GPIO3-LED_BLUE, GPIO0-LED_RED as output*/
 		dwt_setGPIOdirection(GDM0, 0);
+		dwt_setGPIOdirection(GDM1, 0);
+		dwt_setGPIOdirection(GDM2, 0);
 		dwt_setGPIOdirection(GDM3, 0);
 
     /* Loop forever initiating ranging exchanges. */
@@ -140,7 +142,8 @@ void Ranging_Stategy(void)
 						else //测5次距离处理输出模式
 						{
 								uint8_t receive_times, accumulator_times = 0, success_times = 0;
-								uint16_t temp, dist = 0;
+								uint16_t dist = 0;
+								int32_t temp = 0;
 								uint32_t accumulator = 0;
 										
 								uint16_t dist_buffer[4] = {0, 0, 0, 0};
@@ -154,6 +157,7 @@ void Ranging_Stategy(void)
 												dist_buffer[receive_times] = distance_cm;
 												dist_flag[success_times] = receive_times;
 												success_times++;
+												Delay(1);
 										}
 								}
 											
@@ -232,8 +236,17 @@ uint8_t Initiator_Communication(uint8_t TargetID)
 {	
 	uint8_t flag = RESET;
 	
+	dwt_setGPIOvalue(GDM3, 0);
+	dwt_setGPIOvalue(GDM0, GDP0);
+	
+	/* Force IC back to IDLE mode. */
+	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
+	
 	/* Clear good RX frame event and TX frame sent in the DW1000 status register. */
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG | SYS_STATUS_TXFRS);
+	
+	/* Clear All error events in the DW1000 status register. */
+	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
 	
 	/* Write frame data to DW1000 and prepare transmission. */	
 	tx_request_begin_range_msg[0] = TargetID;
@@ -241,7 +254,7 @@ uint8_t Initiator_Communication(uint8_t TargetID)
 	
 	/* Set expected delay and timeout for final message reception. */
 	dwt_setrxaftertxdelay(0);
-  dwt_setrxtimeout(2700);
+	dwt_setrxtimeout(2700);
 	
 	/* Start transmission, indicating that a response is expected so that reception is enabled automatically after the frame 
 	 * is sent and the delay set by dwt_setrxaftertxdelay() has elapsed. */
@@ -399,8 +412,17 @@ uint16_t Receptor_Communication(void)
 	uint8_t TargetID;
 	uint8_t flag = RESET;
 	
+	dwt_setGPIOvalue(GDM3, GDP3);
+	dwt_setGPIOvalue(GDM0, 0);
+	
+	/* Force IC back to IDLE mode. */
+	dwt_forcetrxoff();
+	
 	/* Clear reception timeout to start next ranging process. */
 	dwt_setrxtimeout(0);
+	
+	/* Clear RX error events in the DW1000 status register. */
+	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
 
 	/* Activate reception immediately. */
 	dwt_rxenable(0);
@@ -417,7 +439,9 @@ uint16_t Receptor_Communication(void)
 	if (status_reg & SYS_STATUS_RXFCG)
 	{
 		uint32_t frame_len;
-
+		
+		dwt_setGPIOvalue(GDM1, GDP1);
+		
 		/* Clear good RX frame event in the DW1000 status register. */
 		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG);
 
@@ -433,6 +457,8 @@ uint16_t Receptor_Communication(void)
 		{
 			uint32_t resp_tx_time;
 			uint8_t i;
+			
+			dwt_setGPIOvalue(GDM1, 0);
 			
 			TargetID = rx_buffer[1];
 
@@ -469,6 +495,8 @@ uint16_t Receptor_Communication(void)
 
 			if (status_reg & SYS_STATUS_RXFCG)
 			{
+				dwt_setGPIOvalue(GDM1, GDP1);
+				
 				/* Clear good RX frame event and TX frame sent in the DW1000 status register. */
 				dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG | SYS_STATUS_TXFRS);
 
@@ -484,6 +512,9 @@ uint16_t Receptor_Communication(void)
 				{
 					int64_t tof_dtu;
 
+					dwt_setGPIOvalue(GDM1, 0);
+					dwt_setGPIOvalue(GDM2, GDP2);
+					
 					/* Retrieve response transmission and final reception timestamps. */
 					tx_DeviceB_2 = get_tx_timestamp_u64(); //读取tx_reply_msg时间戳
 					rx_DeviceB_3= get_rx_timestamp_u64(); //读取rx_final_msg时间戳
@@ -563,8 +594,9 @@ uint16_t Receptor_Communication(void)
 		/* Debug purpose. Test for getting correct distance value speed. */
 //		dwt_setGPIOvalue(GDM0, 0);
 	}
-	
-	return (uint16_t)((TargetID << 8) &flag);
+	dwt_setGPIOvalue(GDM1, 0);
+	//dwt_setGPIOvalue(GDM2, 0);
+	return (uint16_t)((TargetID << 8) | flag);
 }
 
 static uint64_t get_tx_timestamp_u64(void) //Get the TX time-stamp in a 64-bit variable. Assumes that length of time-stamps is 40 bits.

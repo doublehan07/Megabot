@@ -43,9 +43,6 @@
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 
-/* Inter-ranging delay period, in milliseconds. */
-#define RNG_DELAY_MS 1000
-
 /* Antenna delay values for 16 MHz PRF. */
 #define TX_ANT_DLY 16497 //Experiment value
 #define RX_ANT_DLY 16497 //Experiment value
