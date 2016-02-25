@@ -40,6 +40,8 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 extern __IO uint32_t uwTimingDelay;
+extern __IO uint8_t usart_rx_buffer[2];
+extern __IO uint8_t Usart_RX_flag;
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 

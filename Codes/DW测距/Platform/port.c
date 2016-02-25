@@ -80,7 +80,7 @@ int NVIC_Configuration(void)
 	
 	/* Enable and set USART6 Interrupt the the second lowest priority */
 	NVIC_InitStructure.NVIC_IRQChannel = USART_IRQN;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
@@ -144,10 +144,10 @@ int RCC_Configuration(void)
 						RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD , ENABLE);
 	
 	/* Enable SPI3 clock for DW1000*/
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI3, ENABLE);
+	RCC_APB1PeriphClockCmd(SPI_DW1000_RCC_CLOCK, ENABLE);
 	
 	/* Enable USART6 clock for data transferring */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART6, ENABLE);
+	RCC_APB2PeriphClockCmd(USART_RCC_CLOCK, ENABLE);
 	
 	/* Enable EXTI & NVIC clocks */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
@@ -163,34 +163,23 @@ int GPIO_Configuration(void)
 	* trigger OFF), this will reduce the power consumption and increase the device
 	* immunity against EMI/EMC */
 	// Set all GPIO pins as analog inputs
-//这样SW会无法下载程序的！以后再优化吧
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
-//	GPIO_Init(GPIOB, &GPIO_InitStructure);
-//	GPIO_Init(GPIOC, &GPIO_InitStructure);
-//	GPIO_Init(GPIOD, &GPIO_InitStructure);
-//	GPIO_Init(GPIOE, &GPIO_InitStructure);
+	//这样SW会无法下载程序的！以后再优化吧
 	
 	//Enable GPIO used for DW1000
 	// Enable GPIO used as DECA IRQ for interrupt
 	GPIO_InitStructure.GPIO_Pin = DECAIRQ;
-	GPIO_InitStructure.GPIO_Mode = 	GPIO_Mode_IN;	//IRQ pin should be Pull Down to prevent unnecessary EXT IRQ while DW1000 goes to sleep mode
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;	//IRQ pin should be Pull Down to prevent unnecessary EXT IRQ while DW1000 goes to sleep mode
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_Init(DECAIRQ_GPIO, &GPIO_InitStructure);
 	
 	//Enable GPIO used for data transferring - USART6
 	GPIO_InitStructure.GPIO_Pin = STM_TX | STM_RX;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-	
-	GPIO_Init(STM_UART_PORT, &GPIO_InitStructure);
-	
-	GPIO_PinAFConfig(STM_UART_PORT, STM_TX, ENABLE_USART);
-	GPIO_PinAFConfig(STM_UART_PORT, STM_RX, ENABLE_USART);
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_Init(STM_UART_PORT, &GPIO_InitStructure);
+    
+  GPIO_PinAFConfig(STM_UART_PORT, AF_TX, GPIO_AF_USART6);
+  GPIO_PinAFConfig(STM_UART_PORT, AF_RX, GPIO_AF_USART6);
 
   return 0;
 }
@@ -367,12 +356,23 @@ int USART6_SENDING_DATA_Configration(uint32_t baudrate)
 	USART_Init(USART_CHANNEL, &USART_InitStructure);   
 	
 	USART_ITConfig(USART_CHANNEL, USART_IT_RXNE, ENABLE);	
-	USART_ClearFlag(USART_CHANNEL, USART_FLAG_TC);
+//	USART_ClearFlag(USART_CHANNEL, USART_FLAG_TC);
     
 	USART_Cmd(USART_CHANNEL, ENABLE);
 	
 	return 0;
 }	
+
+void Usart_TX_SendData(uint8_t *pointer, uint8_t length)
+{
+		uint8_t counter;
+		for(counter = 0; counter < length; counter++)
+		{
+				while(RESET == USART_GetFlagStatus(USART_CHANNEL, USART_FLAG_TXE));
+				USART_SendData(USART_CHANNEL, *pointer);
+				pointer++;
+		}
+}
 
 //Systick Delay: Systick time * nTime
 void Delay(__IO uint32_t nTime)
