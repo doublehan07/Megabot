@@ -43,8 +43,6 @@ void MOTOR_Init(void)
 			MSZV[i] = (MSZV[i] + ADC_Voltage[ADC_MOTOR1+i]) / 2;
 	}
 	PWMInited = 1;
-	
-	
 }
 
 

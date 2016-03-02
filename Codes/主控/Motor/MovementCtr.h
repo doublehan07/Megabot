@@ -6,6 +6,9 @@
 void ADC_PWM_Motor_Init(void);
 void ADC_PWM_Motor_Exec(void); //在SysTick中执行，1~10ms一次
 void Motor_Test(void);
+void GoAndTurn(short angle, uint8_t isRelative, int16_t speed_l, int16_t speed_r);//angle为角度制
+
+extern uint8_t isTuring;
 
 /* Ports */
 #define ADC_PORT GPIOC
