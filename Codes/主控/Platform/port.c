@@ -51,14 +51,15 @@ void RCC_init(void)
 		/****************************************************************/
 		/* HCLK = SYSCLK = 168MHz - AHB */
 		RCC_HCLKConfig(RCC_SYSCLK_Div1);  
-		/* PCLK2 = HCLK = 84MHz APB2 */
-		RCC_PCLK2Config(RCC_HCLK_Div1); 
-		/* PCLK1 = HCLK/2 = 42MHz APB1 */
-		RCC_PCLK1Config(RCC_HCLK_Div2);
+		/* PCLK2 = HCLK/2 = 84MHz APB2 */
+		RCC_PCLK2Config(RCC_HCLK_Div2); 
+		/* PCLK1 = HCLK/4 = 42MHz APB1 */
+		RCC_PCLK1Config(RCC_HCLK_Div4);
 
 		/* Configure PLLs *********************************************************/
 		/* PLLCLK = HSE(8M) / 8 * 336 / 2 = 168MHz */
-		RCC_PLLConfig(RCC_PLLSource_HSE, 8, 336, 2, 7);
+		//RCC_PLLConfig(RCC_PLLSource_HSE, 8, 336, 2, 7);
+		RCC_PLLConfig(RCC_PLLSource_HSE, 8, 240, 2, 5);
 		/* Enable PLL */ 
 		RCC_PLLCmd(ENABLE);
 
@@ -121,7 +122,6 @@ void NVIC_init(void)
 	
 	//Set NVIC for JY901-USART1
 	/* Interrupt while receiving data */
-	USART_ITConfig(USART_JY901_CHANNEL, USART_IT_TXE, DISABLE); 
 	USART_ITConfig(USART_JY901_CHANNEL, USART_IT_RXNE, ENABLE); //接收到信息中断
 	
 	/* Enable and set USART6 Interrupt the the second lowest priority */
@@ -134,7 +134,6 @@ void NVIC_init(void)
 	
 	//Set NVIC for DW1000-USART6
 	/* Interrupt while receiving data */
-	USART_ITConfig(USART_DW1000_CHANNEL, USART_IT_TXE, DISABLE); 
 	USART_ITConfig(USART_DW1000_CHANNEL, USART_IT_RXNE, ENABLE); //接收到信息中断
 	
 	/* Enable and set USART6 Interrupt the the second lowest priority */
@@ -198,8 +197,7 @@ void Usart1_Configuration(void)
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
     
-	USART_Init(USART_JY901_CHANNEL, &USART_InitStructure);
-	USART_ClearFlag(USART_JY901_CHANNEL, USART_FLAG_TC);	
+	USART_Init(USART_JY901_CHANNEL, &USART_InitStructure);      
 	USART_Cmd(USART_JY901_CHANNEL, ENABLE);
 }
 
@@ -215,8 +213,7 @@ void Usart6_Configuration(void)
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
     
-	USART_Init(USART_DW1000_CHANNEL, &USART_InitStructure);   
-	USART_ClearFlag(USART_DW1000_CHANNEL, USART_FLAG_TC);	
+	USART_Init(USART_DW1000_CHANNEL, &USART_InitStructure);       
 	USART_Cmd(USART_DW1000_CHANNEL, ENABLE);
 }
 
@@ -236,4 +233,5 @@ void Our_Sys_Init(void)
 	Periph_init();
 	NVIC_init();
 	EXTI_init();
+	ADC_PWM_Motor_Init();
 }
