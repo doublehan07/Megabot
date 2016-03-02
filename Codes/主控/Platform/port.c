@@ -79,7 +79,7 @@ void RCC_init(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
 	
 	/* Enable GPIOs clock */
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOB|RCC_AHB1Periph_GPIOC, ENABLE);
 	
 	/* Enable USART1 clock for JY901 */
 	RCC_APB2PeriphClockCmd(USART_JY901_CLOCK, ENABLE);
@@ -99,7 +99,7 @@ void GPIO_init(void)
   GPIO_Init(STM_JY901_PORT, &GPIO_InitStructure);
     
   GPIO_PinAFConfig(STM_JY901_PORT, AF_JY901_TX, AF_JY901_CHANNEL);
-  GPIO_PinAFConfig(STM_JY901_PORT, AF_JY901_TX, AF_JY901_CHANNEL);	
+  GPIO_PinAFConfig(STM_JY901_PORT, AF_JY901_RX, AF_JY901_CHANNEL);	
 	
 	/* Set GPIOs for USART6-DW1000 */
 	GPIO_InitStructure.GPIO_Pin = STM_DW1000_TX | STM_DW1000_RX;
@@ -107,7 +107,7 @@ void GPIO_init(void)
   GPIO_Init(STM_DW1000_PORT, &GPIO_InitStructure);
     
   GPIO_PinAFConfig(STM_DW1000_PORT, AF_DW1000_TX, AF_DW1000_CHANNEL);
-  GPIO_PinAFConfig(STM_DW1000_PORT, AF_DW1000_TX, AF_DW1000_CHANNEL);	
+  GPIO_PinAFConfig(STM_DW1000_PORT, AF_DW1000_RX, AF_DW1000_CHANNEL);	
 }
 
 //NVIC - Ç¶Ì×ÏòÁ¿ÖÐ¶Ï¿ØÖÆÆ÷ÅäÖÃ

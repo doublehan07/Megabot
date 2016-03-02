@@ -29,7 +29,7 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-		Motor_Test();
+		//Motor_Test();
   }
 }
 
