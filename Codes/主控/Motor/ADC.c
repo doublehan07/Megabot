@@ -15,7 +15,7 @@ void ADC1_Init(void)
 //ADC通用配置
 	ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;
 	ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;  //独立采样
-	ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div4;
+	ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
 	ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_20Cycles;
 	ADC_CommonInit(&ADC_CommonInitStructure);
 	
@@ -47,7 +47,6 @@ void ADC1_Init(void)
 
 	//enable ADC
 	ADC_Cmd(ADC1,ENABLE);
-
 	
 	ADC_SoftwareStartConv(ADC1);
 
@@ -59,6 +58,8 @@ void ADC1_DMAInit(void)
 	DMA_InitTypeDef DMA_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2,ENABLE);
+
 	//DMA初始化
 	DMA_InitStructure.DMA_BufferSize = 3;
 	DMA_InitStructure.DMA_Channel = DMA_Channel_0;
@@ -67,7 +68,7 @@ void ADC1_DMAInit(void)
 	DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)ADCValue;   //目标数据位
 	DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
 	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;
+	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 	DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
 	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&(ADC1->DR));
 	DMA_InitStructure.DMA_PeripheralBurst =DMA_PeripheralBurst_Single;
@@ -83,7 +84,7 @@ void ADC1_DMAInit(void)
 	//initialize interrupt
 	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream0_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 	
@@ -91,8 +92,8 @@ void ADC1_DMAInit(void)
 
 void ADC_Init_User(void)
 {
-	ADC1_Init();
 	ADC1_DMAInit();
+	ADC1_Init();
 }
 
 

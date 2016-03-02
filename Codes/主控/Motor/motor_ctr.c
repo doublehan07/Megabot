@@ -46,10 +46,10 @@ void MOTOR_Init(void)
 }
 
 
-#define MT1_DIR_P		GPIO_SetBits(MT_DIR_PORT, MT1_DIR_PIN)
-#define MT1_DIR_N		GPIO_ResetBits(MT_DIR_PORT, MT1_DIR_PIN)
-#define MT2_DIR_P		GPIO_SetBits(MT_DIR_PORT, MT2_DIR_PIN)
-#define MT2_DIR_N		GPIO_ResetBits(MT_DIR_PORT, MT2_DIR_PIN)
+#define MT1_DIR_N		GPIO_SetBits(MT_DIR_PORT, MT1_DIR_PIN)
+#define MT1_DIR_P		GPIO_ResetBits(MT_DIR_PORT, MT1_DIR_PIN)
+#define MT2_DIR_N		GPIO_SetBits(MT_DIR_PORT, MT2_DIR_PIN)
+#define MT2_DIR_P		GPIO_ResetBits(MT_DIR_PORT, MT2_DIR_PIN)
 
 int16_t MotorVoltage[2]={0};
 

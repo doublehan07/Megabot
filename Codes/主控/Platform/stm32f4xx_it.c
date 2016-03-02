@@ -143,6 +143,7 @@ __IO uint32_t uwTimingDelay;
 void SysTick_Handler(void)
 {		
 		TimingDelay_Decrement();
+		ADC_PWM_Motor_Exec();
 }
 
 /******************************************************************************/
