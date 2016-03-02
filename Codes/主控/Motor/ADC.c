@@ -21,10 +21,10 @@ void ADC1_Init(void)
 	
 	//GPIO Initial
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Pin = ADC_PIN1 | ADC_PIN2;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOC,&GPIO_InitStructure);
+	GPIO_Init(ADC_PORT,&GPIO_InitStructure);
 
 	//ADC mode initial
 	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
@@ -36,8 +36,8 @@ void ADC1_Init(void)
 	ADC_Init(ADC1,&ADC_InitStructure);
 
 	ADC_Cmd(ADC1,ENABLE);
-	ADC_RegularChannelConfig(ADC1,ADC_Channel_14,1,ADC_SampleTime_144Cycles);
-	ADC_RegularChannelConfig(ADC1,ADC_Channel_15,2,ADC_SampleTime_144Cycles);
+	ADC_RegularChannelConfig(ADC1,ADC_Channel1,1,ADC_SampleTime_144Cycles);
+	ADC_RegularChannelConfig(ADC1,ADC_Channel2,2,ADC_SampleTime_144Cycles);
 	ADC_RegularChannelConfig(ADC1,ADC_Channel_17,3,ADC_SampleTime_144Cycles);
 
 	ADC_TempSensorVrefintCmd(ENABLE);

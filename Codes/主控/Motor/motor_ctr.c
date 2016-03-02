@@ -9,7 +9,7 @@
 #define MT2_DIR_PIN			GPIO_Pin_5
 
 uint8_t PWMInited = 0;
-uint16_t FullVoltage[2] = {1200, 1200};
+uint16_t FullVoltage[2] = {1000, 1000};
 
 void MOTOR_Init(void)
 {
@@ -43,6 +43,8 @@ void MOTOR_Init(void)
 			MSZV[i] = (MSZV[i] + ADC_Voltage[ADC_MOTOR1+i]) / 2;
 	}
 	PWMInited = 1;
+	
+	
 }
 
 

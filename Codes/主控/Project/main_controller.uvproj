@@ -360,7 +360,7 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER,__FPU_USED = 1,ARM_MATH_CM4,__FPU_PRESENT = 1,HSE_VALUE = 8000000</Define>
+              <Define>USE_STDPERIPH_DRIVER,__FPU_USED = 1,ARM_MATH_CM4,__FPU_PRESENT = 1,HSE_VALUE = 8000000,STM32F40_41xxx</Define>
               <Undefine></Undefine>
               <IncludePath>..\STM32F4xx_StdPeriph_Driver\inc;..\User;..\decadriver;..\platform;..\Motor</IncludePath>
             </VariousControls>

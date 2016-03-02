@@ -2,6 +2,7 @@
 #define _ADC_H
 
 #include "stm32f4xx.h"
+#include "MovementCtr.h"
 
 void ADC_Init_User(void);
 
