@@ -169,9 +169,9 @@ void SysTick_Handler(void)
   */
 void USART1_IRQHandler(void)
 {
-	if(USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)			
+	if(USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)
 	{		
-
+		ParseSerialData((unsigned char)USART_ReceiveData(USART_JY901_CHANNEL));
 	}
 	//USART不用手动清除标志位
 }

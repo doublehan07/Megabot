@@ -72,6 +72,8 @@
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
+            <nStopB1X>0</nStopB1X>
+            <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>0</RunUserProg1>
@@ -141,10 +143,9 @@
             <RestoreToolbox>1</RestoreToolbox>
             <RestoreTracepoints>1</RestoreTracepoints>
             <RestoreSysVw>1</RestoreSysVw>
-            <UsePdscDebugDescription>0</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>7</TargetSelection>
+          <TargetSelection>6</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -362,7 +363,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,__FPU_USED = 1,ARM_MATH_CM4,__FPU_PRESENT = 1,HSE_VALUE = 8000000,STM32F40_41xxx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\STM32F4xx_StdPeriph_Driver\inc;..\User;..\decadriver;..\platform;..\Motor</IncludePath>
+              <IncludePath>..\STM32F4xx_StdPeriph_Driver\inc;..\User;..\platform;..\Motor;..\JY-901</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -509,6 +510,16 @@
               <FileName>MovementCtr.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Motor\MovementCtr.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>JY-901</GroupName>
+          <Files>
+            <File>
+              <FileName>JY901.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\JY-901\JY901.c</FilePath>
             </File>
           </Files>
         </Group>
