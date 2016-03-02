@@ -138,7 +138,7 @@ void NVIC_init(void)
 	/* Enable and set USART6 Interrupt the the second lowest priority */
 	NVIC_InitStructure.NVIC_IRQChannel = DW1000_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
 	NVIC_Init(&NVIC_InitStructure);
