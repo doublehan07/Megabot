@@ -36,6 +36,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "port.h"
+#include "JY901.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -52,6 +53,7 @@ void PendSV_Handler(void);
 
 void SysTick_Handler(void);
 void USART1_IRQHandler(void);
+void USART6_IRQHandler(void);
 
 #ifdef __cplusplus
 }

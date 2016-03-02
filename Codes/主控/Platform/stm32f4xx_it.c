@@ -142,7 +142,7 @@ void PendSV_Handler(void)
 __IO uint32_t uwTimingDelay;
 void SysTick_Handler(void)
 {		
-		TimingDelay_Decrement();
+	TimingDelay_Decrement();
 }
 
 /******************************************************************************/
@@ -168,10 +168,17 @@ void SysTick_Handler(void)
   */
 void USART1_IRQHandler(void)
 {
-	if(USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)			
-	{		
-
-	}
+	if(USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_TXE) != RESET)
+	{   
+		
+		USART_ClearITPendingBit(USART_JY901_CHANNEL, USART_IT_TXE); 
+  }
+	else if(USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)
+  {
+		ParseSerialData((unsigned char)USART_ReceiveData(USART_JY901_CHANNEL));
+		USART_ClearITPendingBit(USART_JY901_CHANNEL, USART_IT_RXNE);
+  }
+	USART_ClearITPendingBit(USART_JY901_CHANNEL, USART_IT_ORE);
 	//USART不用手动清除标志位
 }
 
@@ -182,10 +189,17 @@ void USART1_IRQHandler(void)
   */
 void USART6_IRQHandler(void)
 {
-	if(USART_GetITStatus(USART_DW1000_CHANNEL, USART_IT_RXNE) != RESET)			
-	{		
-
-	}
+	if(USART_GetITStatus(USART_DW1000_CHANNEL, USART_IT_TXE) != RESET)
+	{   
+		
+		USART_ClearITPendingBit(USART_DW1000_CHANNEL, USART_IT_TXE); 
+  }
+	else if(USART_GetITStatus(USART_DW1000_CHANNEL, USART_IT_RXNE) != RESET)
+  {
+		
+		USART_ClearITPendingBit(USART_DW1000_CHANNEL, USART_IT_RXNE);
+  }
+	USART_ClearITPendingBit(USART_DW1000_CHANNEL, USART_IT_ORE);
 	//USART不用手动清除标志位
 }
 

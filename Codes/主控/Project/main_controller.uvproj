@@ -363,7 +363,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,__FPU_USED = 1,ARM_MATH_CM4,__FPU_PRESENT = 1,HSE_VALUE = 8000000</Define>
               <Undefine></Undefine>
-              <IncludePath>..\STM32F4xx_StdPeriph_Driver\inc;..\User;..\decadriver;..\platform</IncludePath>
+              <IncludePath>..\STM32F4xx_StdPeriph_Driver\inc;..\User;..\decadriver;..\platform;..\JY-901</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -475,6 +475,16 @@
               <FileName>system_stm32f4xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\platform\system_stm32f4xx.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>JY-901</GroupName>
+          <Files>
+            <File>
+              <FileName>JY901.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\JY-901\JY901.c</FilePath>
             </File>
           </Files>
         </Group>

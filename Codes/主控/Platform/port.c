@@ -121,6 +121,7 @@ void NVIC_init(void)
 	
 	//Set NVIC for JY901-USART1
 	/* Interrupt while receiving data */
+	USART_ITConfig(USART_JY901_CHANNEL, USART_IT_TXE, DISABLE); 
 	USART_ITConfig(USART_JY901_CHANNEL, USART_IT_RXNE, ENABLE); //接收到信息中断
 	
 	/* Enable and set USART6 Interrupt the the second lowest priority */
@@ -133,6 +134,7 @@ void NVIC_init(void)
 	
 	//Set NVIC for DW1000-USART6
 	/* Interrupt while receiving data */
+	USART_ITConfig(USART_DW1000_CHANNEL, USART_IT_TXE, DISABLE); 
 	USART_ITConfig(USART_DW1000_CHANNEL, USART_IT_RXNE, ENABLE); //接收到信息中断
 	
 	/* Enable and set USART6 Interrupt the the second lowest priority */
@@ -196,7 +198,8 @@ void Usart1_Configuration(void)
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
     
-	USART_Init(USART_JY901_CHANNEL, &USART_InitStructure);      
+	USART_Init(USART_JY901_CHANNEL, &USART_InitStructure);
+	USART_ClearFlag(USART_JY901_CHANNEL, USART_FLAG_TC);	
 	USART_Cmd(USART_JY901_CHANNEL, ENABLE);
 }
 
@@ -212,7 +215,8 @@ void Usart6_Configuration(void)
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
     
-	USART_Init(USART_DW1000_CHANNEL, &USART_InitStructure);       
+	USART_Init(USART_DW1000_CHANNEL, &USART_InitStructure);   
+	USART_ClearFlag(USART_DW1000_CHANNEL, USART_FLAG_TC);	
 	USART_Cmd(USART_DW1000_CHANNEL, ENABLE);
 }
 
