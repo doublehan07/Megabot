@@ -27,41 +27,24 @@ void ADC_PWM_Motor_Exec()
 	Movement_Exec();
 }
 
-void Motor_Test()
-{
-	/*MotorSpeedSet[0] = 60;
-	MotorSpeedSet[1] = 60;
-	Delay(3000);
-	MotorSpeedSet[0] = 30;
-	MotorSpeedSet[1] = 30;
-	Delay(3000);
-	MotorSpeedSet[0] = -30;
-	MotorSpeedSet[1] = -30;
-	Delay(3000);
-	MotorSpeedSet[0] = -60;
-	MotorSpeedSet[1] = -60;
-	Delay(3000);
-	MotorSpeedSet[0] = 0;
-	MotorSpeedSet[1] = 0;
-	Delay(3000);*/
-	
-	GoAndTurn(30, 1, 0);
-	while(isTuring);
-	Delay(1000);
-	GoAndTurn(-30, 1, 0);
-	while(isTuring);
-	Delay(1000);
-	
-	GoAndTurn(0, 0, 60);
-	Delay(3000);
-	
-	GoAndTurn(0, 0, -60);
-	Delay(3000);
-	
-	GoAndTurn(0, 0, 0);
-	Delay(5000);
-}
+/*
+//	GoAndTurn(30, 1, 0); 	//turn left
+//	while(isTuring);
+//	Delay(1000);
 
+//	GoAndTurn(-30, 1, 0); //turn right
+//	while(isTuring);
+//	Delay(1000);
+//	
+//	GoAndTurn(0, 0, 60); 	//go straight
+//	Delay(3000);
+//	
+//	GoAndTurn(0, 0, -60); //backward
+//	Delay(3000);
+//	
+//	GoAndTurn(0, 0, 0); 	//stop
+//	Delay(5000);
+*/
 void GoAndTurn(short angle, uint8_t isRelative, int16_t speed)
 {
 	Angle_set = isRelative ? Angle_now+angle : angle;
