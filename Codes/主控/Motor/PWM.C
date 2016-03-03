@@ -61,7 +61,3 @@ void PWM_Init(void)
 	TIM_CtrlPWMOutputs(TIM3,ENABLE);
 	
 }
-
-
-
-
