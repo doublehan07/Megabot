@@ -6,8 +6,8 @@
 #include "port.h"
 #include "JY901.h"
 
-short Angle_now, Angle_set;//模块正放则逆时针增大
-int16_t Speed_set;
+volatile short Angle_now, Angle_set;//模块正放则逆时针增大
+volatile int16_t Speed_set;
 uint8_t MOTOR_TURNING_FLAG;
 
 void Movement_Exec(void);
@@ -52,15 +52,14 @@ void Motor_Test()
 	while(isTuring);
 	Delay(1000);
 	
-	GoAndTurn(90, 1, 50);
-	Delay(5000);
-
-	GoAndTurn(-90, 1, -50);
-	Delay(5000);
+	GoAndTurn(0, 0, 60);
+	Delay(3000);
+	
+	GoAndTurn(0, 0, -60);
+	Delay(3000);
 	
 	GoAndTurn(0, 0, 0);
-	while(isTuring);
-	Delay(1000);
+	Delay(5000);
 }
 
 void GoAndTurn(short angle, uint8_t isRelative, int16_t speed)
