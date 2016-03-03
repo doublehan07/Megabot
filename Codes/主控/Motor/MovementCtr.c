@@ -7,14 +7,16 @@
 #include "JY901.h"
 
 short Angle_now, Angle_set;//模块正放则逆时针增大
-int16_t Speed_set[2];
-uint8_t isTuring;
+int16_t Speed_set;
+uint8_t MOTOR_TURNING_FLAG;
 
 void Movement_Exec(void);
 
 void ADC_PWM_Motor_Init()
 {
+	Delay(1000);
 	ADC_Init_User();
+	Angle_set = Angle_now = (short)(ANGLE_INPUT + 360) % 360;
 	PWM_Init();
 	MOTOR_Init();
 }
@@ -27,7 +29,7 @@ void ADC_PWM_Motor_Exec()
 
 void Motor_Test()
 {
-	MotorSpeedSet[0] = 60;
+	/*MotorSpeedSet[0] = 60;
 	MotorSpeedSet[1] = 60;
 	Delay(3000);
 	MotorSpeedSet[0] = 30;
@@ -41,52 +43,66 @@ void Motor_Test()
 	Delay(3000);
 	MotorSpeedSet[0] = 0;
 	MotorSpeedSet[1] = 0;
-	Delay(3000);
+	Delay(3000);*/
+	
+	GoAndTurn(30, 1, 0);
+	while(isTuring);
+	Delay(1000);
+	GoAndTurn(-30, 1, 0);
+	while(isTuring);
+	Delay(1000);
+	
+	GoAndTurn(90, 1, 50);
+	Delay(5000);
+
+	GoAndTurn(-90, 1, -50);
+	Delay(5000);
+	
+	GoAndTurn(0, 0, 0);
+	while(isTuring);
+	Delay(1000);
 }
 
-void GoAndTurn(short angle, uint8_t isRelative, int16_t speed_l, int16_t speed_r)
+void GoAndTurn(short angle, uint8_t isRelative, int16_t speed)
 {
 	Angle_set = isRelative ? Angle_now+angle : angle;
 	Angle_set = (Angle_set + 720) % 360;
-	Speed_set[0] = speed_l;
-	Speed_set[1] = speed_r;
-	if (Speed_set[0] > 100)
-		Speed_set[0] = 100;
-	if (Speed_set[0] < -100)
-		Speed_set[0] = -100;
-	if (Speed_set[1] > 100)
-		Speed_set[1] = 100;
-	if (Speed_set[1] < -100)
-		Speed_set[1] = -100;
+	Speed_set = speed;
+	if (Speed_set > 100)
+		Speed_set = 100;
+	if (Speed_set < -100)
+		Speed_set = -100;
 }
 
 
-#define P 1
-#define D 0
+#define RANGE 4
 
 void Movement_Exec()
 {
-	short dA,L,R,Angle_last = Angle_now;
-	Angle_now = (int32_t)stcAngle.Angle[2] * 180.0 / 32768;
+	short dA,L,R;
+	//Angle_now = (int32_t)stcAngle.Angle[2] * 180 / 32768;
+	Angle_now = (short)(ANGLE_INPUT + 360) % 360;
 	dA = (Angle_set - Angle_now + 360) % 360;
-	if(dA < 5 && dA > -5)
-	{	
-		isTuring=L=R=0;
+	if(dA < RANGE && dA > -RANGE)
+	{
+		L=R=0;
+		if (MOTOR_TURNING_FLAG)
+			MOTOR_TURNING_FLAG--;
 	}
 	else if (dA < 180) //turn left
 	{
-		R = dA * P - D * ((Angle_now - Angle_last + 360) % 360);
+		R = dA * P - D * (stcGyro.w[2] * 2000 / 32768) + 10;
 		L = -R;
-		isTuring = 1;
+		MOTOR_TURNING_FLAG = 100;
 	}
 	else //turn right
 	{
-		L = (360-dA) * P - D * ((Angle_last - Angle_now + 360) % 360);
+		L = (360-dA) * P + D * (stcGyro.w[2] * 2000 / 32768) + 10;
 		R = -L;
-		isTuring = 1;
+		MOTOR_TURNING_FLAG = 100;
 	}
-	MotorSpeedSet[0] = Speed_set[0]+L;
-	MotorSpeedSet[1] = Speed_set[1]+R;
+	MotorSpeedSet[0] = Speed_set+L;
+	MotorSpeedSet[1] = Speed_set+R;
 	if (MotorSpeedSet[0] > 100)
 		MotorSpeedSet[0] = 100;
 	if (MotorSpeedSet[0] < -100)

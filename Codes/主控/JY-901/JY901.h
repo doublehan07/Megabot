@@ -75,6 +75,7 @@ extern struct SDStatus 		stcDStatus;
 extern struct SPress 			stcPress;
 extern struct SLonLat 		stcLonLat;
 extern struct SGPSV 			stcGPSV;
+extern float sAngle;
 
 /* Exported macro ------------------------------------------------------------*/
 #define SAVE 			0x00

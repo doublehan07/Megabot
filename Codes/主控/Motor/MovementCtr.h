@@ -3,12 +3,18 @@
 
 #include "stm32f4xx.h"
 
+/* Functions */
 void ADC_PWM_Motor_Init(void);
 void ADC_PWM_Motor_Exec(void); //在SysTick中执行，1~10ms一次
 void Motor_Test(void);
-void GoAndTurn(short angle, uint8_t isRelative, int16_t speed_l, int16_t speed_r);//angle为角度制
+void GoAndTurn(short angle, uint8_t isRelative, int16_t speed);//angle为角度制
 
-extern uint8_t isTuring;
+/* Definitions */
+#define MOTOR_TURNING_FLAG isTuring
+#define ANGLE_INPUT sAngle //尤其需要注意绝对角度，因为是与此输入相比较
+#define P 1.2
+#define D 0.05
+extern uint8_t MOTOR_TURNING_FLAG;
 
 /* Ports */
 #define ADC_PORT GPIOC

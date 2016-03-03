@@ -27,9 +27,11 @@ int main(void)
 	
 	
   /* Infinite loop */
+	Delay(5000);
   while (1)
   {
-		//Motor_Test();
+		Motor_Test();
+
   }
 }
 

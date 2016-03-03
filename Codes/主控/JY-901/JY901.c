@@ -5,6 +5,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "JY901.h"
+#include <math.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -19,6 +20,7 @@ struct SDStatus stcDStatus;
 struct SPress 	stcPress;
 struct SLonLat 	stcLonLat;
 struct SGPSV 		stcGPSV;
+float 					sAngle = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -43,7 +45,9 @@ void ParseSerialData(unsigned char ucData)
 			//memcpy为编译器自带的内存拷贝函数，需引用"string.h"，将接收缓冲区的字符拷贝到数据共同体里面，从而实现数据的解析。
 			case 0x50:	memcpy(&stcTime, &ucRxBuffer[2], 8); break;
 			case 0x51:	memcpy(&stcAcc, &ucRxBuffer[2], 8); break;
-			case 0x52:	memcpy(&stcGyro, &ucRxBuffer[2], 8); break;
+			case 0x52:	memcpy(&stcGyro, &ucRxBuffer[2], 8);
+									sAngle += stcGyro.w[2] / 163.84;
+									break;
 			case 0x53:	memcpy(&stcAngle, &ucRxBuffer[2], 8); break;
 			case 0x54:	memcpy(&stcMag, &ucRxBuffer[2], 8); break;
 			case 0x55:	memcpy(&stcDStatus, &ucRxBuffer[2], 8); break;

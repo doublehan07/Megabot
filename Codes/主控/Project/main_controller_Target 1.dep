@@ -280,7 +280,7 @@ I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_can.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dac.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h)(0x56D69B38)
-F (..\User\main.c)(0x56D70DF9)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\main.o --omf_browse .\outputs\main.crf --depend .\outputs\main.d)
+F (..\User\main.c)(0x56D81D24)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\main.o --omf_browse .\outputs\main.crf --depend .\outputs\main.d)
 I (..\User\main.h)(0x56D69B38)
 I (..\platform\stm32f4xx.h)(0x56D6BC81)
 I (D:\Keil\ARM\CMSIS\Include\core_cm4.h)(0x532BF7C2)
@@ -317,7 +317,7 @@ I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dac.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h)(0x56D69B38)
 I (..\platform\port.h)(0x56D70B41)
-I (..\Motor\MovementCtr.h)(0x56D7141F)
+I (..\Motor\MovementCtr.h)(0x56D8248D)
 F (..\platform\port.c)(0x56D71138)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\port.o --omf_browse .\outputs\port.crf --depend .\outputs\port.d)
 I (..\platform\port.h)(0x56D70B41)
 I (..\platform\stm32f4xx.h)(0x56D6BC81)
@@ -354,7 +354,7 @@ I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_can.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dac.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h)(0x56D69B38)
-I (..\Motor\MovementCtr.h)(0x56D7141F)
+I (..\Motor\MovementCtr.h)(0x56D8248D)
 F (..\platform\stm32f4xx_it.c)(0x56D70666)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\stm32f4xx_it.o --omf_browse .\outputs\stm32f4xx_it.crf --depend .\outputs\stm32f4xx_it.d)
 I (..\platform\stm32f4xx_it.h)(0x56D70666)
 I (..\platform\stm32f4xx.h)(0x56D6BC81)
@@ -392,8 +392,8 @@ I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dac.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h)(0x56D69B38)
 I (..\platform\port.h)(0x56D70B41)
-I (..\Motor\MovementCtr.h)(0x56D7141F)
-I (..\JY-901\JY901.h)(0x56D70665)
+I (..\Motor\MovementCtr.h)(0x56D8248D)
+I (..\JY-901\JY901.h)(0x56D80FAE)
 I (D:\Keil\ARM\ARMCC\include\string.h)(0x51C7C554)
 F (..\platform\system_stm32f4xx.c)(0x56D69B38)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\system_stm32f4xx.o --omf_browse .\outputs\system_stm32f4xx.crf --depend .\outputs\system_stm32f4xx.d)
 I (..\platform\stm32f4xx.h)(0x56D6BC81)
@@ -466,7 +466,7 @@ I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_can.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dac.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h)(0x56D69B38)
-I (..\Motor\MovementCtr.h)(0x56D7141F)
+I (..\Motor\MovementCtr.h)(0x56D8248D)
 F (..\Motor\motor_ctr.c)(0x56D70E16)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\motor_ctr.o --omf_browse .\outputs\motor_ctr.crf --depend .\outputs\motor_ctr.d)
 I (..\Motor\motor_ctr.h)(0x56D6E090)
 I (..\platform\stm32f4xx.h)(0x56D6BC81)
@@ -505,7 +505,7 @@ I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h)(0x56D69B38)
 I (..\Motor\pwm.h)(0x56D6C951)
 I (..\Motor\adc.h)(0x56D6C930)
-I (..\Motor\MovementCtr.h)(0x56D7141F)
+I (..\Motor\MovementCtr.h)(0x56D8248D)
 I (..\platform\port.h)(0x56D70B41)
 F (..\Motor\PWM.C)(0x56D6DDB3)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\pwm.o --omf_browse .\outputs\pwm.crf --depend .\outputs\pwm.d)
 I (..\Motor\pwm.h)(0x56D6C951)
@@ -543,8 +543,8 @@ I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_can.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dac.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h)(0x56D69B38)
-F (..\Motor\MovementCtr.c)(0x56D7171F)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\movementctr.o --omf_browse .\outputs\movementctr.crf --depend .\outputs\movementctr.d)
-I (..\Motor\MovementCtr.h)(0x56D7141F)
+F (..\Motor\MovementCtr.c)(0x56D82157)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\movementctr.o --omf_browse .\outputs\movementctr.crf --depend .\outputs\movementctr.d)
+I (..\Motor\MovementCtr.h)(0x56D8248D)
 I (..\platform\stm32f4xx.h)(0x56D6BC81)
 I (D:\Keil\ARM\CMSIS\Include\core_cm4.h)(0x532BF7C2)
 I (D:\Keil\ARM\ARMCC\include\stdint.h)(0x51C7C554)
@@ -583,10 +583,10 @@ I (..\Motor\adc.h)(0x56D6C930)
 I (..\Motor\pwm.h)(0x56D6C951)
 I (..\Motor\motor_ctr.h)(0x56D6E090)
 I (..\platform\port.h)(0x56D70B41)
-I (..\JY-901\JY901.h)(0x56D70665)
+I (..\JY-901\JY901.h)(0x56D80FAE)
 I (D:\Keil\ARM\ARMCC\include\string.h)(0x51C7C554)
-F (..\JY-901\JY901.c)(0x56D70665)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\jy901.o --omf_browse .\outputs\jy901.crf --depend .\outputs\jy901.d)
-I (..\JY-901\JY901.h)(0x56D70665)
+F (..\JY-901\JY901.c)(0x56D8179F)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\jy901.o --omf_browse .\outputs\jy901.crf --depend .\outputs\jy901.d)
+I (..\JY-901\JY901.h)(0x56D80FAE)
 I (..\platform\stm32f4xx.h)(0x56D6BC81)
 I (D:\Keil\ARM\CMSIS\Include\core_cm4.h)(0x532BF7C2)
 I (D:\Keil\ARM\ARMCC\include\stdint.h)(0x51C7C554)
@@ -622,3 +622,4 @@ I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dac.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_dcmi.h)(0x56D69B38)
 I (..\STM32F4xx_StdPeriph_Driver\inc\stm32f4xx_fsmc.h)(0x56D69B38)
 I (D:\Keil\ARM\ARMCC\include\string.h)(0x51C7C554)
+I (D:\Keil\ARM\ARMCC\include\math.h)(0x51C7C554)
