@@ -363,7 +363,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,__FPU_USED = 1,ARM_MATH_CM4,__FPU_PRESENT = 1,HSE_VALUE = 8000000,STM32F40_41xxx</Define>
               <Undefine></Undefine>
-              <IncludePath>..\STM32F4xx_StdPeriph_Driver\inc;..\User;..\platform;..\Motor;..\JY-901</IncludePath>
+              <IncludePath>..\STM32F4xx_StdPeriph_Driver\inc;..\User;..\platform;..\Motor;..\JY-901;..\Strategy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -520,6 +520,31 @@
               <FileName>JY901.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\JY-901\JY901.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Strategy</GroupName>
+          <Files>
+            <File>
+              <FileName>leader_nodes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\leader_nodes.c</FilePath>
+            </File>
+            <File>
+              <FileName>ordinary_nodes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\ordinary_nodes.c</FilePath>
+            </File>
+            <File>
+              <FileName>triangle_nodes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\triangle_nodes.c</FilePath>
+            </File>
+            <File>
+              <FileName>strategy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\strategy.c</FilePath>
             </File>
           </Files>
         </Group>

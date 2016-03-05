@@ -43,17 +43,18 @@ void ParseSerialData(unsigned char ucData)
 		switch(ucRxBuffer[1])
 		{
 			//memcpy为编译器自带的内存拷贝函数，需引用"string.h"，将接收缓冲区的字符拷贝到数据共同体里面，从而实现数据的解析。
-			case 0x50:	memcpy(&stcTime, &ucRxBuffer[2], 8); break;
-			case 0x51:	memcpy(&stcAcc, &ucRxBuffer[2], 8); break;
-			case 0x52:	memcpy(&stcGyro, &ucRxBuffer[2], 8);
+			case 0x50:	memcpy(&stcTime, &ucRxBuffer[2], 8); break;			//时间
+			case 0x51:	memcpy(&stcAcc, &ucRxBuffer[2], 8); break;			//加速度
+			case 0x52:	memcpy(&stcGyro, &ucRxBuffer[2], 8);						//角速度
 									sAngle += stcGyro.w[2] / 163.84;
 									break;
-			case 0x53:	memcpy(&stcAngle, &ucRxBuffer[2], 8); break;
-			case 0x54:	memcpy(&stcMag, &ucRxBuffer[2], 8); break;
-			case 0x55:	memcpy(&stcDStatus, &ucRxBuffer[2], 8); break;
-			case 0x56:	memcpy(&stcPress, &ucRxBuffer[2], 8); break;
-			case 0x57:	memcpy(&stcLonLat, &ucRxBuffer[2], 8); break;
-			case 0x58:	memcpy(&stcGPSV, &ucRxBuffer[2], 8); break;
+			case 0x53:	memcpy(&stcAngle, &ucRxBuffer[2], 8); break;		//角度
+			case 0x54:	memcpy(&stcMag, &ucRxBuffer[2], 8); break;			//磁场
+			case 0x55:	memcpy(&stcDStatus, &ucRxBuffer[2], 8); break;	//端口状态数据
+			case 0x56:	memcpy(&stcPress, &ucRxBuffer[2], 8); break;		//气压
+			case 0x57:	memcpy(&stcLonLat, &ucRxBuffer[2], 8); break;		//经纬度
+			case 0x58:	memcpy(&stcGPSV, &ucRxBuffer[2], 8); break;			//地速
+			default:	break;
 		}
 		ucRxCnt=0;
 	}

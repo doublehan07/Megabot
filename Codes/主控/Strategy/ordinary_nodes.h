@@ -1,6 +1,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STRATEGY_H
-#define __STRATEGY_H
+#ifndef __ORDINARY_NDOES_H
+#define __ORDINARY_NDOES_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
@@ -10,4 +10,4 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-#endif /* __STRATEGY_H */
+#endif /* __ORDINARY_NDOES_H */
