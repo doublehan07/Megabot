@@ -59,7 +59,9 @@ void RCC_init(void)
 		/* Configure PLLs *********************************************************/
 		/* PLLCLK = HSE(8M) / 8 * 336 / 2 = 168MHz */
 		//RCC_PLLConfig(RCC_PLLSource_HSE, 8, 336, 2, 7);
-		RCC_PLLConfig(RCC_PLLSource_HSE, 8, 240, 2, 5);
+		//RCC_PLLConfig(RCC_PLLSource_HSE, 8, 240, 2, 5);
+		RCC_PLLConfig(RCC_PLLSource_HSE, 8, 192, 2, 4);
+		
 		/* Enable PLL */ 
 		RCC_PLLCmd(ENABLE);
 
@@ -149,7 +151,6 @@ void NVIC_init(void)
 void EXTI_init(void)
 {
 //	EXTI_InitTypeDef EXTI_InitStructure;
-	
 }
 
 

@@ -26,9 +26,17 @@ int main(void)
 	//如果有后续工作则在此处另外调用
 	
   /* Infinite loop */
+	Delay(5000);
   while (1)
   {
-
+		DisAndTurn(0,1,286);
+		while (isRunning);
+		DisAndTurn(90,1,286);
+		while (isRunning);
+		DisAndTurn(0,1,-286);
+		while (isRunning);
+		DisAndTurn(-90,1,286);
+		while (isRunning);
   }
 }
 

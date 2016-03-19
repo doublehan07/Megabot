@@ -11,6 +11,47 @@
 uint8_t PWMInited = 0;
 uint16_t FullVoltage[2] = {1000, 1000};
 
+void MOTOR_EXTI_Init(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	EXTI_InitTypeDef EXTI_InitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure;
+	
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA,ENABLE);
+  
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
+  
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_Init(GPIOA,&GPIO_InitStructure);
+	
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource0);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOA, EXTI_PinSource2);
+	
+	EXTI_InitStructure.EXTI_Line = EXTI_Line0;
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+  EXTI_Init(&EXTI_InitStructure);
+	
+	EXTI_InitStructure.EXTI_Line = EXTI_Line2;
+	EXTI_Init(&EXTI_InitStructure);
+	
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI2_IRQn;
+	//NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+	NVIC_Init(&NVIC_InitStructure);
+	
+}
+
+
 void MOTOR_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -18,7 +59,7 @@ void MOTOR_Init(void)
 	
 	//gpio initialize
 	GPIO_InitStructure.GPIO_Pin = MT1_DIR_PIN|MT2_DIR_PIN;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_Init(MT_DIR_PORT, &GPIO_InitStructure);

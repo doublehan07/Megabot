@@ -64,6 +64,9 @@ void HardFault_Handler(void)
   /* Go to infinite loop when Hard Fault exception occurs */
   while (1)
   {
+		TIM3->CCR1 = 0;
+		TIM3->CCR2 = 0;
+		GPIO_ResetBits(GPIOA, GPIO_Pin_4|GPIO_Pin_5);
   }
 }
 
@@ -185,7 +188,7 @@ void USART6_IRQHandler(void)
 {
 	if(USART_GetITStatus(USART_DW1000_CHANNEL, USART_IT_RXNE) != RESET)			
 	{		
-
+		u8 tmp = USART_ReceiveData(USART_DW1000_CHANNEL);
 	}
 	//USART不用手动清除标志位
 }
