@@ -1,6 +1,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __ORDINARY_NDOES_H
-#define __ORDINARY_NDOES_H
+#ifndef __XXX ? XXX_H
+#define __XXX ? XXX_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
@@ -10,4 +10,4 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-#endif /* __ORDINARY_NDOES_H */
+#endif /* __XXX ? XXX */

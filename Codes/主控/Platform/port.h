@@ -4,9 +4,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "MovementCtr.h"
+#include "JY901.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+extern __IO uint8_t findFirstData;
+
 /* Exported macro ------------------------------------------------------------*/
 //For Systick
 #ifdef CLOCKS_PER_SEC
@@ -42,5 +45,7 @@
 void Our_Sys_Init(void);
 void TimingDelay_Decrement(void);
 void Delay(__IO uint32_t nTime);
+void DMA_JY901_Find_First_Data(void);
+void DMA_JY901_Find_First_Data_Success(void);
 
 #endif

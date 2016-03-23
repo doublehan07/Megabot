@@ -172,11 +172,35 @@ void SysTick_Handler(void)
   */
 void USART1_IRQHandler(void)
 {
-	if(USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)
-	{		
+	if (USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)
+	{	
 		ParseSerialData((unsigned char)USART_ReceiveData(USART_JY901_CHANNEL));
+		if (findFirstData) //需要对齐数据头
+		{
+			if ((unsigned char)USART_ReceiveData(USART_JY901_CHANNEL) == 0x55)
+			{
+				findFirstData = 0;
+				DMA_JY901_Find_First_Data_Success();
+			}
+		}
 	}
 	//USART不用手动清除标志位
+}
+
+/**
+  * @brief  This function handles USART1_RX DMA Handler. For JY901.
+  * @param  None
+  * @retval None
+  */
+void DMA2_Stream2_IRQHandler(void)
+{  
+  /* Test on DMA Stream Transfer Complete interrupt */
+  if (DMA_GetITStatus(DMA2_Stream2, DMA_IT_TCIF2))
+  {
+		ParseDMAData();
+    /* Clear DMA Stream Transfer Complete interrupt pending bit */
+    DMA_ClearITPendingBit(DMA2_Stream2, DMA_IT_TCIF2);
+  }
 }
 
 /**

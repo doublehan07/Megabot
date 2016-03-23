@@ -1,6 +1,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __LEADER_NODES_H
-#define __LEADER_NODES_H
+#ifndef __COMMUNICATION_H
+#define __COMMUNICATION_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
@@ -10,4 +10,4 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-#endif /* __LEADER_NODES_H */
+#endif /* __COMMUNICATION */
