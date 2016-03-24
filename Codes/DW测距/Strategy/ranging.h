@@ -1,23 +1,21 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __COMMUNICATION_H
-#define __COMMUNICATION_H
+#ifndef __RANGING_H
+#define __RANGING_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
-#include <string.h>
+#include "communication.h"
+#include "deca_regs.h"
+#include "deca_device_api.h"
 
 /* Exported types ------------------------------------------------------------*/
-typedef struct
-{
-	u8 TargetID;
-	u16 Dist;
-}Parse_DW_Data;
-
 /* Exported constants --------------------------------------------------------*/
-extern unsigned char DW_RX_Buffer[6];
-
+extern double distance;
+extern uint16_t distance_cm;
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void Parse_DW1000_Data(unsigned char ucData);
+/* Private functions ---------------------------------------------------------*/
+uint8_t Initiator_Communication(uint8_t TargetID);
+uint16_t Receptor_Communication(void);
 
-#endif /* __COMMUNICATION */
+#endif /* __RANGING */

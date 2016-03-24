@@ -363,7 +363,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,__FPU_USED = 1,ARM_MATH_CM4,__FPU_PRESENT = 1,HSE_VALUE = 8000000</Define>
               <Undefine></Undefine>
-              <IncludePath>..\STM32F4xx_StdPeriph_Driver\inc;..\User;..\decadriver;..\platform</IncludePath>
+              <IncludePath>..\STM32F4xx_StdPeriph_Driver\inc;..\User;..\decadriver;..\platform;..\Strategy</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -530,6 +530,21 @@
               <FileName>deca_range_tables.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\decadriver\deca_range_tables.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Strategy</GroupName>
+          <Files>
+            <File>
+              <FileName>communication.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\communication.c</FilePath>
+            </File>
+            <File>
+              <FileName>ranging.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\ranging.c</FilePath>
             </File>
           </Files>
         </Group>

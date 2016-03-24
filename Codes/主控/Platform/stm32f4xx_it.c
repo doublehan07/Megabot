@@ -174,13 +174,14 @@ void USART1_IRQHandler(void)
 {
 	if (USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)
 	{	
-		ParseSerialData((unsigned char)USART_ReceiveData(USART_JY901_CHANNEL));
-		if (findFirstData) //需要对齐数据头
+		u8 tmp = USART_ReceiveData(USART_JY901_CHANNEL);
+		ParseSerialData(tmp);
+		if (findFirstData_JY901) //需要对齐数据头
 		{
 			if ((unsigned char)USART_ReceiveData(USART_JY901_CHANNEL) == 0x55)
 			{
-				findFirstData = 0;
-				DMA_JY901_Find_First_Data_Success();
+				findFirstData_JY901 = 0;
+				//找到数据头处理函数
 			}
 		}
 	}
@@ -210,11 +211,43 @@ void DMA2_Stream2_IRQHandler(void)
   */
 void USART6_IRQHandler(void)
 {
+	static uint8_t flagI = 0;
+	
 	if(USART_GetITStatus(USART_DW1000_CHANNEL, USART_IT_RXNE) != RESET)			
 	{		
 		u8 tmp = USART_ReceiveData(USART_DW1000_CHANNEL);
+		Parse_DW1000_Data(tmp);	
+		if (findFirstData_DW1000) //需要对齐数据头
+		{
+			if (tmp == 0x0A)
+			{
+				flagI = 1;
+			}
+			else if(flagI && tmp == 0xCF)
+			{
+				flagI = 0;
+				findFirstData_DW1000 = 0;
+				//找到数据头处理函数
+			}
+		}		
 	}
 	//USART不用手动清除标志位
+}
+
+/**
+  * @brief  This function handles USART6_RX DMA Handler. For DW1000.
+  * @param  None
+  * @retval None
+  */
+void DMA2_Stream1_IRQHandler(void)
+{  
+  /* Test on DMA Stream Transfer Complete interrupt */
+  if (DMA_GetITStatus(DMA2_Stream1, DMA_IT_TCIF1))
+  {
+		
+    /* Clear DMA Stream Transfer Complete interrupt pending bit */
+    DMA_ClearITPendingBit(DMA2_Stream1, DMA_IT_TCIF1);
+  }
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

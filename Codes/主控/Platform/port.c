@@ -13,8 +13,11 @@
 
 /* Private variables ---------------------------------------------------------*/
 RCC_ClocksTypeDef RCC_Clocks;
+
 static __IO uint32_t uwTimingDelay;
- __IO uint8_t findFirstData = 0;
+
+__IO uint8_t findFirstData_JY901 = 0;
+__IO uint8_t findFirstData_DW1000 = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 void RCC_init(void);
@@ -23,9 +26,12 @@ void NVIC_init(void);
 void EXTI_init(void);
 
 void Systick_init(void);
+
 void Usart_JY901_init(void);
 void Usart_JY901_DMA_init(void);
+
 void Usart_DW1000_init(void);
+void Usart_DW1000_DMA_init(void);
 
 /* Private functions ---------------------------------------------------------*/
 //系统时钟配置
@@ -209,7 +215,7 @@ void Usart_JY901_DMA_init(void)
 	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
 	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
 	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
 	DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Enable;
 	DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
 	DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
@@ -238,7 +244,7 @@ void DMA_JY901_Find_First_Data(void)
 {
 	DMA_Cmd(DMA2_Stream2, DISABLE);
 	USART_Cmd(USART_JY901_CHANNEL, ENABLE);
-	findFirstData = 1;
+	findFirstData_JY901 = 1;
 }
 
 void DMA_JY901_Find_First_Data_Success(void)
@@ -275,6 +281,7 @@ void Usart_DW1000_init(void)
     
 	USART_Init(USART_DW1000_CHANNEL, &USART_InitStructure); 
 
+#ifndef DMA_DW1000
 	/* Set NVIC for DW1000-USART6 */
 	//Interrupt while receiving data
 	USART_ITConfig(USART_DW1000_CHANNEL, USART_IT_RXNE, ENABLE); //接收到信息中断
@@ -289,6 +296,68 @@ void Usart_DW1000_init(void)
 	
 	/* Enable USART6 */
 	USART_Cmd(USART_DW1000_CHANNEL, ENABLE);
+#else
+	Usart_DW1000_DMA_Init();
+#endif
+}
+
+void Usart_DW1000_DMA_init(void)
+{
+	DMA_InitTypeDef DMA_InitStructure;
+	NVIC_InitTypeDef NVIC_InitStructure; //NVIC - 嵌套向量中断控制器
+	
+	/* Enable DMA2 clock for USART6 */
+//	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE); //JY901初始化时已经开启了
+	
+	DMA_DeInit(DMA2_Stream1);
+	while (DMA_GetCmdStatus(DMA2_Stream1) != DISABLE) {}
+	
+	DMA_InitStructure.DMA_Channel = DMA_Channel_5;
+	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&USART6->DR;
+	DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)DW_RX_Buffer;
+	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
+	DMA_InitStructure.DMA_BufferSize = (uint16_t)sizeof(DW_RX_Buffer) - 1;
+	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+	DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+	DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+	DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+	DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Enable;
+	DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
+	DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+	DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+	
+	DMA_Init(DMA2_Stream1, &DMA_InitStructure);
+	
+	/* Enable the USART6 RX DMA request */  
+  USART_DMACmd(USART6, USART_DMAReq_Rx, ENABLE);  
+   
+  /* Enable DMA Stream Transfer Complete interrupt */  
+  DMA_ITConfig(DMA2_Stream1, DMA_IT_TC, ENABLE); 
+
+	/* Enable the USART6 RX DMA Interrupt */  
+	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream1_IRQn;  
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;  
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;  
+	NVIC_Init(&NVIC_InitStructure);  
+   
+  /* Enable the DMA Stream */  
+  DMA_Cmd(DMA2_Stream1, ENABLE);
+}
+
+void DMA_DW1000_Find_First_Data(void)
+{
+	DMA_Cmd(DMA2_Stream1, DISABLE);
+	USART_Cmd(USART_DW1000_CHANNEL, ENABLE);
+	findFirstData_DW1000 = 1;
+}
+
+void DMA_DW1000_Find_First_Data_Success(void)
+{
+	USART_Cmd(USART_DW1000_CHANNEL, DISABLE);
+	DMA_Cmd(DMA2_Stream1, ENABLE);
 }
 
 //外设初始化

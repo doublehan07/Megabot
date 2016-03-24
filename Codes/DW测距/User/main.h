@@ -36,39 +36,18 @@
 #include "deca_sleep.h"
 #include "port.h"
 #include "stm32f4xx_it.h"
+#include "communication.h"
 
 #include <math.h>
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-
 /* Antenna delay values for 16 MHz PRF. */
 #define TX_ANT_DLY 16497 //Experiment value
 #define RX_ANT_DLY 16497 //Experiment value
 
-/* UWB microsecond (uus) to device time unit (dtu, around 15.65 ps) conversion factor.
- * 1 uus = 512 / 499.2 us and 1 us = 499.2 * 128 dtu. */
-#define UUS_TO_DWT_TIME 65536
-
-/* This is the delay from Frame RX timestamp to TX reply timestamp used for calculating/setting the DW1000's delayed TX function.
- * This includes the frame length of approximately ??? ms with above configuration. */
-#define RESP_RX_TO_FINAL_TX_DLY_UUS 2500
-
-/* Delay between frames, in UWB microseconds. */
-/* This is the delay from Frame RX timestamp to TX reply timestamp used for calculating/setting the DW1000's delayed TX function. 
- * This includes the frame length of approximately ??? ms with above configuration. */
-#define POLL_RX_TO_RESP_TX_DLY_UUS 2000
-
-/* Speed of light in air, in metres per second. */
-#define SPEED_OF_LIGHT 299702547
-
+/* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-uint8_t Initiator_Communication(uint8_t TargetID);
-uint16_t Receptor_Communication(void);
-static uint64_t get_tx_timestamp_u64(void);
-static uint64_t get_rx_timestamp_u64(void);
-void Ranging_Stategy(void);
 
 #endif /* __MAIN_H */
 

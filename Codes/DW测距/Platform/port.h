@@ -31,8 +31,8 @@ int readfromspi_serial(uint16_t	headerLength,
                               uint32_t readlength,
                               uint8_t *readBuffer );
 
-#define writetospi  												writetospi_serial
-#define readfromspi												  readfromspi_serial
+#define writetospi													writetospi_serial
+#define readfromspi													readfromspi_serial
 
 //SPI3 for DW1000
 #define SPI_DW1000_RCC_CLOCK								RCC_APB1Periph_SPI3															

@@ -175,47 +175,14 @@ void SysTick_Handler(void)
   * @}
   */ 
 
-__IO uint8_t usart_rx_buffer[2];
-__IO uint8_t Usart_RX_flag = RESET;
 void USART6_IRQHandler(void) //串口收发
 {
-	static uint8_t temp = 0, start_check = RESET, receive_flag = RESET, end_check = RESET, i = 0;
-	
-		if(USART_GetITStatus(USART_CHANNEL, USART_IT_RXNE) != RESET)			
-		{		
-				//接收到上位机指令处理
-				//与上位机通信格式：0x0A | 0xCF | 1-bit type | 1-bit id | 0xFC
-				temp = USART_ReceiveData(USART_CHANNEL);
-
-				if(temp == 0x0A)
-				{
-						start_check = SET;
-				}
-				else if(start_check && temp == 0xCF)
-				{
-						start_check = RESET;
-						receive_flag = SET;
-						i = 0;
-				}
-				else if(receive_flag && i < 2)
-				{
-						usart_rx_buffer[i] = temp;
-						i++;
-						if(i >= 2)
-						{
-								receive_flag = RESET;
-								end_check = SET;
-						}
-				}
-				else if(end_check)
-				{
-						if(temp == 0xFC)
-						{
-								Usart_RX_flag = SET;
-						}
-				}
-		}
-		//USART不用手动清除标志位
+	if(USART_GetITStatus(USART_CHANNEL, USART_IT_RXNE) != RESET)			
+	{
+		u8 tmp = USART_ReceiveData(USART_CHANNEL);
+		ParseSerialData(tmp);				
+	}
+	//USART不用手动清除标志位
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
