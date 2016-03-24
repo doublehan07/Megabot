@@ -7,7 +7,7 @@
 #include <string.h>
 
 #include "port.h"
-#include "ranging.h"
+#include "Msg_api.h"
 
 /* Exported types ------------------------------------------------------------*/
 typedef struct
@@ -25,12 +25,9 @@ typedef struct
 /* Exported constants --------------------------------------------------------*/
 extern unsigned char ucRxBuffer[5];
 extern RX_Command upperCmd;
-extern __IO uint8_t Usart_RX_flag;
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 /* Private functions ---------------------------------------------------------*/
-void ParseSerialData(unsigned char ucData);
-void Ranging_Stategy(void);
 
 #endif /* __COMMUNICATION */

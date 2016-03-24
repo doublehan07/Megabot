@@ -30,18 +30,17 @@
 #define SPEED_OF_LIGHT 299702547
 
 /* Ranging definition -------------------------------------------------------*/
-//Target ID | Our ID | Times | TimeStamp | CRC | CRC
-#define OurID	0x01
-static uint8_t tx_request_begin_range_msg[] = {0x00, OurID, 0x01, 0x0D, 0x0A};
-static uint8_t tx_second_range_msg[] = {0x00, OurID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
-static uint8_t tx_reply_msg[] = {0x00, OurID, 0x01, 0x0D, 0x0A};
-static uint8_t tx_final_msg[] = {0x00, OurID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
+//CmdType | Target ID | MyID | Times | TimeStamp | CRC | CRC
+static uint8_t tx_request_begin_range_msg[] = {0x01, 0x00, MyID, 0x01, 0x0D, 0x0A};
+static uint8_t tx_second_range_msg[] = {0x01, 0x00, MyID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
+static uint8_t tx_reply_msg[] = {0x01, 0x00, MyID, 0x01, 0x0D, 0x0A};
+static uint8_t tx_final_msg[] = {0x01, 0x00, MyID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 
 /* Buffer to store received response message. */
-#define RX_BUF_LEN 17
-#define TS1_FIELD_INDEX 3
-#define TS2_FIELD_INDEX 7
-#define TS3_FIELD_INDEX 11
+#define RX_BUF_LEN 30
+#define TS1_FIELD_INDEX 4
+#define TS2_FIELD_INDEX 8
+#define TS3_FIELD_INDEX 12
 static uint8 rx_buffer[RX_BUF_LEN];
 
 /* Hold copy of status register state here for reference, so reader can examine it at a breakpoint. */
@@ -68,6 +67,7 @@ double distance = 0.0;
 uint16_t distance_cm = 0;
 
 /* Private function prototypes -----------------------------------------------*/
+u16 Ranging_Communication(u8 *TargetID, u32 *frame_len, u8 *flag);
 static uint64_t get_tx_timestamp_u64(void);
 static uint64_t get_rx_timestamp_u64(void);
 
@@ -89,8 +89,8 @@ uint8_t Initiator_Communication(uint8_t TargetID)
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
 	
 	/* Write frame data to DW1000 and prepare transmission. */	
-	tx_request_begin_range_msg[0] = TargetID;
-	tx_second_range_msg[0] = TargetID;
+	tx_request_begin_range_msg[1] = TargetID;
+	tx_second_range_msg[1] = TargetID;
 	
 	/* Set expected delay and timeout for final message reception. */
 	dwt_setrxaftertxdelay(0);
@@ -129,7 +129,7 @@ uint8_t Initiator_Communication(uint8_t TargetID)
 		}
 
 		/* Check that the frame is the expected response from Target Device(TargetID). */
-		if(rx_buffer[0] == OurID && rx_buffer[1] == TargetID && rx_buffer[2] == 0x01)
+		if(rx_buffer[0] == 0x01 && rx_buffer[1] == MyID && rx_buffer[2] == TargetID && rx_buffer[3] == 0x01)
 		{
 			uint32_t final_tx_time, temp_send_msg;
 			uint8_t i;
@@ -207,7 +207,7 @@ uint8_t Initiator_Communication(uint8_t TargetID)
 				}
 
 				/* Check that the frame is the expected response from Target Device(TargetID). */
-				if(rx_buffer[0] == OurID && rx_buffer[1] == TargetID && rx_buffer[2] == 0x02)
+				if(rx_buffer[0] == 0x01 && rx_buffer[1] == MyID && rx_buffer[2] == TargetID && rx_buffer[3] == 0x02)
 				{
 					//get distance
 					/* 解析本次数据包中的tof_dtu */
@@ -251,6 +251,7 @@ uint16_t Receptor_Communication(void)
 {
 	uint8_t TargetID;
 	uint8_t flag = RESET;
+	u16 tmp;
 	
 	dwt_setGPIOvalue(GDM3, GDP3);
 	dwt_setGPIOvalue(GDM0, 0);
@@ -291,16 +292,38 @@ uint16_t Receptor_Communication(void)
 		{
 			dwt_readrxdata(rx_buffer, frame_len, 0);
 		}
+		
+		tmp = Ranging_Communication(&TargetID, &frame_len, &flag);
+		if(tmp == 0xFFFF) {return 0xFFFF;}
+		
+	}
+	
+	else
+	{
+		/* Clear RX error events in the DW1000 status register. */
+		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
+		
+		/* Debug purpose. Test for getting correct distance value speed. */
+//		dwt_setGPIOvalue(GDM0, 0);
+	}
+	
+	dwt_setGPIOvalue(GDM1, 0);
+	//dwt_setGPIOvalue(GDM2, 0);
+	
+	return (uint16_t)((TargetID << 8) | flag);
+}
 
-		/* Check that the frame is the expected message from Source Device(TargetID). */
-		if(rx_buffer[0] == OurID && rx_buffer[2] == 0x01)
+u16 Ranging_Communication(u8 *TargetID, u32 *frame_len, u8 *flag)
+{
+			/* Check that the frame is the expected message from Source Device(TargetID). */
+		if(rx_buffer[0] == 0x01 && rx_buffer[1] == MyID && rx_buffer[3] == 0x01)
 		{
 			uint32_t resp_tx_time;
 			uint8_t i;
 			
 			dwt_setGPIOvalue(GDM1, 0);
 			
-			TargetID = rx_buffer[1];
+			*TargetID = rx_buffer[2];
 
 			/* Retrieve poll reception timestamp. */
 			rx_DeviceB_1 = get_rx_timestamp_u64(); //读取rx_deviceB_first_msg时间戳
@@ -314,7 +337,7 @@ uint16_t Receptor_Communication(void)
 			dwt_setrxtimeout(3700);
 			
 			//修改tx_reply_msg
-			tx_reply_msg[0] = TargetID;
+			tx_reply_msg[1] = *TargetID;
 
 			/* Write and send the response message. */
 			dwt_writetxdata(sizeof(tx_reply_msg), tx_reply_msg, 0);
@@ -341,14 +364,14 @@ uint16_t Receptor_Communication(void)
 				dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG | SYS_STATUS_TXFRS);
 
 				/* A frame has been received, read it into the local buffer. */
-				frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFLEN_MASK;
-				if (frame_len <= RX_BUF_LEN)
+				*frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFLEN_MASK;
+				if (*frame_len <= RX_BUF_LEN)
 				{
-					dwt_readrxdata(rx_buffer, frame_len, 0);
+					dwt_readrxdata(rx_buffer, *frame_len, 0);
 				}
 
 				/* Check that the frame is the expected message from Source Device(TargetID). */
-				if(rx_buffer[0] == OurID && rx_buffer[1] == TargetID && rx_buffer[2] == 0x02)
+				if(rx_buffer[0] == 0x01 && rx_buffer[1] == MyID && rx_buffer[2] == *TargetID && rx_buffer[3] == 0x02)
 				{
 					int64_t tof_dtu;
 
@@ -397,7 +420,7 @@ uint16_t Receptor_Communication(void)
 					distance = tof * SPEED_OF_LIGHT;
 					distance_cm = (uint16_t)(distance * 100);
 					
-					flag = SET;
+					*flag = SET;
 					
 					/* Debug purpose. Test for getting correct distance value speed. */
 //					dwt_setGPIOvalue(GDM0, GDP0);
@@ -409,7 +432,7 @@ uint16_t Receptor_Communication(void)
 						tx_final_msg[TS1_FIELD_INDEX + i] = (uint8_t)tof_dtu;
 						tof_dtu >>= 8;
 					}
-					tx_final_msg[0] = TargetID;
+					tx_final_msg[1] = *TargetID;
 					
 					dwt_writetxdata(sizeof(tx_final_msg), tx_final_msg, 0);
 					dwt_writetxfctrl(sizeof(tx_final_msg), 0);
@@ -425,18 +448,8 @@ uint16_t Receptor_Communication(void)
 //				dwt_setGPIOvalue(GDM0, 0);
 			}
 		}
-	}
-	else
-	{
-		/* Clear RX error events in the DW1000 status register. */
-		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
 		
-		/* Debug purpose. Test for getting correct distance value speed. */
-//		dwt_setGPIOvalue(GDM0, 0);
-	}
-	dwt_setGPIOvalue(GDM1, 0);
-	//dwt_setGPIOvalue(GDM2, 0);
-	return (uint16_t)((TargetID << 8) | flag);
+		return 0;
 }
 
 static uint64_t get_tx_timestamp_u64(void) //Get the TX time-stamp in a 64-bit variable. Assumes that length of time-stamps is 40 bits.

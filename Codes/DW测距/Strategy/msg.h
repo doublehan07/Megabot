@@ -1,10 +1,9 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __RANGING_H
-#define __RANGING_H
+#ifndef __MSG_H
+#define __MSG_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
-#include "deca_regs.h"
 #include "deca_device_api.h"
 #include "Msg_api.h"
 
@@ -12,6 +11,5 @@
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-/* Private functions ---------------------------------------------------------*/
 
-#endif /* __RANGING */
+#endif /* __MSG */

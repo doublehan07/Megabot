@@ -31,8 +31,7 @@ typedef struct
 {
 	double Rect_Axis[2];
 	double Polar_Axis[2];
-	uint16_t MyID;
-	
+	u8 MyID;
 }MyInfo;
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/

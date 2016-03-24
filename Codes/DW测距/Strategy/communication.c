@@ -17,7 +17,7 @@ unsigned char ucRxBuffer[5];
 RX_Command upperCmd;
 __IO uint8_t Usart_RX_flag = RESET;
 __IO static uint8_t ADMS = 0; //Accurate Distance Mode Switch
-Parse_DW_Data DW_TX_Data;
+__IO Parse_DW_Data DW_TX_Data;
 
 /* Private function prototypes -----------------------------------------------*/
 void DW_TX_Parse(void);
@@ -33,6 +33,7 @@ void ParseSerialData(unsigned char ucData)
 		type = 0x03 - 广播消息，必须回应      id = 协作点id
 		type = 0x04 - 指定消息								id = 被指定点id         (频段根据自己是协作点还是主动点身份自动选择)
 		type = 0x05 - 广播自己坐标消息        
+		type = 0x06 - 开始新一轮的定位，大boss
 	*/
 	
 	static unsigned char ucRxCnt = 0;	
@@ -162,6 +163,46 @@ void Ranging_Stategy(void)
 						{
 								ADMS = 1;
 						}
+				}
+					//与上位机通信格式：0x0A | 0xCF | 1-bit type | 1-bit id | 0xFC
+					/*
+						通信协议
+						type = 0x01 - 与指定id进行测距				id = 测距目标id					(若不busy，被指定必须回应开始测距)
+						type = 0x02 - 修改测距模式 						id = 0x01关闭均值输出
+						type = 0x03 - 广播消息，必须回应      id = 协作点id
+						type = 0x04 - 指定消息								id = 被指定点id         (频段根据自己是协作点还是主动点身份自动选择)
+						type = 0x05 - 广播自己坐标消息    
+						type = 0x06 - 开始新一轮的定位，大boss
+					*/
+				else if(upperCmd.CmdType == 0x03) //0x03 - 广播消息，必须回应
+				{
+					Broadcast_Msg(upperCmd.ID, 0);
+				}
+				else if(upperCmd.CmdType == 0x04) //0x04 - 指定消息
+				{
+					u8 frec = 0xFF;
+					
+					//被动点切换频段
+					switch(myInfo.MyStatus)
+					{
+						case 0x01: frec = 0; break; //主动测距点
+						case 0x02: frec = 1; break; //被动测距点
+						default: break;		//无需指定命令
+					}
+					
+					if(frec != 0xFF)
+					{
+						Selected_Msg(upperCmd.ID, frec);
+					}
+					
+				}
+				else if(upperCmd.CmdType == 0x05) //0x05 - 广播自己坐标消息 
+				{
+					Broadcast_Msg(0xFF, 1);
+				}
+				else if(upperCmd.CmdType == 0x06) //0x06 - 开始新一轮的定位，大boss 
+				{
+					Boss_Msg();
 				}
 				else //其他指令，参见communication通信接口
 				{
