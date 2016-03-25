@@ -31,21 +31,17 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
+#include <math.h>
+
 #include "deca_device_api.h"
 #include "deca_regs.h"
 #include "deca_sleep.h"
 #include "port.h"
 #include "stm32f4xx_it.h"
-#include "communication.h"
-
-#include <math.h>
+#include "Msg_api.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* Antenna delay values for 16 MHz PRF. */
-#define TX_ANT_DLY 16497 //Experiment value
-#define RX_ANT_DLY 16497 //Experiment value
-
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 

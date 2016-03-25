@@ -9,10 +9,6 @@
 
 /* Constant definition for calculation ---------------------------------------*/
 
-/* Antenna delay values for 16 MHz PRF. */
-#define TX_ANT_DLY 16497 //Experiment value
-#define RX_ANT_DLY 16497 //Experiment value
-
 /* UWB microsecond (uus) to device time unit (dtu, around 15.65 ps) conversion factor.
  * 1 uus = 512 / 499.2 us and 1 us = 499.2 * 128 dtu. */
 #define UUS_TO_DWT_TIME 65536
@@ -244,6 +240,7 @@ uint8_t Initiator_Communication(uint8_t TargetID)
 		/* Debug purpose. Test for getting correct distance value speed. */
 //		dwt_setGPIOvalue(GDM0, 0);
 	}
+		
 	return flag;
 }
 
@@ -311,9 +308,22 @@ uint16_t Receptor_Communication(void)
 				 Resp_Msg();
 			}
 		}
-		else if(rx_buffer[0] == 0x04) //如果是指定消息，根据频段MySatus切换至被指定0x03or0x04
+		else if(rx_buffer[0] == 0x04 && rx_buffer[1] == MyID) //如果是指定消息，根据频段MySatus切换至被指定0x03or0x04
 		{
-			
+			switch(rx_buffer[3])
+			{
+				case 0: 										//被主动测距点指定
+					myInfo.MyStatus = 0x03;
+					break;
+				case 1: 										//被被动测距点指定，切换频段
+					myInfo.MyStatus = 0x04;
+					config.rxCode = 4;
+					config.txCode = 4;
+					dwt_configure(&config);
+					myInfo.RxTx_CodeNUm = 1;
+					break; 
+				default: break;
+			}
 		}
 		else if(rx_buffer[0] == 0x05) //如果是广播自己坐标消息，将信息记录到netInfo表里面
 		{
@@ -471,6 +481,7 @@ u16 Ranging_Communication(u8 *TargetID, u32 *frame_len, u8 *flag)
 					dwt_writetxdata(sizeof(tx_final_msg), tx_final_msg, 0);
 					dwt_writetxfctrl(sizeof(tx_final_msg), 0);
 					dwt_starttx(DWT_START_TX_IMMEDIATE);
+					
 				}
 			}
 			else

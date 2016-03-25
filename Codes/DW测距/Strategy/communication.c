@@ -155,14 +155,7 @@ void Ranging_Stategy(void)
 				}
 				else if(upperCmd.CmdType == 0x02) //0x02 - 修改测距模式
 				{
-						if(upperCmd.ID == 0x01)
-						{
-								ADMS = 0;
-						}
-						else
-						{
-								ADMS = 1;
-						}
+					ADMS = (upperCmd.ID == 0x01) ? 0 : 1;
 				}
 					//与上位机通信格式：0x0A | 0xCF | 1-bit type | 1-bit id | 0xFC
 					/*
@@ -178,6 +171,8 @@ void Ranging_Stategy(void)
 				else if(upperCmd.CmdType == 0x03) //0x03 - 广播消息，必须回应
 				{
 					Broadcast_Msg(upperCmd.ID, 0);
+					//广播消息回应处理函数
+					//Waiting_Resp()
 				}
 				else if(upperCmd.CmdType == 0x04) //0x04 - 指定消息
 				{
@@ -196,6 +191,13 @@ void Ranging_Stategy(void)
 						Selected_Msg(upperCmd.ID, frec);
 					}
 					
+					if(myInfo.MyStatus == 0x02) //若开展被动测距，切换频段
+					{
+						config.rxCode = 4;
+						config.txCode = 4;
+						dwt_configure(&config);
+						myInfo.RxTx_CodeNUm = 1;
+					}				
 				}
 				else if(upperCmd.CmdType == 0x05) //0x05 - 广播自己坐标消息 
 				{
@@ -217,6 +219,7 @@ void Ranging_Stategy(void)
 		if((uint8_t)temp == 0xAA)
 		{
 				//若自己进入测距模式，向上位机传输距离信息
+				myInfo.MyStatus = 0x05;
 				DW_TX_Data.TargetID = (temp >> 8);							//TargetID
 				DW_TX_Data.Dist = distance_cm;									//distance						
 				DW_TX_Parse();

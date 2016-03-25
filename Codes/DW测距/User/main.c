@@ -8,7 +8,7 @@
 #include "main.h"
 
 /* Channel2 , PRF16M , Preamble length = 64 , Preamble code = 3 , 6.8M , standard SFD , SFD = 8 symbol times long */
-static dwt_config_t config = {
+dwt_config_t config = {
     2,               /* Channel number. */
     DWT_PRF_16M,     /* Pulse repetition frequency. */
     DWT_PLEN_64,  	 /* Preamble length. */

@@ -4,6 +4,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
+#include "deca_device_api.h"
 
 /* Exported types ------------------------------------------------------------*/
 typedef struct
@@ -19,6 +20,7 @@ typedef struct
 		0x04 - 被被动测距点指定的未知节点
 		0x05 - 已定位，状态翻转 //不响应广播信息
 	*/
+	u8 RxTx_CodeNUm; //0 - 3, 1 - 4
 }MyInfo;
 
 typedef struct
@@ -31,6 +33,10 @@ typedef struct
 /* Exported macro ------------------------------------------------------------*/
 #define netInfoSIZE	10
 
+/* Antenna delay values for 16 MHz PRF. */
+#define TX_ANT_DLY 16497 //Experiment value
+#define RX_ANT_DLY 16497 //Experiment value
+
 /* Exported constants --------------------------------------------------------*/
 extern double distance;
 extern uint16_t distance_cm;
@@ -38,6 +44,7 @@ extern __IO uint8_t Usart_RX_flag;
 extern __IO MyInfo myInfo;
 extern NetInfo netInfo[netInfoSIZE];
 extern __IO u8 netCnt;
+extern dwt_config_t config;
 
 /* Exported functions ------------------------------------------------------- */
 uint8_t Initiator_Communication(uint8_t TargetID);
