@@ -12,6 +12,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 __IO MyInfo myInfo = {{0,0}, {0,0}, MyID};
+NetInfo netInfo[netInfoSIZE];
+__IO u8 netCnt = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/

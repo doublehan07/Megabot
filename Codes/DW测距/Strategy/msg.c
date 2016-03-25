@@ -57,3 +57,14 @@ void Boss_Msg(void)
 	dwt_writetxfctrl(sizeof(boss_msg), 0);
 	dwt_starttx(DWT_START_TX_IMMEDIATE);
 }
+
+void Resp_Msg(void)
+{
+	//CmdType | MyID | ReserveForCounter | 0x0D | 0x0A
+	static u8 resp_msg[5] = {0x07, MyID, 0, 0x0D, 0x0A};
+	
+		/* Start transmission */
+	dwt_writetxdata(sizeof(resp_msg), resp_msg, 0);
+	dwt_writetxfctrl(sizeof(resp_msg), 0);
+	dwt_starttx(DWT_START_TX_IMMEDIATE);
+}

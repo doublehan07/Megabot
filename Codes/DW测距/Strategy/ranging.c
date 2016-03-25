@@ -293,9 +293,46 @@ uint16_t Receptor_Communication(void)
 			dwt_readrxdata(rx_buffer, frame_len, 0);
 		}
 		
-		tmp = Ranging_Communication(&TargetID, &frame_len, &flag);
-		if(tmp == 0xFFFF) {return 0xFFFF;}
+		/*
+			flag = 0xAA，测距成功
+			flag = 0xFF，被串口中断打断
+			
+		*/
 		
+		if(rx_buffer[0] == 0x01 && rx_buffer[1] == MyID && rx_buffer[3] == 0x01) //如果是对方的测距请求
+		{
+			tmp = Ranging_Communication(&TargetID, &frame_len, &flag);
+			if(tmp == 0xFFFF) {return 0xFFFF;}
+		}
+		else if(rx_buffer[0] == 0x03) //如果是广播消息，MySatus0x00未知节点必须响应
+		{
+			if(myInfo.MyStatus == 0x00)
+			{
+				 Resp_Msg();
+			}
+		}
+		else if(rx_buffer[0] == 0x04) //如果是指定消息，根据频段MySatus切换至被指定0x03or0x04
+		{
+			
+		}
+		else if(rx_buffer[0] == 0x05) //如果是广播自己坐标消息，将信息记录到netInfo表里面
+		{
+			if(netCnt < netInfoSIZE) //以后扩展的时候，超出修改表的大小
+			{
+				NetInfo *pt = &netInfo[netCnt++];
+				pt->ID = rx_buffer[2];
+				pt->RectX = (u16)rx_buffer[3] | (((u16)rx_buffer[4]) << 8);
+				pt->RectY = (u16)rx_buffer[5] | (((u16)rx_buffer[6]) << 8);
+			}
+		}
+		else if(rx_buffer[0] == 0x06) //如果是大boss消息，将MyStatus切换至未知节点0x00
+		{
+			myInfo.MyStatus = 0x00;
+		}
+		else //Receive other Cmd.
+		{
+			
+		}
 	}
 	
 	else
@@ -315,9 +352,6 @@ uint16_t Receptor_Communication(void)
 
 u16 Ranging_Communication(u8 *TargetID, u32 *frame_len, u8 *flag)
 {
-			/* Check that the frame is the expected message from Source Device(TargetID). */
-		if(rx_buffer[0] == 0x01 && rx_buffer[1] == MyID && rx_buffer[3] == 0x01)
-		{
 			uint32_t resp_tx_time;
 			uint8_t i;
 			
@@ -420,7 +454,7 @@ u16 Ranging_Communication(u8 *TargetID, u32 *frame_len, u8 *flag)
 					distance = tof * SPEED_OF_LIGHT;
 					distance_cm = (uint16_t)(distance * 100);
 					
-					*flag = SET;
+					*flag = 0xAA; //flag = 0xAA, 测距成功
 					
 					/* Debug purpose. Test for getting correct distance value speed. */
 //					dwt_setGPIOvalue(GDM0, GDP0);
@@ -447,7 +481,6 @@ u16 Ranging_Communication(u8 *TargetID, u32 *frame_len, u8 *flag)
 				/* Debug purpose. Test for getting correct distance value speed. */
 //				dwt_setGPIOvalue(GDM0, 0);
 			}
-		}
 		
 		return 0;
 }

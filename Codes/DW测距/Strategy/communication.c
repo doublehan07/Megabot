@@ -173,6 +173,7 @@ void Ranging_Stategy(void)
 						type = 0x04 - 指定消息								id = 被指定点id         (频段根据自己是协作点还是主动点身份自动选择)
 						type = 0x05 - 广播自己坐标消息    
 						type = 0x06 - 开始新一轮的定位，大boss
+						type = 0x07 - 回应广播消息
 					*/
 				else if(upperCmd.CmdType == 0x03) //0x03 - 广播消息，必须回应
 				{
@@ -213,8 +214,9 @@ void Ranging_Stategy(void)
 					
 		//进入接收模式
 		temp = Receptor_Communication();
-		if((uint8_t)temp == SET)
+		if((uint8_t)temp == 0xAA)
 		{
+				//若自己进入测距模式，向上位机传输距离信息
 				DW_TX_Data.TargetID = (temp >> 8);							//TargetID
 				DW_TX_Data.Dist = distance_cm;									//distance						
 				DW_TX_Parse();
@@ -229,7 +231,7 @@ void Ranging_Stategy(void)
 void DW_TX_Parse(void)
 {
 	static uint8_t usart_tx_data[] = {0x0A, 0xCF, 0x00, 0x00, 0x00, 0xFC}; //0x0A | 0xCF | TargetID | 2-bit dist | 0xFC	
-	usart_tx_data[3] = DW_TX_Data.TargetID;
+	usart_tx_data[2] = DW_TX_Data.TargetID;
 	usart_tx_data[3] = (uint8_t)DW_TX_Data.Dist; 				//distance
 	usart_tx_data[4] = (uint8_t)(DW_TX_Data.Dist >> 8); //distance
 	Usart_TX_SendData(usart_tx_data, sizeof(usart_tx_data));
