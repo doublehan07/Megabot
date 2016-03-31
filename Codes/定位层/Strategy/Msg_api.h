@@ -11,6 +11,7 @@ typedef struct
 {
 	double Rect_Axis[2];
 	double Polar_Axis[2];
+	u8 ID;
 	u8 MyStatus;
 	/*
 		0x00 - 待操作的未知节点
@@ -20,7 +21,6 @@ typedef struct
 		0x04 - 被被动测距点指定的未知节点
 		0x05 - 已定位，状态翻转 //不响应广播信息
 	*/
-	u8 RxTx_CodeNUm; //0 - 3, 1 - 4
 }MyInfo;
 
 typedef struct
@@ -36,6 +36,7 @@ typedef struct
 /* Antenna delay values for 16 MHz PRF. */
 #define TX_ANT_DLY 16497 //Experiment value
 #define RX_ANT_DLY 16497 //Experiment value
+#define RX_BUF_LEN 30
 
 /* Exported constants --------------------------------------------------------*/
 extern double distance;
@@ -45,9 +46,10 @@ extern __IO MyInfo myInfo;
 extern NetInfo netInfo[netInfoSIZE];
 extern __IO u8 netCnt;
 extern dwt_config_t config;
+extern uint8 rx_buffer[RX_BUF_LEN];
 
 /* Exported functions ------------------------------------------------------- */
-u8 Initiator_Ranging(uint8_t TargetID);
+u8 Initiator_Ranging(uint8_t TargetID, u8 Times, u8 MyStatus, u8 if_change_freq);
 u8 Receptor_Listening(void);
 
 void ParseSerialData(unsigned char ucData);
@@ -58,6 +60,8 @@ void Selected_Msg(u8 SelectedID, u8 Frec);
 void Boss_Msg(void);
 void Resp_Msg(void);
 
+void NetInfo_Init(u8 ID, u16 RectX, u16 RectY);
+void MyInfo_Init(double Rect_Axis[2], double Polar_Axis[2], u8 MyStatus);
 void Leader_Strategy(void);
 void Receptor_Strategy(void);
 

@@ -26,9 +26,9 @@ static u8 msg_Rx_Buffer_dbl[MSG_RXBUF_LENGTH];
 /* Private functions ---------------------------------------------------------*/
 void Broadcast_Msg(u8 CorpID, u8 if_bdc_axis, u8 *ID)
 {
-	//CmdType | CorpID | MyID | RectXL | RectXH | RectYL | RectYH | 0x0D
+	//CmdType | CorpID | MyID | RectXL | RectXH | RectYL | RectYH | CRC | CRC
 	static u8 counter = 0;
-	static u8 bdc_msg[8] = {0x03, 0, MyID, 0, 0, 0, 0, 0x0D};
+	static u8 bdc_msg[9] = {0x03, 0, MyID, 0, 0, 0, 0, 0x0D, 0x0A};
 	static u32 status_reg, frame_len;
 	u16 RectX = (u16)myInfo.Rect_Axis[0];
 	u16 RectY = (u16)myInfo.Rect_Axis[1];
@@ -107,15 +107,15 @@ void Broadcast_Msg(u8 CorpID, u8 if_bdc_axis, u8 *ID)
 		ID[0] = 0;
 		if(counter > 0)
 		{
-			//CmdType | MyID | ReserveForCounter | 0x0D
-			if(msg_Rx_Buffer[0] == 0x07 && msg_Rx_Buffer[3] == 0x0D)
+			//CmdType | MyID | ReserveForCounter | 0x0D | 0x0A
+			if(msg_Rx_Buffer[0] == 0x07)
 			{
 				ID[1] = msg_Rx_Buffer[1];
 				ID[0] = 1;
 			}
 			if(counter > 1)
 			{
-				if(msg_Rx_Buffer_dbl[0] == 0x07 && msg_Rx_Buffer_dbl[3] == 0x0D)
+				if(msg_Rx_Buffer_dbl[0] == 0x07)
 				{
 					ID[ID[0]+1] = msg_Rx_Buffer_dbl[1];
 					ID[0]++;
@@ -153,10 +153,10 @@ void Boss_Msg(void)
 
 void Resp_Msg(void)
 {
-	//CmdType | MyID | ReserveForCounter | 0x0D
-	static u8 resp_msg[4] = {0x07, MyID, 0, 0x0D};
+	//CmdType | MyID | ReserveForCounter | CRC | CRC
+	static u8 resp_msg[5] = {0x07, MyID, 0, 0x0D, 0x0A};
 	
-		/* Start transmission */
+	/* Start transmission */
 	dwt_writetxdata(sizeof(resp_msg), resp_msg, 0);
 	dwt_writetxfctrl(sizeof(resp_msg), 0);
 	dwt_starttx(DWT_START_TX_IMMEDIATE);

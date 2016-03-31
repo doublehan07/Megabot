@@ -54,7 +54,6 @@ void ParseSerialData(unsigned char ucData)
 
 void Ranging_Stategy(void)
 {
-	uint16_t temp = 0;
 	if(Usart_RX_flag == SET) //当上位机发来信息
 	{		
 		//处理指令		

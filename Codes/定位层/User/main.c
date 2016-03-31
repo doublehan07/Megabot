@@ -42,12 +42,6 @@ int main(void)
 	
 		/* No frame filter will be used. */
 		dwt_enableframefilter(DWT_FF_NOTYPE_EN);
-	
-		/* Set GPIO3-LED_BLUE, GPIO0-LED_RED as output*/
-		dwt_setGPIOdirection(GDM0, 0);
-		dwt_setGPIOdirection(GDM1, 0);
-		dwt_setGPIOdirection(GDM2, 0);
-		dwt_setGPIOdirection(GDM3, 0);
 
     /* Loop forever initiating ranging exchanges. */
     while (1)

@@ -27,17 +27,16 @@
 
 /* Ranging definition -------------------------------------------------------*/
 //CmdType | Target ID | MyID | Times | TimeStamp | CRC | CRC
-static uint8_t tx_request_begin_range_msg[] = {0x01, 0x00, MyID, 0x01, 0x0D, 0x0A};
+static uint8_t tx_request_begin_range_msg[] = {0x01, 0x00, MyID, 0x01, 0, 0, 0, 0x0D, 0x0A};
 static uint8_t tx_second_range_msg[] = {0x01, 0x00, MyID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 static uint8_t tx_reply_msg[] = {0x01, 0x00, MyID, 0x01, 0x0D, 0x0A};
 static uint8_t tx_final_msg[] = {0x01, 0x00, MyID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 
 /* Buffer to store received response message. */
-#define RX_BUF_LEN 30
 #define TS1_FIELD_INDEX 4
 #define TS2_FIELD_INDEX 8
 #define TS3_FIELD_INDEX 12
-static uint8 rx_buffer[RX_BUF_LEN];
+uint8 rx_buffer[RX_BUF_LEN];
 
 /* Hold copy of status register state here for reference, so reader can examine it at a breakpoint. */
 static uint32 status_reg = 0;
@@ -68,7 +67,7 @@ static uint64_t get_tx_timestamp_u64(void);
 static uint64_t get_rx_timestamp_u64(void);
 
 /* Private functions ---------------------------------------------------------*/
-u8 Initiator_Ranging(uint8_t TargetID)
+u8 Initiator_Ranging(uint8_t TargetID, u8 Times, u8 MyStatus, u8 if_change_freq)
 {	
 	u8 flag = RESET;
 	
@@ -80,6 +79,9 @@ u8 Initiator_Ranging(uint8_t TargetID)
 	
 	/* Write frame data to DW1000 and prepare transmission. */	
 	tx_request_begin_range_msg[1] = TargetID;
+	tx_request_begin_range_msg[4] = Times;
+	tx_request_begin_range_msg[5] = MyStatus;
+	tx_request_begin_range_msg[6] = if_change_freq;
 	tx_second_range_msg[1] = TargetID;
 	
 	/* Set expected delay and timeout for final message reception. */
@@ -215,7 +217,7 @@ u8 Initiator_Ranging(uint8_t TargetID)
 
 u8 Receptor_Listening(void)
 {
-	u8 flag = RESET;
+	u8 flag = 0;
 	
 	dwt_forcetrxoff(); //Force IC back to IDLE mode.	
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event	
@@ -226,6 +228,10 @@ u8 Receptor_Listening(void)
 	while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))
 	{ 
 		//这里要有监听被打断的机制吗？
+		if(Usart_RX_flag == SET) //当上位机发来信息
+		{
+			return 0xAA;
+		}
 	}
 
 	if (status_reg & SYS_STATUS_RXFCG)
@@ -239,7 +245,7 @@ u8 Receptor_Listening(void)
 		if (frame_len <= RX_BUFFER_LEN)
 		{
 			dwt_readrxdata(rx_buffer, frame_len, 0);
-			flag = SET;
+			flag = 1;
 		}
 	}
 	else
