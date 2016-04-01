@@ -46,6 +46,6 @@ int main(void)
     /* Loop forever initiating ranging exchanges. */
     while (1)
     {
-				Ranging_Stategy();
+				AI_Stategy();
 		}
 }

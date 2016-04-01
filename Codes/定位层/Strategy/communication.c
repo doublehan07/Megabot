@@ -52,7 +52,7 @@ void ParseSerialData(unsigned char ucData)
 	}
 }
 
-void Ranging_Stategy(void)
+void AI_Stategy(void)
 {
 	if(Usart_RX_flag == SET) //当上位机发来信息
 	{		
