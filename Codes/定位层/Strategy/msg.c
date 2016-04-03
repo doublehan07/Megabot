@@ -27,14 +27,14 @@ void Broadcast_Msg(u8 CorpID, u8 *ID)
 	//CmdType | CorpID | MyID | RectXL | RectXH | RectYL | RectYH | CRC | CRC
 	static u8 bdc_msg[9] = {0x03, 0, MyID, 0, 0, 0, 0, 0x0D, 0x0A};
 	
-	u16 RectX = (u16)myInfo.Rect_Axis[0];
-	u16 RectY = (u16)myInfo.Rect_Axis[1];
+	int16 RectX = (u16)myInfo.Rect_Axis[0];
+	int16 RectY = (u16)myInfo.Rect_Axis[1];
 	
 	bdc_msg[1] = CorpID;
-	bdc_msg[3] = (u8)RectX;
-	bdc_msg[4] = (u8)(RectX >> 8);
-	bdc_msg[5] = (u8)RectY;
-	bdc_msg[6] = (u8)(RectY >> 8);
+	bdc_msg[3] = (int8)RectX;
+	bdc_msg[4] = (int8)(RectX >> 8);
+	bdc_msg[5] = (int8)RectY;
+	bdc_msg[6] = (int8)(RectY >> 8);
 	
 	/* Start transmission */
 	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
@@ -46,7 +46,7 @@ void Broadcast_Msg(u8 CorpID, u8 *ID)
 	dwt_writetxdata(sizeof(bdc_msg), bdc_msg, 0);
 	dwt_writetxfctrl(sizeof(bdc_msg), 0);
 	
-	dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
+	dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);	
 	Double_Buff_Recp_Listening(ID, 1);
 }
 
@@ -68,16 +68,16 @@ void Selected_Msg(u8 SelectedID, u8 Frec)
 	Delay(1);
 }
 
-void CorpInfo_Msg(u8 CorpID, u16 *Axis)
+void CorpInfo_Msg(u8 CorpID, int16 *Axis)
 {
 	//CmdType | CorpID | RectXL | RectXH | RectYL | RectYH | CRC | CRC
 	static u8 bdc_msg[8] = {0x05, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 	
 	bdc_msg[1] = CorpID;
-	bdc_msg[2] = (u8)Axis[0];
-	bdc_msg[3] = (u8)(Axis[0] >> 8);
-	bdc_msg[4] = (u8)Axis[1];
-	bdc_msg[5] = (u8)(Axis[1] >> 8);
+	bdc_msg[2] = (int8)Axis[0];
+	bdc_msg[3] = (int8)(Axis[0] >> 8);
+	bdc_msg[4] = (int8)Axis[1];
+	bdc_msg[5] = (int8)(Axis[1] >> 8);
 	
 	/* Start transmission */
 	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里

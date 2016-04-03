@@ -53,10 +53,10 @@ void Receptor_Strategy(void) //我是监听者，我要继续子网的定位
 	//第一种可能，收到某个点的广播消息，若未翻转状态必须回应！
 	if(rx_buffer[0] == 0x03) //广播消息
 	{
-		static u16 RectX, RectY;
+		static int16 RectX, RectY;
 		//首先，我要记录下这个广播消息的内容
-		RectX = ((u16)rx_buffer[4] << 8) | (u16)rx_buffer[3];
-		RectY = ((u16)rx_buffer[6] << 8) | (u16)rx_buffer[5];
+		RectX = ((int16)rx_buffer[4] << 8) | (int16)rx_buffer[3];
+		RectY = ((int16)rx_buffer[6] << 8) | (int16)rx_buffer[5];
 		NetInfo_Init(rx_buffer[2], RectX, RectY);
 		
 		//如果我不是被指定的协作点，而且我没有翻转状态，只管回复就好了
@@ -101,10 +101,10 @@ void Receptor_Strategy(void) //我是监听者，我要继续子网的定位
 	}
 	else if(rx_buffer[0] == 0x05) //广播指定点坐标的信息
 	{
-		static u16 RectX, RectY;
+		static int16 RectX, RectY;
 		//我记录下这个广播消息的内容即可
-		RectX = ((u16)rx_buffer[3] << 8) | (u16)rx_buffer[2];
-		RectY = ((u16)rx_buffer[5] << 8) | (u16)rx_buffer[4];
+		RectX = ((int16)rx_buffer[3] << 8) | (int16)rx_buffer[2];
+		RectY = ((int16)rx_buffer[5] << 8) | (int16)rx_buffer[4];
 		NetInfo_Init(rx_buffer[1], RectX, RectY);
 	}
 	else if(rx_buffer[0] == 0x08) //Last_One_Msg()
@@ -145,7 +145,7 @@ void Ranging_Strategy(void)
 	if(UpperStatus == 0xFF) //leader的消息，建系
 	{
 		//更新我的info状态
-		myInfo.Polar_Axis[0] = distance_cm;
+//		myInfo.Polar_Axis[0] = distance_cm;
 		myInfo.Rect_Axis[0] = distance_cm;
 		myInfo.MyStatus = 0x05;
 		//我知道这组通信结束了，于是我要广播消息开始下一组通信
@@ -160,7 +160,7 @@ void Ranging_Strategy(void)
 	else if(UpperStatus == 0x02) //被动测距点和我通信啦
 	{
 		u8 CorpID;
-		u16 Axis[4];
+		int16 Axis[4];
 		dist_Array[Times - 1] = distance_cm;
 		id_Array[Times - 1] = SourceID;
 		CorpID = which_freq;
@@ -168,7 +168,7 @@ void Ranging_Strategy(void)
 		if(myInfo.MyStatus == 0x03 && Times == 2) //第三次测距，我的主场
 		{
 			u8 i, counter = 0;
-			u16 tempa[2], tempb[2];
+			int16 tempa[2], tempb[2];
 			Change_Freq(1);
 			//计算我可能的位置，两组u16，然后发过去顺带测距
 			//首先得到前两个点的坐标
@@ -205,7 +205,7 @@ void Ranging_Strategy(void)
 	else if(UpperStatus == 0x03) //主动点指定的位置节点和我通信啦
 	{
 		u8 i, counter = 0;
-		u16 tempa[2], tempb[2], myAxis[4], corpAxis[4];
+		int16 tempa[2], tempb[2], myAxis[4], corpAxis[4];
 		dist_Array[2] = distance_cm;
 		id_Array[2] = SourceID;
 		Change_Freq(0);
@@ -260,10 +260,13 @@ void FirstOne_Strategy(u8 CorpID)
 	myInfo.MyStatus = 0x01; //BUG！！广播消息那里会有未知的错误
 	//我开始启动广播，在我网络里面的点都要回应，同时记录下我的坐标(RectX, RectY)
 	NetInfo_Init(MyID, myInfo.Rect_Axis[0], myInfo.Rect_Axis[1]); //我也记录我的坐标
+	Delay(7);
 	Broadcast_Msg(CorpID, Resp_ID);
+	
 	if(Resp_ID[0] == 2) //假设我成功收到了两个回应
 	{
 		//于是我会指定第一个收到的节点，咱们是老大不用切换频段hhh
+		Delay(1);
 		Selected_Msg(Resp_ID[1], 0);
 	}
 	else if(Resp_ID[0] == 1) //运气不好，只剩一个节点需要定位了
@@ -273,6 +276,7 @@ void FirstOne_Strategy(u8 CorpID)
 		//我指定第三点，他有我们俩的坐标，所以他直接启动测距就好
 		//如果大于两个已知节点，我和协作点之外，我再挑一个点，三点定位
 		//这个有关netCnt的if-else直接让第三点自己判断就行，我只管Msg告诉他
+		Delay(1);
 		Last_One_Msg(Resp_ID[1]);
 		myInfo.MyStatus = 0x05;
 		return;
@@ -280,6 +284,7 @@ void FirstOne_Strategy(u8 CorpID)
 	else if(Resp_ID[0] == 0) //啊咧，没有点了，结束定位就好
 	{
 		//我还是发一条消息让协作点别等了吧，不然协作点要出bug
+		Delay(1);
 		Stop_Waiting_Msg();
 		myInfo.MyStatus = 0x05;
 		return;
@@ -291,7 +296,7 @@ void FirstOne_Strategy(u8 CorpID)
 		//Error_Handler()
 	}
 	//我开始监听协作点的选择信息，别用阻塞式监听，也设置timeout
-	flag = Receptor_Listening(5000);
+	flag = Receptor_Listening(0);
 	if(flag == 0x01)
 	{
 		if(rx_buffer[0] == 0x04 && rx_buffer[2] == CorpID)
@@ -413,9 +418,10 @@ void LastOne_Strategy(void)
 	//这个有关netCnt的if-else直接让第三点自己判断就行
 	if(netCnt == 2)
 	{
-		u16 Axis[4] = {0, 0, 0, 0}, dist_Array[2] = {0, 0};
-		u16 posA[2] = {0, 0};
-		u16 posB[2] = {0, 0};
+		int16 Axis[4] = {0, 0, 0, 0};
+		u16 dist_Array[2] = {0, 0};
+		int16 posA[2] = {0, 0};
+		int16 posB[2] = {0, 0};
 		
 		posA[0] = netInfo[0].RectX;
 		posA[1] = netInfo[0].RectY;
@@ -441,10 +447,11 @@ void LastOne_Strategy(void)
 	}
 	else if(netCnt > 2)
 	{
-		u16 Axis[2] = {0, 0}, dist_Array[3] = {0, 0, 0};
-		u16 posA[2] = {0, 0};
-		u16 posB[2] = {0, 0};
-		u16 posC[2] = {0, 0};
+		int16 Axis[2] = {0, 0};
+		u16 dist_Array[3] = {0, 0, 0};
+		int16 posA[2] = {0, 0};
+		int16 posB[2] = {0, 0};
+		int16 posC[2] = {0, 0};
 		
 		posA[0] = netInfo[netCnt - 1].RectX;
 		posA[1] = netInfo[netCnt - 1].RectY;
@@ -481,7 +488,7 @@ void LastOne_Strategy(void)
 	}
 }
 
-void NetInfo_Init(u8 ID, u16 RectX, u16 RectY)
+void NetInfo_Init(u8 ID, int16 RectX, int16 RectY)
 {
 	if(netCnt > netInfoSIZE) {return;}
 	netInfo[netCnt].ID = ID;
@@ -492,10 +499,10 @@ void NetInfo_Init(u8 ID, u16 RectX, u16 RectY)
 
 void MyInfo_Init(double Rect_Axis[2], double Polar_Axis[2], u8 MyStatus)
 {
-	myInfo.Rect_Axis[0] = Rect_Axis[0];
-	myInfo.Rect_Axis[1] = Rect_Axis[1];
-	myInfo.Polar_Axis[0] = Polar_Axis[0];
-	myInfo.Polar_Axis[1] = Polar_Axis[1];
+	myInfo.Rect_Axis[0] = (int16)Rect_Axis[0];
+	myInfo.Rect_Axis[1] = (int16)Rect_Axis[1];
+	myInfo.Polar_Axis[0] = (int16)Polar_Axis[0];
+	myInfo.Polar_Axis[1] = (int16)Polar_Axis[1];
 	myInfo.MyStatus = MyStatus;
 }
 
@@ -515,7 +522,7 @@ void Change_Freq(u8 flag)
 	dwt_configure(&config);
 }
 
-void Calculate_My_Pos(u16 *tempa, u16 *tempb, u16 *dist_Array, u16 *Axis)
+void Calculate_My_Pos(int16 *tempa, int16 *tempb, u16 *dist_Array, int16 *Axis)
 {
 	double x1 = tempa[0], y1 = tempa[1], x2 = tempb[0], y2 = tempb[1], d1 = dist_Array[0], d2 = dist_Array[1];
 	double xa = 0.0, ya = 0.0, xb = 0.0, yb = 0.0;
@@ -551,16 +558,16 @@ void Calculate_My_Pos(u16 *tempa, u16 *tempb, u16 *dist_Array, u16 *Axis)
 		xb = C - D * yb;
 	}
 	
-	Axis[0] = (u16)xa;
-	Axis[1] = (u16)ya;
-	Axis[2] = (u16)xb;
-	Axis[3] = (u16)yb;
+	Axis[0] = (int16)xa;
+	Axis[1] = (int16)ya;
+	Axis[2] = (int16)xb;
+	Axis[3] = (int16)yb;
 }
 
-void Cal_Mypos_Triangle(u16 posA[2], u16 posB[2], u16 posC[2], u16 dist_Array[3], u16 Axis[2])
+void Cal_Mypos_Triangle(int16 posA[2], int16 posB[2], int16 posC[2], u16 dist_Array[3], int16 Axis[2])
 {
 	double A, B, C, D, E, F;
-	u16 Axis_temp[4];
+	int16 Axis_temp[4];
 	Calculate_My_Pos(posA, posB, dist_Array, Axis_temp);
 	
 	A = posC[0] - Axis_temp[0];
@@ -585,7 +592,7 @@ void Cal_Mypos_Triangle(u16 posA[2], u16 posB[2], u16 posC[2], u16 dist_Array[3]
 	}
 }
 
-void Decide_Our_Pos(u16 *myAxis, u16 *corpAxis, u16 dist, u8 CorpID)
+void Decide_Our_Pos(int16 *myAxis, int16 *corpAxis, u16 dist, u8 CorpID)
 {
 	u8 i, j;
 	double myx, myy, corpx, corpy;

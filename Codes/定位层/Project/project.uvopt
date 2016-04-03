@@ -176,9 +176,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>70</LineNumber>
+          <LineNumber>347</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134241312</Address>
+          <Address>134242172</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -187,7 +187,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>D:\Save\SaveHardwareC\32Study\Challenge\Codes\Strategy\strategy.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\project\../Strategy/strategy.c\70</Expression>
+          <Expression>\\project\../Strategy/strategy.c\347</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -216,6 +216,16 @@
           <WinNumber>1</WinNumber>
           <ItemText>netInfo</ItemText>
         </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>status_reg</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>MyID</ItemText>
+        </Ww>
       </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
@@ -223,7 +233,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
-        <aLwin>1</aLwin>
+        <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>

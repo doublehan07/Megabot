@@ -30,7 +30,7 @@
 static uint8_t tx_request_begin_range_msg[] = {0x01, 0x00, MyID, 0x01, 0, 0, 0, 0x0D, 0x0A};
 static uint8_t tx_second_range_msg[] = {0x01, 0x00, MyID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 static uint8_t tx_reply_msg[] = {0x01, 0x00, MyID, 0x01, 0x0D, 0x0A};
-static uint8_t tx_final_msg[] = {0x01, 0x00, MyID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
+static uint8_t tx_final_msg[] = {0x01, 0x00, MyID, 0x02, 0, 0, 0x0D, 0x0A};
 static uint8_t tx_request_second_corp_msg[] = {0x01, 0x00, MyID, 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 0x0A};
 
 //Double buffer listening
@@ -191,16 +191,7 @@ u8 Initiator_Ranging(uint8_t TargetID, u8 Times, u8 MyStatus, u8 which_freq)
 				if(rx_buffer[0] == 0x01 && rx_buffer[1] == MyID && rx_buffer[2] == TargetID && rx_buffer[3] == 0x02)
 				{
 					//get distance
-					/* 解析本次数据包中的tof_dtu */
-					int64_t tof_dtu = 0;
-					for(i = 0; i < 8; i++)
-					{
-						tof_dtu += rx_buffer[TS1_FIELD_INDEX + i] << (i * 8);
-					}
-
-					tof = tof_dtu * DWT_TIME_UNITS;
-					distance = tof * SPEED_OF_LIGHT;
-					distance_cm = (uint16_t)(distance * 100);
+					distance_cm = (u16)rx_buffer[4] | ((u16)rx_buffer[5] << 8);
 					
 					flag = 0xAA;
 				}
@@ -315,16 +306,14 @@ u8 Receptor_Ranging(u8 *TargetID, u8 *Times, u8 *UpperStatus, u8 *which_freq)
 												
 			/* Send distance to Source Device */
 			//修改tx_final_msg
-			for(i = 0; i < 8; i++)
-			{
-				tx_final_msg[TS1_FIELD_INDEX + i] = (uint8_t)tof_dtu;
-				tof_dtu >>= 8;
-			}
+			tx_final_msg[4] = (u8)distance_cm;
+			tx_final_msg[5] = (u8)(distance_cm >> 8);
 			tx_final_msg[1] = *TargetID;
 					
 			dwt_writetxdata(sizeof(tx_final_msg), tx_final_msg, 0);
 			dwt_writetxfctrl(sizeof(tx_final_msg), 0);
-			dwt_starttx(DWT_START_TX_IMMEDIATE);				
+			dwt_starttx(DWT_START_TX_IMMEDIATE);	
+			Delay(2);
 		}
 	}
 	else
@@ -336,7 +325,7 @@ u8 Receptor_Ranging(u8 *TargetID, u8 *Times, u8 *UpperStatus, u8 *which_freq)
 	return flag;
 }
 
-u8 Corp_Ranging(uint8_t TargetID, u8 Times, u8 MyStatus, u8 which_freq, u16 *Axis)
+u8 Corp_Ranging(uint8_t TargetID, u8 Times, u8 MyStatus, u8 which_freq, int16 *Axis)
 {	
 	u8 flag = RESET;
 	
@@ -351,14 +340,14 @@ u8 Corp_Ranging(uint8_t TargetID, u8 Times, u8 MyStatus, u8 which_freq, u16 *Axi
 	tx_request_begin_range_msg[4] = Times;
 	tx_request_begin_range_msg[5] = MyStatus;
 	tx_request_begin_range_msg[6] = which_freq;
-	tx_request_second_corp_msg[16] = (u8)Axis[0];
-	tx_request_second_corp_msg[17] = (u8)(Axis[0] >> 8);
-	tx_request_second_corp_msg[18] = (u8)Axis[1];
-	tx_request_second_corp_msg[19] = (u8)(Axis[1] >> 8);
-	tx_request_second_corp_msg[20] = (u8)Axis[2];
-	tx_request_second_corp_msg[21] = (u8)(Axis[2] >> 8);
-	tx_request_second_corp_msg[22] = (u8)Axis[3];
-	tx_request_second_corp_msg[23] = (u8)(Axis[3] >> 8);
+	tx_request_second_corp_msg[16] = (int8)Axis[0];
+	tx_request_second_corp_msg[17] = (int8)(Axis[0] >> 8);
+	tx_request_second_corp_msg[18] = (int8)Axis[1];
+	tx_request_second_corp_msg[19] = (int8)(Axis[1] >> 8);
+	tx_request_second_corp_msg[20] = (int8)Axis[2];
+	tx_request_second_corp_msg[21] = (int8)(Axis[2] >> 8);
+	tx_request_second_corp_msg[22] = (int8)Axis[3];
+	tx_request_second_corp_msg[23] = (int8)(Axis[3] >> 8);
 	
 	tx_second_range_msg[1] = TargetID;
 	
