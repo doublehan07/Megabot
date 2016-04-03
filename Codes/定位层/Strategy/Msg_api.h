@@ -5,6 +5,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx.h"
 #include "deca_device_api.h"
+#include "port.h"
 
 /* Exported types ------------------------------------------------------------*/
 typedef struct
@@ -53,7 +54,7 @@ extern uint8 rx_buffer[RX_BUF_LEN];
 u8 Initiator_Ranging(uint8_t TargetID, u8 Times, u8 MyStatus, u8 which_freq);
 u8 Receptor_Ranging(u8 *TargetID, u8 *Times, u8 *UpperStatus, u8 *which_freq);
 u8 Corp_Ranging(uint8_t TargetID, u8 Times, u8 MyStatus, u8 which_freq, u16 Axis[4]);
-u8 Receptor_Listening(void);
+u8 Receptor_Listening(u16 timeout);
 void Double_Buff_Recp_Listening(u8 *ID, u8 if_brd_use);
 
 void ParseSerialData(unsigned char ucData);
@@ -64,16 +65,20 @@ void CorpInfo_Msg(u8 CorpID, u16 *Axis);
 void Selected_Msg(u8 SelectedID, u8 Frec);
 void Boss_Msg(void);
 void Resp_Msg(void);
+void Last_One_Msg(u8 LastID);
+void Stop_Waiting_Msg(void);
 
 void NetInfo_Init(u8 ID, u16 RectX, u16 RectY);
 void MyInfo_Init(double Rect_Axis[2], double Polar_Axis[2], u8 MyStatus);
 void Calculate_My_Pos(u16 tempa[2], u16 tempb[2], u16 *dist_Array, u16 *Axis);
+void Cal_Mypos_Triangle(u16 posA[2], u16 posB[2], u16 posC[2], u16 dist_Array[3], u16 Axis[2]);
 void Decide_Our_Pos(u16 *myAxis, u16 *corpAxis, u16 dist, u8 CorpID);
 void Leader_Strategy(void);
 void Receptor_Strategy(void);
 void Ranging_Strategy(void);
 void FirstOne_Strategy(u8 CorpID);
 void Coordianator_Strategy(u8 boss_ID);
+void LastOne_Strategy(void);
 void Change_Freq(u8 flag);
 
 #endif /* __MSG_API */

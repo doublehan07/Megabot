@@ -176,93 +176,45 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>604</LineNumber>
+          <LineNumber>70</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134237152</Address>
+          <Address>134241312</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\Save\SaveHardwareC\32Study\Challenge\Codes\Strategy\ranging.c</Filename>
+          <Filename>D:\Save\SaveHardwareC\32Study\Challenge\Codes\Strategy\strategy.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\project\../Strategy/ranging.c\604</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>609</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134237164</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\Save\SaveHardwareC\32Study\Challenge\Codes\Strategy\ranging.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\project\../Strategy/ranging.c\609</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>593</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134237086</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\Save\SaveHardwareC\32Study\Challenge\Codes\Strategy\ranging.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\project\../Strategy/ranging.c\593</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>612</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134237174</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\Save\SaveHardwareC\32Study\Challenge\Codes\Strategy\ranging.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\project\../Strategy/ranging.c\612</Expression>
+          <Expression>\\project\../Strategy/strategy.c\70</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>upperCmd</ItemText>
+          <ItemText>Resp_ID</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Resp_ID</ItemText>
+          <ItemText>rx_buffer</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>status_reg</ItemText>
+          <ItemText>Usart_RX_flag</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>rx_buffer</ItemText>
+          <ItemText>distance_cm</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>Usart_RX_flag</ItemText>
+          <ItemText>netInfo</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

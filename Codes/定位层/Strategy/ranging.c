@@ -493,14 +493,13 @@ u8 Corp_Ranging(uint8_t TargetID, u8 Times, u8 MyStatus, u8 which_freq, u16 *Axi
 	return flag;
 }
 
-u8 Receptor_Listening(void)
+u8 Receptor_Listening(u16 timeout)
 {
 	u8 flag = 0;
 	
 	dwt_forcetrxoff(); //Force IC back to IDLE mode.	
-	dwt_setdblrxbuffmode(0); //Close double buffer mode.
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event	
-	dwt_setrxtimeout(0); //阻塞式监听
+	dwt_setrxtimeout(timeout); //0-阻塞式监听
 
 	dwt_rxenable(0); //Activate reception immediately.
 
@@ -525,12 +524,17 @@ u8 Receptor_Listening(void)
 		if (frame_len <= RX_BUFFER_LEN)
 		{
 			dwt_readrxdata(rx_buffer, frame_len, 0);
-			flag = 1;
+			flag = 0x01;
+		}
+		else
+		{
+			flag = 0xA0; //rx_buffer out of range error
 		}
 	}
 	else
 	{
 		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR); //Clear RX error events in the DW1000 status register.
+		flag = 0xB0; //Timeout error
 	}	
 	return flag;
 }
@@ -540,27 +544,13 @@ void Double_Buff_Recp_Listening(u8 *ID, u8 if_brd_use)
 	static u8 counter = 0;
 	static u32 status_reg, frame_len;
 	
-	//不要开双收模式的自动重启接收！
-	//双收模式overrun的case太难处理了！
+	//最后不使用双收，还是单收模式
 	if(if_brd_use == 0)
 	{
-		/*
-		dwt_forcetrxoff(); //Force IC back to IDLE mode.	
-		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event	
-		
-		dwt_setautorxreenable(0); //禁止自动重启接收
-		dwt_setdblrxbuffmode(1); //开启双收模式
-			
-		//要求HSRBP == ICRBP
-		dwt_syncrxbufptrs();
-		dwt_setrxtimeout(3000); //这个参数要调，一次接收的timeout时间
-			
-		dwt_rxenable(0); //Start RX
-		*/
 		dwt_forcetrxoff(); //Force IC back to IDLE mode.	
 		dwt_setdblrxbuffmode(0); //Close double buffer mode.
 		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event	
-		dwt_setrxtimeout(0); //阻塞式监听
+		dwt_setrxtimeout(5000); //非阻塞式监听
 
 		dwt_rxenable(0); //Activate reception immediately.
 	}
@@ -581,12 +571,17 @@ void Double_Buff_Recp_Listening(u8 *ID, u8 if_brd_use)
 			dwt_readrxdata(msg_Rx_Buffer, frame_len, 0);
 		}
 		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
-//		dwt_syncrxbufptrs(); //切换保证两个相等
 		dwt_setrxtimeout(5000); 
 		counter++;
 		dwt_rxenable(0); //马上开始接收下一个
 			
-		while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))	{}
+		while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))	
+		{
+			if(Usart_RX_flag == SET) //当上位机发来信息
+			{
+				return;
+			}
+		}
 				
 		if(status_reg & SYS_STATUS_RXFCG)
 		{

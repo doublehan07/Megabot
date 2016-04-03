@@ -27,7 +27,7 @@ void Leader_Strategy(void) //我是leader，我要启动子网的定位
 	NetInfo_Init(MyID, 0, 0); //我也记录我的坐标
 	Broadcast_Msg(0xFF, Resp_ID);
 	
-	if(Resp_ID[0] == 2) //正常来说，我会收到两个人的回应，取最前面那个好了
+	if(Resp_ID[0] >= 1) //正常来说，我会收到两个人的回应，取最前面那个好了
 	{
 		//我开始和最近的点测距，同时确定坐标系
 		Initiator_Ranging(Resp_ID[1], 1, 0xFF, 0);
@@ -40,7 +40,7 @@ void Receptor_Strategy(void) //我是监听者，我要继续子网的定位
 	static u8 upperAsk = 0;
 	do
 	{
-		upperAsk = Receptor_Listening();
+		upperAsk = Receptor_Listening(0);
 	}
 	while(upperAsk == 0); //等待接收到消息
 	if(upperAsk == 0xEE) //上位机打断了监听
@@ -55,8 +55,8 @@ void Receptor_Strategy(void) //我是监听者，我要继续子网的定位
 	{
 		static u16 RectX, RectY;
 		//首先，我要记录下这个广播消息的内容
-		RectX = ((u16)rx_buffer[4] << 8) & (u16)rx_buffer[3];
-		RectY = ((u16)rx_buffer[6] << 8) & (u16)rx_buffer[5];
+		RectX = ((u16)rx_buffer[4] << 8) | (u16)rx_buffer[3];
+		RectY = ((u16)rx_buffer[6] << 8) | (u16)rx_buffer[5];
 		NetInfo_Init(rx_buffer[2], RectX, RectY);
 		
 		//如果我不是被指定的协作点，而且我没有翻转状态，只管回复就好了
@@ -98,6 +98,21 @@ void Receptor_Strategy(void) //我是监听者，我要继续子网的定位
 	{
 		//我被指定之后要做什么呢？记下指定我的坏人的编号？之后测距的时候就有选择性了？
 		Change_Freq(rx_buffer[3]);		
+	}
+	else if(rx_buffer[0] == 0x05) //广播指定点坐标的信息
+	{
+		static u16 RectX, RectY;
+		//我记录下这个广播消息的内容即可
+		RectX = ((u16)rx_buffer[3] << 8) | (u16)rx_buffer[2];
+		RectY = ((u16)rx_buffer[5] << 8) | (u16)rx_buffer[4];
+		NetInfo_Init(rx_buffer[1], RectX, RectY);
+	}
+	else if(rx_buffer[0] == 0x08) //Last_One_Msg()
+	{
+		if(rx_buffer[1] == MyID)
+		{
+			LastOne_Strategy();
+		}
 	}
 }
 
@@ -228,6 +243,10 @@ void Ranging_Strategy(void)
 		
 		FirstOne_Strategy(SourceID);
 	}
+	else if(UpperStatus == 0xFE) //最后一个点和我测距
+	{
+		return;
+	}
 	else //嗯？例外情况？空着！
 	{
 		
@@ -247,25 +266,53 @@ void FirstOne_Strategy(u8 CorpID)
 		//于是我会指定第一个收到的节点，咱们是老大不用切换频段hhh
 		Selected_Msg(Resp_ID[1], 0);
 	}
-	else
+	else if(Resp_ID[0] == 1) //运气不好，只剩一个节点需要定位了
 	{
-		
+		//分两种情况，如果只有两个已知节点，无法构成三点协作
+		//这时候和两点通信，构成三角形，可以随意旋转
+		//我指定第三点，他有我们俩的坐标，所以他直接启动测距就好
+		//如果大于两个已知节点，我和协作点之外，我再挑一个点，三点定位
+		//这个有关netCnt的if-else直接让第三点自己判断就行，我只管Msg告诉他
+		Last_One_Msg(Resp_ID[1]);
+		myInfo.MyStatus = 0x05;
+		return;
 	}
-	//我开始监听协作点的选择信息
-	do
+	else if(Resp_ID[0] == 0) //啊咧，没有点了，结束定位就好
 	{
-		flag = Receptor_Listening();
-		if(flag && rx_buffer[0] == 0x04 && rx_buffer[2] == CorpID)
+		//我还是发一条消息让协作点别等了吧，不然协作点要出bug
+		Stop_Waiting_Msg();
+		myInfo.MyStatus = 0x05;
+		return;
+		//这里留一个关闭接收功能的接口，节省功耗用，然而可能用不着
+		//Low_Power_Interface()
+	}
+	else //例外情况？
+	{
+		//Error_Handler()
+	}
+	//我开始监听协作点的选择信息，别用阻塞式监听，也设置timeout
+	flag = Receptor_Listening(5000);
+	if(flag == 0x01)
+	{
+		if(rx_buffer[0] == 0x04 && rx_buffer[2] == CorpID)
 		{
 			corp_TarID = rx_buffer[1];
-			break;
 		}
 		else
 		{
-			flag = 0;
+			//留一个协作点告知自己没听到的接口，这里先不处理
 		}
 	}
-	while(flag != 1);
+	else if(flag == 0xEE) //被上位机打断
+	{
+		myInfo.MyStatus = 0x05;
+		return;
+	}
+	else
+	{
+		//Error_Handler()
+	}
+	
 	//我知道协作点也知道啦，开始第一轮测距吧！有点小紧张hhh
 	if(Initiator_Ranging(Resp_ID[1], 1, 0x01, 0) == 0xAA) //成功测距啦，我要切换频段 BUG！！上位机打断改成0xEE
 	{
@@ -276,6 +323,8 @@ void FirstOne_Strategy(u8 CorpID)
 		if(Initiator_Ranging(corp_TarID, 2, 0x01, 0) == 0xAA)
 		{
 			Change_Freq(0);
+			myInfo.MyStatus = 0x05;
+			return;
 		}
 	}
 	myInfo.MyStatus = 0x05;
@@ -287,22 +336,40 @@ void Coordianator_Strategy(u8 boss_ID)
 	u8 Resp_ID[3] = {0, 0, 0};
 	//我被指定协作了，马上转双收状态！
 	Double_Buff_Recp_Listening(Resp_ID, 0);
-	myInfo.MyStatus = 0x02; //////////////////BUG!!!!!!!!!!!!!!!!!!!!!!!
-	//我开始监听主动点的选择信息
-	do
+	myInfo.MyStatus = 0x02;
+	//我开始监听主动点的选择信息，别用阻塞式监听，也设置timeout
+	flag = Receptor_Listening(5000);
+	if(flag == 0x01)
 	{
-		flag = Receptor_Listening();
-		if(flag && rx_buffer[0] == 0x04 && rx_buffer[2] == boss_ID)
+		if(rx_buffer[0] == 0x04 && rx_buffer[2] == boss_ID)
 		{
 			boss_TarID = rx_buffer[1];
-			break;
 		}
-		else
+		else if(rx_buffer[0] == 0x08) //Last_One_Msg()，我直接更改MyStatus+return就好
 		{
-			flag = 0;
+			myInfo.MyStatus = 0x05;
+			return;
+		}
+		else if(rx_buffer[0] == 0x09) //Stop_Waiting_Msg()，我直接更改MyStatus+return就好
+		{
+			myInfo.MyStatus = 0x05;
+			return;	
+		}
+		else //收到了别的信息
+		{
+			//Error_Handler()
 		}
 	}
-	while(flag != 1);
+	else if(flag == 0xEE) //被上位机打断
+	{
+		myInfo.MyStatus = 0x05;
+		return;
+	}
+	else //接收错误
+	{
+		//Error_Handler()
+	}
+	
 	if(Resp_ID[0] == 2) //假设我成功收到了两个回应
 	{
 		if(Resp_ID[1] == boss_TarID)
@@ -325,14 +392,81 @@ void Coordianator_Strategy(u8 boss_ID)
 			if(Initiator_Ranging(boss_TarID, 2, 0x02, myTarID) == 0xAA)
 			{
 				//也没我啥事了
+				myInfo.MyStatus = 0x05;
+				return;
 			}
 		}
 	}
 	else
 	{
-		
+		//这时候有可能是我的通信出了问题
+		//Error_Handler()
 	}
 	myInfo.MyStatus = 0x05;
+}
+
+void LastOne_Strategy(void)
+{
+	//分两种情况，如果只有两个已知节点，无法构成三点协作
+	//这时候和两点通信，构成三角形，可以随意旋转
+	//如果大于两个已知节点，我和协作点之外，我再挑一个点，三点定位
+	//这个有关netCnt的if-else直接让第三点自己判断就行
+	if(netCnt == 2)
+	{
+		u16 Axis[4] = {0, 0, 0, 0}, dist_Array[2] = {0, 0};
+		u16 posA[2] = {netInfo[0].RectX, netInfo[0].RectY};
+		u16 posB[2] = {netInfo[1].RectX, netInfo[1].RectY};
+		
+		if(Initiator_Ranging(netInfo[0].ID, 1, 0xFE, 0) == 0xAA)
+		{
+			dist_Array[0] = distance_cm;
+			if(Initiator_Ranging(netInfo[1].ID, 1, 0xFE, 0) == 0xAA)
+			{
+				dist_Array[1] = distance_cm;
+				Calculate_My_Pos(posA, posB, dist_Array, Axis);
+				myInfo.MyStatus = 0x05;
+				myInfo.Rect_Axis[0] = Axis[0];
+				myInfo.Rect_Axis[1] = Axis[1];
+				//我也记录下我的信息
+				NetInfo_Init(MyID, Axis[0], Axis[1]);
+				//告诉大家我的信息
+				CorpInfo_Msg(MyID, Axis);
+			}
+		}		
+	}
+	else if(netCnt > 2)
+	{
+		u16 Axis[2] = {0, 0}, dist_Array[3] = {0, 0, 0};
+		u16 posA[2] = {netInfo[netCnt - 1].RectX, netInfo[netCnt - 1].RectY};
+		u16 posB[2] = {netInfo[netCnt - 2].RectX, netInfo[netCnt - 2].RectY};
+		u16 posC[2] = {netInfo[netCnt - 3].RectX, netInfo[netCnt - 3].RectY};
+		
+		if(Initiator_Ranging(netInfo[netCnt - 1].ID, 1, 0xFE, 0) == 0xAA)
+		{
+			dist_Array[0] = distance_cm;
+			if(Initiator_Ranging(netInfo[netCnt - 2].ID, 1, 0xFE, 0) == 0xAA)
+			{
+				dist_Array[1] = distance_cm;
+				if(Initiator_Ranging(netInfo[netCnt - 3].ID, 1, 0xFE, 0) == 0xAA)
+				{
+					dist_Array[2] = distance_cm;
+					//成功得到数据，计算我的坐标
+					Cal_Mypos_Triangle(posA, posB, posC, dist_Array, Axis);
+					myInfo.MyStatus = 0x05;
+					myInfo.Rect_Axis[0] = Axis[0];
+					myInfo.Rect_Axis[1] = Axis[1];
+					//我也记录下我的信息
+					NetInfo_Init(MyID, Axis[0], Axis[1]);
+					//告诉大家我的信息
+					CorpInfo_Msg(MyID, Axis);
+				}
+			}
+		}
+	}
+	else
+	{
+		//Error_Handler()
+	}
 }
 
 void NetInfo_Init(u8 ID, u16 RectX, u16 RectY)
@@ -409,6 +543,35 @@ void Calculate_My_Pos(u16 *tempa, u16 *tempb, u16 *dist_Array, u16 *Axis)
 	Axis[1] = (u16)ya;
 	Axis[2] = (u16)xb;
 	Axis[3] = (u16)yb;
+}
+
+void Cal_Mypos_Triangle(u16 posA[2], u16 posB[2], u16 posC[2], u16 dist_Array[3], u16 Axis[2])
+{
+	u16 temp;
+	double A, B, C, D, E, F;
+	u16 Axis_temp[4];
+	Calculate_My_Pos(posA, posB, dist_Array, Axis_temp);
+	
+	A = posC[0] - Axis_temp[0];
+	B = posC[1] - Axis_temp[1];
+	C = A * A + B * B - dist_Array[2] * dist_Array[2];
+	C = C > 0 ? C : -C;
+	
+	D = posC[0] - Axis_temp[2];
+	E = posC[1] - Axis_temp[3];
+	F = D * D + E * E - dist_Array[2] * dist_Array[2];
+	F = F > 0 ? F : -F;
+	
+	if(C < F)
+	{
+		Axis[0] = Axis_temp[0];
+		Axis[1] = Axis_temp[1];
+	}
+	else
+	{
+		Axis[0] = Axis_temp[2];
+		Axis[1] = Axis_temp[3];
+	}
 }
 
 void Decide_Our_Pos(u16 *myAxis, u16 *corpAxis, u16 dist, u8 CorpID)

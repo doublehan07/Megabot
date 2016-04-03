@@ -7,7 +7,9 @@
 		type = 0x04 - 指定消息								id = 被指定点id         (频段根据自己是协作点还是主动点身份自动选择)
 		type = 0x05 - 广播自己坐标消息    
 		type = 0x06 - 开始新一轮的定位，大boss
-		type = 0x07 - 回应广播消息					
+		type = 0x07 - 回应广播消息	
+		type = 0x08 - 指定最后一点自行定位消息
+		type = 0x09 - 宣布网络定位结束大家都return的消息
   ******************************************************************************
   */
 
@@ -35,60 +37,17 @@ void Broadcast_Msg(u8 CorpID, u8 *ID)
 	bdc_msg[6] = (u8)(RectY >> 8);
 	
 	/* Start transmission */
-	/*
 	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
-	
-	dwt_setautorxreenable(0); //禁止自动重启接收
-	dwt_setdblrxbuffmode(1); //开启双收模式
-			
-	//要求HSRBP == ICRBP
-	dwt_syncrxbufptrs();
-	
-	dwt_setrxaftertxdelay(0);
-	dwt_setrxtimeout(0); //这个参数要调，一次接收的timeout时间
-	
-	dwt_writetxdata(sizeof(bdc_msg), bdc_msg, 0);
-	dwt_writetxfctrl(sizeof(bdc_msg), 0);
-	
-	dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
-	*/
-	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
-	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
-	
-	dwt_setdblrxbuffmode(0); //close双收模式
 			
 	dwt_setrxaftertxdelay(0);
-	dwt_setrxtimeout(0); //这个参数要调，一次接收的timeout时间
+	dwt_setrxtimeout(5000); //这个参数要调，接收等待时间
 	
 	dwt_writetxdata(sizeof(bdc_msg), bdc_msg, 0);
 	dwt_writetxfctrl(sizeof(bdc_msg), 0);
 	
 	dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
 	Double_Buff_Recp_Listening(ID, 1);
-}
-
-void CorpInfo_Msg(u8 CorpID, u16 *Axis)
-{
-	//CmdType | CorpID | MyID | RectXL | RectXH | RectYL | RectYH | CRC | CRC
-	static u8 bdc_msg[9] = {0x05, 0xFF, 0, 0, 0, 0, 0, 0x0D, 0x0A};
-	
-	bdc_msg[2] = CorpID;
-	bdc_msg[3] = (u8)Axis[0];
-	bdc_msg[4] = (u8)(Axis[0] >> 8);
-	bdc_msg[5] = (u8)Axis[1];
-	bdc_msg[6] = (u8)(Axis[1] >> 8);
-	
-	/* Start transmission */
-	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
-	dwt_setdblrxbuffmode(0); //禁止双收模式
-	
-	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
-	
-	dwt_writetxdata(sizeof(bdc_msg), bdc_msg, 0);
-	dwt_writetxfctrl(sizeof(bdc_msg), 0);
-	
-	dwt_starttx(DWT_START_TX_IMMEDIATE);
 }
 
 void Selected_Msg(u8 SelectedID, u8 Frec)
@@ -101,12 +60,35 @@ void Selected_Msg(u8 SelectedID, u8 Frec)
 	
 	/* Start transmission */
 	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
-	dwt_setdblrxbuffmode(0); //禁止双收模式
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
 	
 	dwt_writetxdata(sizeof(slc_msg), slc_msg, 0);
 	dwt_writetxfctrl(sizeof(slc_msg), 0);
 	dwt_starttx(DWT_START_TX_IMMEDIATE);
+	Delay(1);
+}
+
+void CorpInfo_Msg(u8 CorpID, u16 *Axis)
+{
+	//CmdType | CorpID | RectXL | RectXH | RectYL | RectYH | CRC | CRC
+	static u8 bdc_msg[8] = {0x05, 0, 0, 0, 0, 0, 0x0D, 0x0A};
+	
+	bdc_msg[1] = CorpID;
+	bdc_msg[2] = (u8)Axis[0];
+	bdc_msg[3] = (u8)(Axis[0] >> 8);
+	bdc_msg[4] = (u8)Axis[1];
+	bdc_msg[5] = (u8)(Axis[1] >> 8);
+	
+	/* Start transmission */
+	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
+	
+	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
+	
+	dwt_writetxdata(sizeof(bdc_msg), bdc_msg, 0);
+	dwt_writetxfctrl(sizeof(bdc_msg), 0);
+	
+	dwt_starttx(DWT_START_TX_IMMEDIATE);
+	Delay(1);
 }
 
 void Boss_Msg(void)
@@ -116,12 +98,12 @@ void Boss_Msg(void)
 	
 	/* Start transmission */
 	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
-	dwt_setdblrxbuffmode(0); //禁止双收模式
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
 	
 	dwt_writetxdata(sizeof(boss_msg), boss_msg, 0);
 	dwt_writetxfctrl(sizeof(boss_msg), 0);
 	dwt_starttx(DWT_START_TX_IMMEDIATE);
+	Delay(1);
 }
 
 void Resp_Msg(void)
@@ -131,10 +113,48 @@ void Resp_Msg(void)
 	
 	/* Start transmission */
 	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
-	dwt_setdblrxbuffmode(0); //禁止双收模式
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
 	
 	dwt_writetxdata(sizeof(resp_msg), resp_msg, 0);
 	dwt_writetxfctrl(sizeof(resp_msg), 0);
+	
+	Delay(MyID); //Avoid collision.
 	dwt_starttx(DWT_START_TX_IMMEDIATE);
+	Delay(1);
+}
+
+void Last_One_Msg(u8 LastID)
+{
+	//CmdType | SelectedID | 0x0D | 0x0A
+	static u8 last_msg[4] = {0x08, 0, 0x0D, 0x0A};
+	
+	last_msg[1] = LastID;
+	
+	/* Start transmission */
+	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
+	
+	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
+	
+	dwt_writetxdata(sizeof(last_msg), last_msg, 0);
+	dwt_writetxfctrl(sizeof(last_msg), 0);
+	
+	dwt_starttx(DWT_START_TX_IMMEDIATE);
+	Delay(1);
+}
+
+void Stop_Waiting_Msg(void)
+{
+	//CmdType | 0x0D | 0x0A
+	static u8 stop_msg[3] = {0x09, 0x0D, 0x0A};
+	
+	/* Start transmission */
+	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
+	
+	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
+	
+	dwt_writetxdata(sizeof(stop_msg), stop_msg, 0);
+	dwt_writetxfctrl(sizeof(stop_msg), 0);
+	
+	dwt_starttx(DWT_START_TX_IMMEDIATE);
+	Delay(1);
 }
