@@ -414,8 +414,13 @@ void LastOne_Strategy(void)
 	if(netCnt == 2)
 	{
 		u16 Axis[4] = {0, 0, 0, 0}, dist_Array[2] = {0, 0};
-		u16 posA[2] = {netInfo[0].RectX, netInfo[0].RectY};
-		u16 posB[2] = {netInfo[1].RectX, netInfo[1].RectY};
+		u16 posA[2] = {0, 0};
+		u16 posB[2] = {0, 0};
+		
+		posA[0] = netInfo[0].RectX;
+		posA[1] = netInfo[0].RectY;
+		posB[0] = netInfo[1].RectX;
+		posB[1] = netInfo[1].RectY;
 		
 		if(Initiator_Ranging(netInfo[0].ID, 1, 0xFE, 0) == 0xAA)
 		{
@@ -437,9 +442,16 @@ void LastOne_Strategy(void)
 	else if(netCnt > 2)
 	{
 		u16 Axis[2] = {0, 0}, dist_Array[3] = {0, 0, 0};
-		u16 posA[2] = {netInfo[netCnt - 1].RectX, netInfo[netCnt - 1].RectY};
-		u16 posB[2] = {netInfo[netCnt - 2].RectX, netInfo[netCnt - 2].RectY};
-		u16 posC[2] = {netInfo[netCnt - 3].RectX, netInfo[netCnt - 3].RectY};
+		u16 posA[2] = {0, 0};
+		u16 posB[2] = {0, 0};
+		u16 posC[2] = {0, 0};
+		
+		posA[0] = netInfo[netCnt - 1].RectX;
+		posA[1] = netInfo[netCnt - 1].RectY;
+		posB[0] = netInfo[netCnt - 2].RectX;
+		posB[1] = netInfo[netCnt - 2].RectY;
+		posC[0] = netInfo[netCnt - 3].RectX;
+		posC[1] = netInfo[netCnt - 3].RectY;
 		
 		if(Initiator_Ranging(netInfo[netCnt - 1].ID, 1, 0xFE, 0) == 0xAA)
 		{
@@ -547,7 +559,6 @@ void Calculate_My_Pos(u16 *tempa, u16 *tempb, u16 *dist_Array, u16 *Axis)
 
 void Cal_Mypos_Triangle(u16 posA[2], u16 posB[2], u16 posC[2], u16 dist_Array[3], u16 Axis[2])
 {
-	u16 temp;
 	double A, B, C, D, E, F;
 	u16 Axis_temp[4];
 	Calculate_My_Pos(posA, posB, dist_Array, Axis_temp);
