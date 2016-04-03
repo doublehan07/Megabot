@@ -43,7 +43,7 @@ void Receptor_Strategy(void) //我是监听者，我要继续子网的定位
 		upperAsk = Receptor_Listening();
 	}
 	while(upperAsk == 0); //等待接收到消息
-	if(upperAsk == 0xAA) //上位机打断了监听
+	if(upperAsk == 0xEE) //上位机打断了监听
 	{
 		upperAsk = 0;
 		return;
@@ -183,6 +183,7 @@ void Ranging_Strategy(void)
 				dist_Array[2] = distance_cm;
 				Change_Freq(0);
 				//没我什么事了，我等着协作点广播我的坐标和它自己的坐标
+				myInfo.MyStatus = 0x05;
 			}
 		}
 	}	
@@ -237,7 +238,7 @@ void FirstOne_Strategy(u8 CorpID)
 {
 	u8 flag = 0, corp_TarID;
 	u8 Resp_ID[3] = {0, 0, 0};
-	myInfo.MyStatus = 0x01;
+	myInfo.MyStatus = 0x01; //BUG！！广播消息那里会有未知的错误
 	//我开始启动广播，在我网络里面的点都要回应，同时记录下我的坐标(RectX, RectY)
 	NetInfo_Init(MyID, myInfo.Rect_Axis[0], myInfo.Rect_Axis[1]); //我也记录我的坐标
 	Broadcast_Msg(CorpID, Resp_ID);
@@ -266,7 +267,7 @@ void FirstOne_Strategy(u8 CorpID)
 	}
 	while(flag != 1);
 	//我知道协作点也知道啦，开始第一轮测距吧！有点小紧张hhh
-	if(Initiator_Ranging(Resp_ID[1], 1, 0x01, 0) == 0xAA) //成功测距啦，我要切换频段
+	if(Initiator_Ranging(Resp_ID[1], 1, 0x01, 0) == 0xAA) //成功测距啦，我要切换频段 BUG！！上位机打断改成0xEE
 	{
 		Change_Freq(1);
 		//这里要有失败的监听处理机制，暂时还没写
@@ -277,7 +278,7 @@ void FirstOne_Strategy(u8 CorpID)
 			Change_Freq(0);
 		}
 	}
-	
+	myInfo.MyStatus = 0x05;
 }
 
 void Coordianator_Strategy(u8 boss_ID)
@@ -286,7 +287,7 @@ void Coordianator_Strategy(u8 boss_ID)
 	u8 Resp_ID[3] = {0, 0, 0};
 	//我被指定协作了，马上转双收状态！
 	Double_Buff_Recp_Listening(Resp_ID, 0);
-	myInfo.MyStatus = 0x02;
+	myInfo.MyStatus = 0x02; //////////////////BUG!!!!!!!!!!!!!!!!!!!!!!!
 	//我开始监听主动点的选择信息
 	do
 	{
@@ -331,6 +332,7 @@ void Coordianator_Strategy(u8 boss_ID)
 	{
 		
 	}
+	myInfo.MyStatus = 0x05;
 }
 
 void NetInfo_Init(u8 ID, u16 RectX, u16 RectY)

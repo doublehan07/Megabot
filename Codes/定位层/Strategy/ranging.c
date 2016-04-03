@@ -510,7 +510,7 @@ u8 Receptor_Listening(void)
 		//这里要有监听被打断的机制吗？
 		if(Usart_RX_flag == SET) //当上位机发来信息
 		{
-			return 0xAA;
+			return 0xEE;
 		}
 	}
 
