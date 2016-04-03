@@ -55,7 +55,8 @@ void ParseSerialData(unsigned char ucData)
 void AI_Stategy(void)
 {
 	if(Usart_RX_flag == SET) //当上位机发来信息
-	{		
+	{	
+		Usart_RX_flag = RESET;
 		//处理指令		
 		if(upperCmd.CmdType == 0x00)		
 		{

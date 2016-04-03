@@ -24,6 +24,7 @@ void Broadcast_Msg(u8 CorpID, u8 *ID)
 {
 	//CmdType | CorpID | MyID | RectXL | RectXH | RectYL | RectYH | CRC | CRC
 	static u8 bdc_msg[9] = {0x03, 0, MyID, 0, 0, 0, 0, 0x0D, 0x0A};
+	
 	u16 RectX = (u16)myInfo.Rect_Axis[0];
 	u16 RectY = (u16)myInfo.Rect_Axis[1];
 	
@@ -34,11 +35,10 @@ void Broadcast_Msg(u8 CorpID, u8 *ID)
 	bdc_msg[6] = (u8)(RectY >> 8);
 	
 	/* Start transmission */
+	/*
 	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
-	
 	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
 	
-	/*
 	dwt_setautorxreenable(0); //禁止自动重启接收
 	dwt_setdblrxbuffmode(1); //开启双收模式
 			
@@ -46,22 +46,25 @@ void Broadcast_Msg(u8 CorpID, u8 *ID)
 	dwt_syncrxbufptrs();
 	
 	dwt_setrxaftertxdelay(0);
-	dwt_setrxtimeout(10000); //这个参数要调，一次接收的timeout时间
+	dwt_setrxtimeout(0); //这个参数要调，一次接收的timeout时间
 	
 	dwt_writetxdata(sizeof(bdc_msg), bdc_msg, 0);
 	dwt_writetxfctrl(sizeof(bdc_msg), 0);
 	
 	dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
 	*/
-	//双收失败了，先试试单收能不能收到东西
+	dwt_forcetrxoff(); //如果不让DW回到IDLE状态，设置timeout会失效，之后如不能接受会卡死在while循环里
+	dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
+	
+	dwt_setdblrxbuffmode(0); //close双收模式
+			
 	dwt_setrxaftertxdelay(0);
-	dwt_setrxtimeout(10000); //这个参数要调，一次接收的timeout时间
+	dwt_setrxtimeout(0); //这个参数要调，一次接收的timeout时间
 	
 	dwt_writetxdata(sizeof(bdc_msg), bdc_msg, 0);
 	dwt_writetxfctrl(sizeof(bdc_msg), 0);
 	
 	dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
-	
 	Double_Buff_Recp_Listening(ID, 1);
 }
 

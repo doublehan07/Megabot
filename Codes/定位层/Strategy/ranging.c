@@ -544,6 +544,7 @@ void Double_Buff_Recp_Listening(u8 *ID, u8 if_brd_use)
 	//双收模式overrun的case太难处理了！
 	if(if_brd_use == 0)
 	{
+		/*
 		dwt_forcetrxoff(); //Force IC back to IDLE mode.	
 		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event	
 		
@@ -555,9 +556,22 @@ void Double_Buff_Recp_Listening(u8 *ID, u8 if_brd_use)
 		dwt_setrxtimeout(3000); //这个参数要调，一次接收的timeout时间
 			
 		dwt_rxenable(0); //Start RX
+		*/
+		dwt_forcetrxoff(); //Force IC back to IDLE mode.	
+		dwt_setdblrxbuffmode(0); //Close double buffer mode.
+		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event	
+		dwt_setrxtimeout(0); //阻塞式监听
+
+		dwt_rxenable(0); //Activate reception immediately.
 	}
 	
-	while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))	{}
+	while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))	
+	{
+		if(Usart_RX_flag == SET) //当上位机发来信息
+		{
+			return;
+		}
+	}
 		
 	if(status_reg & SYS_STATUS_RXFCG)
 	{		
@@ -566,10 +580,11 @@ void Double_Buff_Recp_Listening(u8 *ID, u8 if_brd_use)
 		{		
 			dwt_readrxdata(msg_Rx_Buffer, frame_len, 0);
 		}
-		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD); //clear good&bad event
-		dwt_syncrxbufptrs(); //切换保证两个相等
-		dwt_rxenable(0); //马上开始接收下一个
+		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_TX | SYS_STATUS_ALL_RX_GOOD | SYS_STATUS_ALL_RX_ERR); //clear good&bad event
+//		dwt_syncrxbufptrs(); //切换保证两个相等
+		dwt_setrxtimeout(5000); 
 		counter++;
+		dwt_rxenable(0); //马上开始接收下一个
 			
 		while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG | SYS_STATUS_ALL_RX_ERR)))	{}
 				
