@@ -3,6 +3,7 @@
 
 #include "stm32f4xx.h"
 
+void MOTOR_EXTI_Init(void);
 void MOTOR_Init(void);
 void Motor_Exec(void);
 void MOTOR_Voltage_Control(void);

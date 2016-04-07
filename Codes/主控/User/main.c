@@ -20,18 +20,23 @@ int main(void)
 	//所有外设的初始化：时钟、IO、定时器等
 	Our_Sys_Init();
 	/* Insert 50 ms delay */
-  Delay(5);
+  Delay(50);
 	//关于初始化：
 	//如果一开始就可以做的尽量都放在开始时
 	//如果有后续工作则在此处另外调用
-	
 	
   /* Infinite loop */
 	Delay(5000);
   while (1)
   {
-		Motor_Test();
-
+		DisAndTurn(0,1,286);
+		while (isRunning);
+		DisAndTurn(90,1,286);
+		while (isRunning);
+		DisAndTurn(0,1,-286);
+		while (isRunning);
+		DisAndTurn(-90,1,286);
+		while (isRunning);
   }
 }
 

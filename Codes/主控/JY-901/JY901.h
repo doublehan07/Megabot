@@ -5,6 +5,8 @@
 #include "stm32f4xx.h"
 #include <string.h>
 
+#include "port.h"
+
 /* Exported types ------------------------------------------------------------*/
 struct STime
 {
@@ -65,6 +67,19 @@ struct SGPSV
 	long lGPSVelocity;
 };
 
+struct SQuat
+{
+	short Q[4];
+};
+
+struct SSatePre
+{
+	short SN;
+	short PDOP;
+	short HDOP;
+	short VDOP;
+};
+
 /* Exported constants --------------------------------------------------------*/
 extern struct STime				stcTime;
 extern struct SAcc 				stcAcc;
@@ -76,6 +91,7 @@ extern struct SPress 			stcPress;
 extern struct SLonLat 		stcLonLat;
 extern struct SGPSV 			stcGPSV;
 extern float sAngle;
+extern unsigned char DMA_JY_Buffer[11];
 
 /* Exported macro ------------------------------------------------------------*/
 #define SAVE 			0x00
@@ -151,5 +167,5 @@ extern float sAngle;
 
 /* Exported functions ------------------------------------------------------- */
 void ParseSerialData(unsigned char ucData);
-
+void ParseDMAData(void);
 #endif
