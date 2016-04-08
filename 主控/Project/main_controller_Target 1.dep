@@ -577,7 +577,7 @@ I (..\Motor\pwm.h)(0x56D6C951)
 I (..\Motor\adc.h)(0x56D6C930)
 I (..\Motor\MovementCtr.h)(0x57050661)
 I (..\platform\port.h)(0x57051F10)
-F (..\Motor\PWM.C)(0x5705007A)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901 -I..\Strategy-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\pwm.o --omf_browse .\outputs\pwm.crf --depend .\outputs\pwm.d)
+F (..\Motor\PWM.C)(0x5707AAB4)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901 -I..\Strategy-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\pwm.o --omf_browse .\outputs\pwm.crf --depend .\outputs\pwm.d)
 I (..\Motor\pwm.h)(0x56D6C951)
 I (..\platform\stm32f4xx.h)(0x56D9597F)
 I (D:\Keil\ARM\CMSIS\Include\core_cm4.h)(0x532BF7C2)
@@ -655,7 +655,7 @@ I (..\Motor\motor_ctr.h)(0x56EC0AE1)
 I (..\platform\port.h)(0x57051F10)
 I (..\JY-901\JY901.h)(0x57051E60)
 I (D:\Keil\ARM\ARMCC\include\string.h)(0x51C7C554)
-F (..\JY-901\JY901.c)(0x57054500)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901 -I..\Strategy-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\jy901.o --omf_browse .\outputs\jy901.crf --depend .\outputs\jy901.d)
+F (..\JY-901\JY901.c)(0x5707ADC6)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I..\STM32F4xx_StdPeriph_Driver\inc -I..\User -I..\platform -I..\Motor -I..\JY-901 -I..\Strategy-I D:\Keil\ARM\RV31\INC-I D:\Keil\ARM\CMSIS\Include-I D:\Keil\ARM\Inc\ST\STM32F4xx-DUSE_STDPERIPH_DRIVER -D__FPU_USED="1" -DARM_MATH_CM4 -D__FPU_PRESENT="1" -DHSE_VALUE="8000000" -DSTM32F40_41xxx -DSTM32F40_41xxx-o .\outputs\jy901.o --omf_browse .\outputs\jy901.crf --depend .\outputs\jy901.d)
 I (..\JY-901\JY901.h)(0x57051E60)
 I (..\platform\stm32f4xx.h)(0x56D9597F)
 I (D:\Keil\ARM\CMSIS\Include\core_cm4.h)(0x532BF7C2)

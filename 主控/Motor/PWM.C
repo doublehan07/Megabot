@@ -31,8 +31,8 @@ void PWM_Init(void)
 
 	//timer3 initialize
 	
-	//timer3 base initialize @10kHz
-	TIM_TimeBaseStructure.TIM_Prescaler = 23;
+	//timer3 base initialize @5kHz
+	TIM_TimeBaseStructure.TIM_Prescaler = 47;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIM_TimeBaseStructure.TIM_Period = 799;
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;

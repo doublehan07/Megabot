@@ -22,9 +22,27 @@ struct SLonLat 	stcLonLat;
 struct SGPSV 		stcGPSV;
 struct SQuat		stcQuat;
 float 					sAngle = 0;
+short						temp_Angle[5], i=0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+float Calculate_Angle()
+{
+	float sum = 0;
+	short max = 0x8000, min = 0x7fff, j;
+	temp_Angle[i++] = stcAngle.Angle[2];
+	i %= 5;
+	for (j = 0; j < 5; j++)
+	{
+		sum+=temp_Angle[j];
+		if (max < temp_Angle[j])
+			max = temp_Angle[j];
+		if (min > temp_Angle[j])
+			min = temp_Angle[j];
+	}
+	return ((sum - max - min)*60/32768);
+}
+
 void ParseSerialData(unsigned char ucData)
 {
 	static unsigned char ucRxBuffer[250];
@@ -49,7 +67,7 @@ void ParseSerialData(unsigned char ucData)
 			case 0x52:	memcpy(&stcGyro, &ucRxBuffer[2], 8); break;			//角速度
 									//sAngle += stcGyro.w[2] / 1638.4;
 			case 0x53:	memcpy(&stcAngle, &ucRxBuffer[2], 8);						//角度
-									sAngle = stcAngle.Angle[2]*180./32768; break;
+									sAngle = Calculate_Angle(); break;
 			case 0x54:	memcpy(&stcMag, &ucRxBuffer[2], 8); break;			//磁场
 			case 0x55:	memcpy(&stcDStatus, &ucRxBuffer[2], 8); break;	//端口状态数据
 			case 0x56:	memcpy(&stcPress, &ucRxBuffer[2], 8); break;		//气压
