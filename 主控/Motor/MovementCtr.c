@@ -63,7 +63,7 @@ void DisAndTurn(short angle, uint8_t isRelative, int32_t dis)
 #endif
 	MOTOR_RUNNING_FLAG = 100;
 }
-#define RANGE 2
+#define RANGE 5
 
 void Movement_Exec()
 {
