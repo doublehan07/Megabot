@@ -55,7 +55,11 @@ u16 Calculate_Angle(void) //角度滤波，避免抖动
 			min = temp_Angle[j];
 	}
 	result  = (sum - max - min) * 60.0 / 32768.0; //按照datasheet给的计算公式
-	return_val = ((u16)result + 360) % 360; //角度输出为0-360整型就可以啦
+	return_val = ((u16)result + 360);// % 360; //角度输出为0-360整型就可以啦
+	while(return_val > 360)
+	{
+		return_val -= 360;
+	}
 	return return_val;
 }
 

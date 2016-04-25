@@ -106,18 +106,18 @@ void Motor_Speed_PID(void)
 		last2Error = last1Error;
 		last1Error = error;
 			
-		if(phaseFlag)
+		if(phaseFlag == 1)
 		{
-			if(i)
+			if(i == 1)
 				MOTOR_RIGHT_F;
-			else
+			else if(i == 0)
 				MOTOR_LEFT_F;
 		}
-		else
+		else if(phaseFlag == 0)
 		{
-			if(i)
+			if(i == 1)
 				MOTOR_RIGHT_B;
-			else
+			else if(i==0)
 				MOTOR_LEFT_B;
 		}
 		

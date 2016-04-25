@@ -29,23 +29,13 @@ int main(void)
 	Motor_Set(0);
 	
   /* Infinite loop */
-	Delay(1000);
+	Delay(5000);
   while (1)
   {
-		/*
-		Motor_Setspeed(MOTOR_LEFT, -40);
-		Motor_Setspeed(MOTOR_RIGHT, -40);
-		Delay(2000);
-		Motor_Setspeed(MOTOR_LEFT, 40);
-		Motor_Setspeed(MOTOR_RIGHT, 40);
-		Delay(2000);
-		*/
-		Motor_SetAngle(90, 1);
-		while(MOTOR_TURNNING_FLAG);
-		Delay(2000);
-		//Motor_Turnangle(-90, 1);
-		//while(MOTOR_TURNNING_FLAG);
-		//Delay(500);
+		Motor_Setspeed(33,30);
+		Delay(200);
+		//Motor_Setspeed(0,0);
+		//rDelay(2000);
   }
 }
 
