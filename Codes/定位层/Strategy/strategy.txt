@@ -1,0 +1,16 @@
+1. Leader节点进行广播信息，(方法: Leader监听所有点的回应，选取尚未定位的ID(最多3个)构成接下来要操作的网络)
+//这个时候Leader节点临时储存了Partner1,Partner2, ID1, ID2, ID3五个ID号
+2. 如果是一个点的情况：
+	构成一个四元组操作(leader, Partner1, Partner2, ID1)
+		
+		leader，Partner1，Partner2分别与ID1进行测距
+		确定ID1的坐标，将其status置为已定位
+
+3. 如果是两个点的情况：
+	构成一个四元组操作(Leader, Partner1, ID1, ID2)
+		leader通知
+4. 如果是三个点的情况：
+	构成一个四元组操作(Leader, ID1, ID2, ID3)
+5. 测过距的ID做一个status标记
+6. 重回1
+
