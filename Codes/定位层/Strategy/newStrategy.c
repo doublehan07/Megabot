@@ -64,7 +64,16 @@ void SGY_Cross_measuring(){}
 void SGY_Init_all_id(){}
 
 void SGY_Leader(){
-	Listening
+	do{
+		upperAsk = Receptor_Listening(0);
+	}
+	while(upperAsk == 0); //µÈ´ý½ÓÊÕµ½ÏûÏ¢
+	if(upperAsk == 0xEE) //ÉÏÎ»»ú´ò¶ÏÁË¼àÌý
+	{
+		upperAsk = 0;
+		return;
+	}//listening...
+
 	SGY_Recieveing(&data);
 	if recieve the indication from master{
 		SGY_Init_all_id();
@@ -72,11 +81,18 @@ void SGY_Leader(){
 
 	}
 	if Init is OK{
+		//start the four point locating...
+		SGY_Setchannel(P2, P3, ChB);
+
+		SGY_Measuring_Distance(P4);
+
+	}
+	if four point locating is Done
 		//Set P1, P2 in ChA, P3, P4 in CHB
 		SGY_Setchannel(P1, ChA);
 		SGY_Setchannel(P2, ChA);
-		SGY_Setchannel(P3, ChB);
-		SGY_Setchannel(P4, ChB);
+		//SGY_Setchannel(P3, ChB);
+		//SGY_Setchannel(P4, ChB);
 
 		//Set ID[1:n/2] in ChA, ID[n/2+1:n] in ChB
 
@@ -84,33 +100,27 @@ void SGY_Leader(){
 		SGY_Setchannel(id[n/2+1:n], ChB);
 	
 		//Let P3 Measuring the Distance
-		SGY_Indication_Measuringdistance(P3, id[1:n/2]);
+		SGY_Indication_Measuringdistance(P3, id[n/2+1:n]);
+		SGY_Indication_Measuringdistance(P2, id[1:n/2]);
+
+		SGY_Setchannel(P3, ChB);
+		SGY_Setchannel(P4, ChB);
 		//Start Measuring Distance with [1:n/2]
-		SGY_Measuring_Distance(&data, id[n/2:n]);
+		SGY_Measuring_Distance(&data, id[1:n/2]);
 
 	}
 
 	if (data[recieveID]==P1 && data[action]==firstStep && data[success]==success){//First Step Measuring of P1 is over 
 		firstStep_status |= 0x01;
 		//Let P2 Mesuring Distance with [1:n/2]	
-		SGY_Indication_Measuringdistance(P2);
-		SGY_Sendmessage(&data);
+		SGY_Indication_Measuringdistance(P2, id[1:n/2]);
 	}
 	if (data[recieveID]==P2 && data[action]==firstStep && data[success]==success){//First Step Measuring of P2 is over 
 		firstStep_status |= 0x02;
 	}
-	if (data[recieveID]==P3 && data[action]==firstStep && data[success]==success){//First Step Measuring of P3 is over 
-		firstStep_status |= 0x04;	
-		SGY_Indication_Measuringdistance(P4);
-		SGY_Sendmessage(&data);
-
-		//Let P3 stays in CHA 
-		SGY_Setchannel(P3, ChA);
-	}
-	if (data[recieveID]==P1 && data[action]==firstStep && data[success]==success){//First Step Measuring of P4 is over 
-		firstStep_status |= 0x08;	
+	if (data[recieveID]==P4 && data[action]==firstStep && data[success]==success){//First Step Measuring of P4 is over 
+		firstStep_status |= 0x12;	
 		//Let P4 stays in CHA 
-		SGY_Setchannel(P4, ChA);
 	}
 	if (firstStep_status == 0xF){//First Step is done //status==0xF
 		//start second Step Measuring:
@@ -118,33 +128,107 @@ void SGY_Leader(){
 		//Let ID[n/2+1:n] stays in ChA
 		SGY_Setchannel(id[n/2+1:n], ChA);
 		//tell ID[1:n/2] begin the Second Step:// In this step there may be one case that ID[1] has already abandoned \
-		SGY_Indication_Measuringdistance(id[1:n/2])										//So if ID[1] recieves then it should boardcast to let other's know \
+		SGY_Indication_Measuringdistance(id[1:n/2], id[n/2+1:n]);										//So if ID[1] recieves then it should boardcast to let other's know \
 	}											//so every one should delay a moment to reieve the ok state
-	if (data[recieveID]<=n/2 && data[action]==secondStep && data[success]==success){//reply is ok
+	if (data[Cmtype]==Ind && data[recieveID]<=n/2 && data[action]==secondStep && data[success]==success){//reply is ok
 		//tell that ID to begin the measuring 
 		SGY_Indication_Measuringdistance(data[recieveiD], id[n/2+1:n]);
 		// and this id should indicate the next measuring
 	}
-	if (data[recieveID]<=n/2 && data[action]==secondStep && data[success]==success){//Measuring is done//but how to decide the whole processure is done?
+	if (data[Cmtype]==Ind && data[recieveID]<=n/2 && data[action]==secondStep && data[success]==success){//Measuring is done//but how to decide the whole processure is done?
 		//Set some status 
 	}
 }
 
-void SGY_P1(){
+void SGY_P2(){
+	do
+	{
+		upperAsk = Receptor_Listening(0);
+	}
+	while(upperAsk == 0); //µÈ´ý½ÓÊÕµ½ÏûÏ¢
+	if(upperAsk == 0xEE) //ÉÏÎ»»ú´ò¶ÏÁË¼àÌý
+	{
+		upperAsk = 0;
+		return;
+	}//listening...
+
+	if (data[Cmtype]==Act && data[action]==AllInit){
+		//Init data
+	} 
+	if (data[Cmtype]==Act && data[action]==setChannel){
+		channel==data[channel];
+	}
+	if (data[Cmtype]==Ind && data[action]==firstStep){
+		SGY_Measuring_Distance(&data, id[1:n/2])
+	}
+}
+void SGY_P3(){
+	do{
+		upperAsk = Receptor_Listening(0);
+	}
+	while(upperAsk == 0); //µÈ´ý½ÓÊÕµ½ÏûÏ¢
+	if(upperAsk == 0xEE){//
+		upperAsk = 0;
+		return;
+	}//listening...
+
+	if (data[Cmtype]==Act && data[action]==AllInit){
+		//Init data
+	} 
+	if (data[Cmtype]==Act && data[action]==setChannel){
+		channel=data[channel];
+	}
+	if (data[Cmtype]==Ind && data[action]==firstStep){
+		SGY_Measuring_Distance(&data, id[1:n/2])
+	}
+	if (data[Cmtype]==Msg && data[recieveID]==P3 && data[action]==firstStep && data[success]==success){//First Step Measuring of P1 is over 
+		//Let P2 Mesuring Distance with [1:n/2]	
+		SGY_Indication_Measuringdistance(P4, id[n/2+1:n]);
+		channel=~channel;
+	}
+}
+void SGY_P4(){
+	do{
+		upperAsk = Receptor_Listening(0);
+	}
+	while(upperAsk == 0); //µÈ´ý½ÓÊÕµ½ÏûÏ¢
+	if(upperAsk == 0xEE){
+		upperAsk = 0;
+		return;
+	}//listening...
+
+	if (data[Cmtype]==Act && data[action]==AllInit){
+		//Init data
+	} 
+	if (data[Cmtype]==Act && data[action]==setChannel){
+		channel==data[channel];
+	}
+	if (data[Cmtype]==Ind && data[action]==firstStep){
+		SGY_Measuring_Distance(&data, id[n/2:n/2+1]);
+	}
+	if (data[Cmtype]==Msg && data[recieveID]==P4 && data[action]==firstStep && data[success]==success){//First Step Measuring of P1 is over 
+		channel=~channel;
+		SGY_Sendmessage(&data);//send the message that the firstStep successed
+	}
 
 }
-void SGY_P2(){}
-void SGY_P3(){}
-void SGY_P4(){}
 
 void SGY_Receptor(){
+	do{
+		upperAsk = Receptor_Listening(0);
+	}
+	while(upperAsk == 0);
+	if(upperAsk == 0xEE) 
+		upperAsk = 0;
+		return;
+	}
 	if Measuring failed:
 		status = loss 
 	if status == loss{
 		return
 	}
 	//Listening...
-	while (!SGY_Recievemessage(&data) ){
+	while (!SGY_Recievemessage(&data)){
 
 	}
 	if Init{
@@ -168,4 +252,5 @@ void SGY_Receptor(){
 	}
 
 }
+
 
