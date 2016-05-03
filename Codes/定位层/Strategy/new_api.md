@@ -1,0 +1,24 @@
+##API
+
+data
+
+Cmtype:              fstMeasure:0xA sndMeasure:0xB trdMeasure:0xC  
+SenderID:			 id who send the message	
+RecieveIDLowerBound: LowerBound<=id who should recieve the message
+RecieveIDUpperBound: UpperBound>=id who should recieve the message
+CoodinateX:			
+CoodinateY:
+FLAG:                SUCCESS:0x01 FAIL:0x00
+
+
+void SGY_Sendmessage(&data)
+//Boardcast data
+
+void SGY_Measuring_Distance(&data)
+//Measuring 
+
+u8* active_measuring()
+u8* passive_measuring(int delay_ms)
+//return the message in poll
+//这两个名字按你的写，就是被动测距函数需要传进一个延时的毫秒数
+
