@@ -1,6 +1,6 @@
-#代码说明
+#麓煤脗毛脣碌脙梅
 
-##需求接口
+##脨猫脟贸陆脫驴脷
 struct MyInfo
 {
   present position
@@ -35,18 +35,18 @@ Goto_Polar_Axis(r,theta)
 
 return if_success
 
-##平台代码
-leader节点配三个uart，和两个dw&九轴通信
-自动回发测距就行，自己有一个方向，先别变，速度慢一点
+##脝陆脤篓麓煤脗毛
+leader陆脷碌茫脜盲脠媒赂枚uart拢卢潞脥脕陆赂枚dw&戮脜脰谩脥篓脨脜
+脳脭露炉禄脴路垄虏芒戮脿戮脥脨脨拢卢脳脭录潞脫脨脪禄赂枚路陆脧貌拢卢脧脠卤冒卤盲拢卢脣脵露脠脗媒脪禄碌茫
 
-tri节点配两个uart，和dw&九轴通信
-主要是goto函数的设计，之后follow模式不要知道leader的速度，用dist信息（一个）做pid
-dist信息自身需要有滤波机制
+tri陆脷碌茫脜盲脕陆赂枚uart拢卢潞脥dw&戮脜脰谩脥篓脨脜
+脰梅脪陋脢脟goto潞炉脢媒碌脛脡猫录脝拢卢脰庐潞贸follow脛拢脢陆虏禄脪陋脰陋碌脌leader碌脛脣脵露脠拢卢脫脙dist脨脜脧垄拢篓脪禄赂枚拢漏脳枚pid
+dist脨脜脧垄脳脭脡铆脨猫脪陋脫脨脗脣虏篓禄煤脰脝
 
-两个tri避免collision，考虑delay
+脕陆赂枚tri卤脺脙芒collision拢卢驴录脗脟delay
 
-##需要速度接口！！！给出m/s数值的！！
-入带编码器的电机
-后期，如果不做小平台demo，考虑装麦克纳姆轮做全向移动平台
+##脨猫脪陋脣脵露脠陆脫驴脷拢隆拢隆拢隆赂酶鲁枚m/s脢媒脰碌碌脛拢隆拢隆
+脠毛麓酶卤脿脗毛脝梅碌脛碌莽禄煤
+潞贸脝脷拢卢脠莽鹿没虏禄脳枚脨隆脝陆脤篓demo拢卢驴录脗脟脳掳脗贸驴脣脛脡脛路脗脰脳枚脠芦脧貌脪脝露炉脝陆脤篓
 
 Updated by haldak 3.3
