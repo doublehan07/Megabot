@@ -50,7 +50,7 @@ void Receptor_Strategy(void) //我是监听者，我要继续子网的定位
 	}
 	
 	//接收到的消息放在rx_buffer里面
-	//第一种可能，收到某个点的广播消息，若未翻转状态必须回应！
+	//第一种可能，收到某个点 的广播消息，若未翻转状态必须回应！
 	if(rx_buffer[0] == 0x03) //广播消息
 	{
 		static int16 RectX, RectY;
