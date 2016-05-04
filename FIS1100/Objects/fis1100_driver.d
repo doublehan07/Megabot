@@ -1,0 +1,9 @@
+.\objects\fis1100_driver.o: fis_driver\fis1100_driver.c
+.\objects\fis1100_driver.o: fis_driver\fis1100_driver.h
+.\objects\fis1100_driver.o: D:\MDKV5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\fis1100_driver.o: D:\MDKV5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\fis1100_driver.o: D:\MDKV5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\fis1100_driver.o: fis_driver\fis1100_hal.h
+.\objects\fis1100_driver.o: D:\MDKV5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\fis1100_driver.o: D:\MDKV5\ARM\ARMCC\Bin\..\include\assert.h
+.\objects\fis1100_driver.o: D:\MDKV5\ARM\ARMCC\Bin\..\include\math.h
