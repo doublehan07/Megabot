@@ -52,22 +52,8 @@
 
 
 //Asuming n-3 as leader
-void SGY_Four_point_measuring(int total, int ){
-	SGY_Sendmessage()
-}
-
-
-
-
-
-void SGY_Internel_measuring(){}
-void SGY_Cross_measuring(){}
-void SGY_Init_all_id(){
-	//...
-}
-
 void SGY_Leader(){
-	u8 data[MSGLEN]; 
+	u8 data[MSGLEN];
 	do{
 		upperAsk = Receptor_Listening(0);
 	}
@@ -77,43 +63,32 @@ void SGY_Leader(){
 		upperAsk = 0;
 		return;
 	}//listening...
-
-
-	SGY_Recieveing(&data);
 	if recieve the indication from master{
-		SGY_Init_all_id();
-		firstStep_status=0x0;
+		Done[0] = 0;
+		Done[1] = 0;
+		firstStatus = 0;
+		secondStatus = 0;
+		thirdStatus = 0;
 	}
 
-	if Init is OK{
+	if Init is ok {
 		//start the four point locating...
-		SGY_Indication(locating);	
-		data[Cmtype] = Measure;
+		data[Cmtype] = fstMeasure;
 		data[Sender] = P1;
 		data[RecieverL] = P2;
 		data[RecieverU] = P4;
-		data[Feq] = 0x00;
-		data[coodiX] = 0x00;
-		data[coodiY] = 0x00;
-		data[Success] = FAIL;
-		data[Loss] = 0x00;
 		SGY_Measuring_Distance(&data);//Measuring P1 with P2 P3 P4 
 	}
 
-	if (upperAsk[Cmtype] = Msg && upperAsk[Sender]==P4 && upperAsk[RecieverL] == P3 && upperAsk[RecieverU] == P3 && upperAsk[Success] == SUCCESS){//P4 replies Measuring status by P3 
+	if (upperAsk[Cmtype] = fstMeasure && upperAsk[Sender]==P4 && upperAsk[RecieverL] == P3 && upperAsk[RecieverU] == P3){//P4 replies Measuring status by P3 
 		data[Cmtype] = secMeasure;
 		data[Sender] = P1;
 		data[RecieverL] = P2;
 		data[RecieverU] = P4;
-		data[Feq] = 0x00;
-		data[coodiX] = 0x00;
-		data[coodiY] = 0x00;
-		data[Success] = FAIL;
-		data[Loss] = 0x00;
 		SGY_Sendmessage(&data);//tell P2 P3 to Start the Second Measure
 	}
 
-	if (upperAsk[Cmtype] = secMeasure && upperAsk[Sender] == P2 && upperAsk[RecieverL] == P1 && upperAsk[RecieverU] ==  P1 && upperAsk[Success] == SUCCESS){//
+	if (upperAsk[Cmtype] = secMeasure && upperAsk[Sender] == P2 && upperAsk[RecieverL] == P1 && upperAsk[RecieverU] == P1){//
 		data[Cmtype] = secMeasure;
 		data[Sender] = P1;
 		data[RecieverL] = 1;
@@ -139,7 +114,7 @@ void SGY_Leader(){
 		data[Sender] = P1;
 		data[RecieverL] = 1;
 		data[RecieverU] = n;
-		SGY_Sendmessage();
+		SGY_Sendmessage(&data);
 	}
 }
 
@@ -153,7 +128,7 @@ void SGY_P2(){
 		upperAsk = 0;
 		return;
 	}//listening...
-	if (upperAsk[Cmtype] == Measure && upperAsk[RecieveIDL] >=P2 && upperAsk[RecieveIDU] <= P2 && upperAsk[CommCount]==1){
+	if (upperAsk[Cmtype] == fstMeasure && upperAsk[RecieveIDL] >=P2 && upperAsk[RecieveIDU] <= P2 && upperAsk[CommCount]==1){
 		locatingStatus = passive_Measuring((P2 - upperAsk[Sender] - 1) % 3);
 	} 
 
@@ -203,7 +178,7 @@ void SGY_P3(){
 	}//listening...
 
 
-	if (upperAsk[Cmtype] == Measure && upperAsk[RecieveIDL] >=P3 && upperAsk[RecieveIDU] <= P3 && upperAsk[CommCount]==1){
+	if (upperAsk[Cmtype] == fstMeasure && upperAsk[RecieveIDL] >=P3 && upperAsk[RecieveIDU] <= P3 && upperAsk[CommCount]==1){
 		passive_Measuring(P3 - upperAsk[Sender] - 1) % 3);
 	} 
 
@@ -261,6 +236,7 @@ void SGY_P3(){
 
 void SGY_P4(){
 	u8 data[MSGLEN];
+
 	do{
 		upperAsk = Receptor_Listening(0);
 	}
@@ -271,10 +247,10 @@ void SGY_P4(){
 	}//listening...
 
 
-	if (upperAsk[Cmtype] == Measure && upperAsk[RecieveIDL] >=P4 && upperAsk[RecieveIDU] <= P4 && upperAsk[CommCount]==1){
-		locatingStatus = passive_Measuring(P4 - upperAsk[Sender] - 1) % 3);
-		if (locatingStatus != 0){
-			data[Cmtype] = Msg;
+	if (upperAsk[Cmtype] == fstMeasure && upperAsk[RecieveIDL] >=P4 && upperAsk[RecieveIDU] <= P4 && upperAsk[CommCount]==1){
+		locatingStatus = passive_Measuring((P4 - upperAsk[Sender] - 1) % 3)
+		if (locatingStatus != NULL){
+			data[Cmtype] = fstMeasure;
 			data[Sender] = P4;
 			data[RecieverL] = upperAsk[Sender];
 			data[RecieverU] = upperAsk[Sender];
@@ -336,18 +312,67 @@ void SGY_Receptor(){
 		SGY_Sendmessage(&data)
 	}
 
-	if (upperAsk[Cmtype] == secMeasure && upperAsk[Sender] == P1 && upperAsk[RecieverL] == P2 && upperAsk[RecieverU] ==  P4 && upperAsk[Success] == SUCCESS){
-		if (id > n/2){
+	if (upperAsk[Cmtype] == secMeasure && upperAsk[Sender] == P1 && upperAsk[RecieverL] == P2 && upperAsk[RecieverU] == P4 && upperAsk[Success] == SUCCESS){
+		if (id > n/2)
 			channel = ChB;
-		}
-		else {
+		else 
 			channel = ChA;
-		}
 	}
 
-	if (upperAsk[Cmtype] == secMeasure && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >=id && upperAsk[CommCount]==1){
+	if (upperAsk[Cmtype] == secMeasure && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >=id && upperAsk[CommCount] == 1){   //secMeasure 
 		msg = passive_Measuring((id-1) % (n/2));
-		dist[upperAsk[Sender]] = ;
+		if (id < n/2 + 1){
+			
+			if (upperAsk[Sender] == P1){
+				dist1 = msg[Dist1];
+				P1X = msg[coodiX];
+				P1Y = msg[coodiY];
+			}
+			if (upperAsk[Sender] == P2){
+				dist2 = msg[Dist2];
+				P2X = msg[coodiX];
+				P2Y = msg[coodiY];
+			}
+
+			d = sqrt((P1X - P2X)*(P1X - P2X) + (P1Y - P2Y)*(P1Y - P2Y));
+			p = (dist1 + dist2 + d) / 2;
+			S = sqrt(p*(p-dist1)*(p-dist2)*(p-d));
+			h = 2 * S / d;
+			a = sqrt(dist1*dist1 - h * h);
+			x_ = dist1 / d * P2X + (1 - dist1 / d) * P1X;
+			y_ = dist2 / d * P2Y + (1 - dist1 / d) * P1Y;
+			x1 = x_ + (P2X - P1X) * h / d;
+			y1 = y_ - (P2Y - P1Y) * h / d;
+			x2 = x_ - (P2X - P1X) * h / d;
+			y2 = y_ + (P2Y - P1Y) * h / d;
+
+		}
+		else {
+
+			if (upperAsk[Sender] == P3){
+				dist1 = msg[Dist1];
+				P3X = msg[coodiX];
+				P3Y = msg[coodiY];
+			}
+			if (upperAsk[Sender] == P4){
+				dist2 = msg[Dist2];
+				P4X = msg[coodiX];
+				P4Y = msg[coodiY];
+			}
+
+			d = sqrt((P3X - P4X)*(P3X - P4X) + (P3Y - P4Y)*(P3Y - P4Y));
+			p = (dist1 + dist2 + d) / 2;
+			S = sqrt(p*(p-dist1)*(p-dist2)*(p-d));
+			h = 2 * S / d;
+			a = sqrt(dist1*dist1 - h * h);
+			x_ = dist1 / d * P4X + (1 - dist1 / d) * P3X;
+			y_ = dist2 / d * P4Y + (1 - dist1 / d) * P3Y;
+			x1 = x_ + (P4X - P3X) * h / d;
+			y1 = y_ - (P4Y - P3Y) * h / d;
+			x2 = x_ - (P4X - P3X) * h / d;
+			y2 = y_ + (P4Y - P3Y) * h / d;
+		}
+
 		//SGY_Calculate_distance()
 	}
 
@@ -364,22 +389,34 @@ void SGY_Receptor(){
 			data[Sender] = id;
 			data[RecieverL] = n/2+1;
 			data[RecieverU] = n;
-			data[coodiX] = dist[P3];
-			data[coodiY] = dist[P4];
+			data[coodiX] = x1;
+			data[coodiY] = y1;
+			data[Dist1] = x2;
+			data[Dist2] = y2;
+
+			//send x1, x2, y1, y2
 			SGY_Measuring_Distance(&data);
 		}
 		if (id == n/2 + 1){
 			data[Cmtype] == trdMeasure;
 			data[Sender] == id;
-			data[RecieverL] == dist[P1];
-			data[RecieverU] == dist[P2];
+			data[RecieverL] == 1;
+			data[RecieverU] == n/2;
+			data[coodiX] = x1;
+			data[coodiY] = y1;
+			data[Dist1] = x2;
+			data[Dist2] = y2;
+
+			//send x1, x2, y1, y2;
 			SGY_Measuring_Distance(&data);
 		}
 	}
 
-	if (upperAsk[Cmtype] == trdMeasure && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >=id && upperAsk[CommCount]==1){
-		msg = passive_Measuring ((id-1) % (n/2));
-		SGY_Calculate_distance(msg);
+	if (upperAsk[Cmtype] == trdMeasure && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >=id && upperAsk[CommCount] == 1){
+		
+		dist = passive_Measuring ((id-1) % (n/2));
+		if (y1 - y2)*(y1 - y)
+
 	}
 }
 
