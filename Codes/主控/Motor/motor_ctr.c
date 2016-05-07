@@ -4,7 +4,7 @@
 #include "adc.h"
 #include "port.h"
 
-#define MT_DIR_PORT		GPIOA
+#define MT_DIR_PORT			GPIOA
 #define MT1_DIR_PIN			GPIO_Pin_4
 #define MT2_DIR_PIN			GPIO_Pin_5
 
@@ -17,7 +17,7 @@ void MOTOR_Init(void)
 	uint8_t i;	
 	
 	//gpio initialize
-	GPIO_InitStructure.GPIO_Pin = MT1_DIR_PIN | MT2_DIR_PIN;
+	GPIO_InitStructure.GPIO_Pin = MT1_DIR_PIN|MT2_DIR_PIN;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -37,7 +37,7 @@ void MOTOR_Init(void)
 
 	Delay(10);
 	
-	for(i = 0;i < 2;i++)
+	for(i=0;i<2;i++)
 	{
 		if(ADC_Voltage[ADC_MOTOR1+i] > 1300 && ADC_Voltage[ADC_MOTOR1+i] < 1700)
 			MSZV[i] = (MSZV[i] + ADC_Voltage[ADC_MOTOR1+i]) / 2;
@@ -51,31 +51,31 @@ void MOTOR_Init(void)
 #define MT2_DIR_N		GPIO_SetBits(MT_DIR_PORT, MT2_DIR_PIN)
 #define MT2_DIR_P		GPIO_ResetBits(MT_DIR_PORT, MT2_DIR_PIN)
 
-int16_t MotorVoltage[2] = {0};
+int16_t MotorVoltage[2]={0};
 
 void MOTOR_Voltage_Control(void)
 {
-	if(MotorVoltage[0] < 0)
+	if(MotorVoltage[0]<0)
 	{
 		MT1_DIR_N;
-		PWM_Motor_1 = 800+MotorVoltage[0];
+		PWM_Motor_1=800+MotorVoltage[0];
 	}
 	else
 	{
 		MT1_DIR_P;
-		PWM_Motor_1 = MotorVoltage[0];
+		PWM_Motor_1=MotorVoltage[0];
 	}
 	
 	
-	if(MotorVoltage[1] < 0)
+	if(MotorVoltage[1]<0)
 	{
 		MT2_DIR_N;
-		PWM_Motor_2 = 800 + MotorVoltage[1];
+		PWM_Motor_2=800+MotorVoltage[1];
 	}
 	else
 	{
 		MT2_DIR_P;
-		PWM_Motor_2 = MotorVoltage[1];
+		PWM_Motor_2=MotorVoltage[1];
 	}
 }
 
@@ -90,7 +90,7 @@ void MOTOR_CalculateMotorSpeed(void)
 	uint8_t i;
 	int32_t Vi;
 	
-	for(i = 0;i != 2;i++)
+	for(i=0;i!=2;i++)
 	{
 		Vi = ((int32_t)ADC_Voltage[ADC_MOTOR1+i] - MSZV[i]) * 800;
 		Vi /= ((Vi > 0) ? FullVoltage[0] : FullVoltage[1]);//Vi of 800
