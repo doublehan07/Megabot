@@ -104,6 +104,10 @@ void SGY_Leader(){
 		}
 	}
 
+	if (upperAsk[Cmtype] == fstMeasure && upperAsk[RecieveIDL] >=P2 && upperAsk[RecieveIDU] <= P2 && upperAsk[CommCount]==1){//first state measuring
+		locatingStatus = passive_Measuring((P2 - upperAsk[Sender] - 1) % 3);
+	} 
+
 	if (upperAsk[Cmtype] == secMeasure && upperAsk[Sender] == P4 && upperAsk[RecieverL] == P1 && upperAsk[RecieverU] ==  P1 && upperAsk[Success] == SUCCESS){
 		Done[1] = True;
 	}
@@ -171,7 +175,7 @@ void SGY_P3(){
 	do{
 		upperAsk = Receptor_Listening(0);
 	}
-	while(upperAsk == 0); //µÈ´ý½ÓÊÕµ½ÏûÏ¢
+	while(upperAsk == 0); //
 	if(upperAsk == 0xEE){//
 		upperAsk = 0;
 		return;
@@ -247,9 +251,9 @@ void SGY_P4(){
 	}//listening...
 
 
-	if (upperAsk[Cmtype] == fstMeasure && upperAsk[RecieveIDL] >=P4 && upperAsk[RecieveIDU] <= P4 && upperAsk[CommCount]==1){
-		locatingStatus = passive_Measuring((P4 - upperAsk[Sender] - 1) % 3)
-		if (locatingStatus != NULL){
+	if (upperAsk[Cmtype] == fstMeasure && upperAsk[RecieveIDL] >=P4 && upperAsk[RecieveIDU] <= P4 && upperAsk[CommCount]==1){//first step measuring(passive measuring)
+		dist = passive_Measuring((P4 - upperAsk[Sender] - 1) % 3)
+		if (dist != 0){
 			data[Cmtype] = fstMeasure;
 			data[Sender] = P4;
 			data[RecieverL] = upperAsk[Sender];
@@ -265,29 +269,31 @@ void SGY_P4(){
 
 
 	if (upperAsk[Cmtype] == secMeasure && upperAsk[Sender] == P3 && upperAsk[RecieverL] <= P4 && upperAsk[RecieverU] >= P4 && upperAsk[Success] == SUCCESS){
-		
+		//start the second step: measuring the distances with n/2+1:n and P4    Message is secMeasure P4 n/2+1 n P4X P4Y 0 0 CommCount=1 FAIL
 		data[Cmtype] = secMeasure;
 		data[Sender] = P4;
 		data[RecieverL] = n/2+1;
 		data[RecieverU] = n;
-		data[Feq] = 0x00;
 		data[coodiX] = P4X;
 		data[coodiY] = P4Y;
+		data[CommCount] = 1;
 		data[Success] = FAIL;
-		secondStatus = SGY_Measuring_Distance(&data);
+		secondStatus = SGY_Measuring_Distance(&data);//send measuring message to measure with n/2+1:n
 		if (secondStatus){
 			data[Cmtype] = secMeasure;
 			data[Sender] = P4;
 			data[RecieverL] = n/2+1;
 			data[RecieverU] = n;
+			data[CommCount] = 0;
 			data[Success] = SUCCESS;			
-			SGY_Sendmessage(&data);
+			SGY_Sendmessage(&data);				//this part is to tell n/2+1:n to set in ChA! Because P4 is going to set in ChB,  
 
-			channel = ChA;
-			data[Cmtype] = secMeasure;
+			channel = ChA;                       //tell P1 that the second step measure is done. Because P4 was in ChB when measuring n/2+1:n, 											 
+			data[Cmtype] = secMeasure;			//so ChA should be set before connecting with P1
 			data[Sender] = P4;
 			data[RecieverL] = P1;
 			data[RecieverU] = P1;
+			data[CommCount] = 0;
 			data[Success] = SUCCESS;
 			SGY_Sendmessage(&data);
 		}		
@@ -299,6 +305,7 @@ void SGY_Receptor(){
 	int x;
 	int y;
 	int x1,x2,y1,y2;
+	int P1X, P1Y, P2X, P2Y, P3X, P3Y, P4X, P4Y;
 	u8 upperAsk[]
 
 	do{
@@ -325,10 +332,9 @@ void SGY_Receptor(){
 			channel = ChA;
 	}
 
-	if (upperAsk[Cmtype] == secMeasure && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >=id && upperAsk[CommCount] == 1){   //secMeasure  
-		msg = passive_Measuring((id-1) % (n/2));
-		if (id < n/2 + 1){
-			
+	if (upperAsk[Cmtype] == secMeasure && upperAsk[Sender] >= P1 && upperAsk[Sender] <= P4 && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >=id && upperAsk[CommCount] == 1){   //passive secMeasure  
+		msg = passive_Measuring((id-1) % (n/2));           																		//the message is secMeasure P1-P4 1 n 0 0 CommCount==1 0
+		if (id < n/2 + 1){																										
 			if (upperAsk[Sender] == P1){
 				dist1 = msg[Dist1];
 				P1X = msg[coodiX];
@@ -339,18 +345,19 @@ void SGY_Receptor(){
 				P2X = msg[coodiX];
 				P2Y = msg[coodiY];
 			}
-
-			d = sqrt((P1X - P2X)*(P1X - P2X) + (P1Y - P2Y)*(P1Y - P2Y));
-			p = (dist1 + dist2 + d) / 2;
-			S = sqrt(p*(p-dist1)*(p-dist2)*(p-d));
-			h = 2 * S / d;
-			a = sqrt(dist1*dist1 - h * h);
-			x_ = dist1 / d * P2X + (1 - dist1 / d) * P1X;
-			y_ = dist2 / d * P2Y + (1 - dist1 / d) * P1Y;
-			x1 = x_ + (P2X - P1X) * h / d;
-			y1 = y_ - (P2Y - P1Y) * h / d;
-			x2 = x_ - (P2X - P1X) * h / d;
-			y2 = y_ + (P2Y - P1Y) * h / d;
+			if (dist1 != 0 && dist2 != 0){           									//if dist1 and dist2 are attained
+				d = sqrt((P1X - P2X)*(P1X - P2X) + (P1Y - P2Y)*(P1Y - P2Y));
+				p = (dist1 + dist2 + d) / 2;
+				S = sqrt(p*(p-dist1)*(p-dist2)*(p-d));
+				h = 2 * S / d;
+				a = sqrt(dist1*dist1 - h * h);
+				x_ = dist1 / d * P2X + (1 - dist1 / d) * P1X;
+				y_ = dist2 / d * P2Y + (1 - dist1 / d) * P1Y;
+				x1 = x_ + (P2X - P1X) * h / d;
+				y1 = y_ - (P2Y - P1Y) * h / d;
+				x2 = x_ - (P2X - P1X) * h / d;
+				y2 = y_ + (P2Y - P1Y) * h / d;
+			}
 
 		}
 		else {
@@ -365,25 +372,26 @@ void SGY_Receptor(){
 				P4X = msg[coodiX];
 				P4Y = msg[coodiY];
 			}
-
-			d = sqrt((P3X - P4X)*(P3X - P4X) + (P3Y - P4Y)*(P3Y - P4Y));
-			p = (dist1 + dist2 + d) / 2;
-			S = sqrt(p*(p-dist1)*(p-dist2)*(p-d));
-			h = 2 * S / d;
-			a = sqrt(dist1*dist1 - h * h);
-			x_ = dist1 / d * P4X + (1 - dist1 / d) * P3X;
-			y_ = dist2 / d * P4Y + (1 - dist1 / d) * P3Y;
-			x1 = x_ + (P4X - P3X) * h / d;
-			y1 = y_ - (P4Y - P3Y) * h / d;
-			x2 = x_ - (P4X - P3X) * h / d;
-			y2 = y_ + (P4Y - P3Y) * h / d;
+			if (dist1 != 0 && dist2 != 0){												//if dist1 and dist2 are attained
+				d = sqrt((P3X - P4X)*(P3X - P4X) + (P3Y - P4Y)*(P3Y - P4Y));
+				p = (dist1 + dist2 + d) / 2;
+				S = sqrt(p*(p-dist1)*(p-dist2)*(p-d));
+				h = 2 * S / d;
+				a = sqrt(dist1*dist1 - h * h);
+				x_ = dist1 / d * P4X + (1 - dist1 / d) * P3X;
+				y_ = dist2 / d * P4Y + (1 - dist1 / d) * P3Y;
+				x1 = x_ + (P4X - P3X) * h / d;
+				y1 = y_ - (P4Y - P3Y) * h / d;
+				x2 = x_ - (P4X - P3X) * h / d;
+				y2 = y_ + (P4Y - P3Y) * h / d;
+			}
 		}
 
-		//SGY_Calculate_distance()
+		//Calculate_distance()
 	}
 
-	if (upperAsk[Cmtype] == secMeasure && upperAsk[Sender] == P4 && upperAsk[RecieverL] == n/2+1 && upperAsk[RecieverU] == n){
-		if (id>upperAsk[RecieverL] && id < upperAsk[RecieverU]){
+	if (upperAsk[Cmtype] == secMeasure && upperAsk[Sender] == P4 && upperAsk[RecieverL] == n/2+1 && upperAsk[RecieverU] == n &&upperAsk[CommCount] == 0){
+		if (id>upperAsk[RecieverL] && id < upperAsk[RecieverU]){			//this part aims to set 
 			channel = ChA;
 		}
 	} //after secord step set n/2+1 : n in ChA
