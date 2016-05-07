@@ -295,6 +295,12 @@ void SGY_P4(){
 }
 
 void SGY_Receptor(){
+	//variances list
+	int x;
+	int y;
+	int x1,x2,y1,y2;
+	u8 upperAsk[]
+
 	do{
 		upperAsk = Receptor_Listening(0);
 	}
@@ -319,7 +325,7 @@ void SGY_Receptor(){
 			channel = ChA;
 	}
 
-	if (upperAsk[Cmtype] == secMeasure && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >=id && upperAsk[CommCount] == 1){   //secMeasure 
+	if (upperAsk[Cmtype] == secMeasure && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >=id && upperAsk[CommCount] == 1){   //secMeasure  
 		msg = passive_Measuring((id-1) % (n/2));
 		if (id < n/2 + 1){
 			
@@ -413,10 +419,35 @@ void SGY_Receptor(){
 	}
 
 	if (upperAsk[Cmtype] == trdMeasure && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >=id && upperAsk[CommCount] == 1){
-		
+		//data[coodiX] represent X1 cooridnate of Sender (if reciever's id is in 1:n/2 then Sender is n/2+1 else Sender is 1)
+		//data[coodiY] represent Y1 cooridnate of Sender
+		//data[Dist1] represent X2 cooridnate of Sender //here Dist1 temporarily stores the position of Sender
+		//data[Dist2] represent Y2 cooridnate of Sender
 		dist = passive_Measuring ((id-1) % (n/2));
-		if (y1 - y2)*(y1 - y)
+		min11 = abs((data[coodiY] - y1)*(data[coodiY] - y1) + (data[coodiX]-x1)*(data[coodiX]-x1) - dist*dist);
+		min12 = abs((data[coodiY] - y2)*(data[coodiY] - y2) + (data[coodiX]-x2)*(data[coodiX]-x2) - dist*dist);
+		min21 = abs((data[Dist2] - y1)*(data[Dist2] - y1) + (data[Dist1]-x1)*(data[Dist1] - x1) - dist*dist);
+		min22 = abs((data[Dist2] - y2)*(data[Dist2] - y2) + (data[Dist1]-x1)*(data[Dist1] - x1) - dist*dist);
 
+		x=x1;
+		y=y1;
+		min = min11;
+
+		if (min12 < min) {
+			min = min12;
+			x = x1;
+			y = y1;
+		}	
+		if (min21 < min){
+			min = min21;
+			x = x2;
+			y = y2;
+		}
+		if (min22 < min){
+			min = min22;
+			x = x2;
+			y = y2;
+		}
 	}
 }
 
