@@ -1,0 +1,13 @@
+﻿#时钟配置
+
+HSE = 8MHz
+
+HCLK(AHB） = 96MHz, PCLK2(APB2) = 48MHz, PCLK1(APB1) = 24MHz 	
+
+PLLCLK = HSE(8M) / 8 * 192 / 2 = 168MHz，PLL_Q = 4
+
+Select PLL as system clock source
+
+Systick = 1ms
+
+DO NOT SET SYSCLOCK HIGHER THAN 96M, OR 407 WILL GET STUCK IN HARDFAULT_HANDLER
