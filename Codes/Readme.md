@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-#Codes
-=======
-#Codes
->>>>>>> test
+#Code
