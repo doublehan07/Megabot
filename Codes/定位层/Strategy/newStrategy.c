@@ -28,7 +28,7 @@ void SGY_P1(){//P1's strategy
 			data[Dist1] = 0;
 			data[Dist2] = 0;
 			data[CommCount] = 1;
-			SGY_Measuring_Distance(&data);//Measuring P1 with P2 P3 P4 
+			Initiator_Ranging(&data);//Measuring P1 with P2 P3 P4 
 		}
 	}
 
@@ -40,7 +40,7 @@ void SGY_P1(){//P1's strategy
 			data[RecieverU] = n/2;
 			data[coodiX] = x;
 			data[coodiY] = y;
-			SGY_Measuring_Distance(&data);	
+			Initiator_Ranging(&data);	
 		}
 	}
 
@@ -65,7 +65,7 @@ void SGY_P2(){
 
 	if (upperAsk[Cmtype] = fstMeasure){
 		if (upperAsk[Sender] == P1 && upperAsk[RecieverL] == P2 && upperAsk[RecieverU] == P4 && upperAsk[CommCount] == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring 
-			dist = passive_Measuring(0);
+			dist = Receptor_Ranging(0);
 			y = 0;
 			x = dist;
 			//get the position of P2
@@ -79,7 +79,7 @@ void SGY_P2(){
 			data[RecieverU] = P4;
 			data[coodiX] = x;
 			data[coodiY] = y;
-			SGY_Measuring_Distance(&data);
+			Initiator_Ranging(&data);
 		}
 
 		if (upperAsk[Sender] == P4 && upperAsk[RecieverL] == P2 && upperAsk[RecieverU] == P3 && upperAsk[CommCount] == 0){//P4 replies Measuring with P3, then tell P2 and P3 to start the secondstep
@@ -90,7 +90,7 @@ void SGY_P2(){
 			data[RecieverU] = n/2;
 			data[coodiX] = x;
 			data[coodiY] = y;
-			SGY_Measuring_Distance(&data);
+			Initiator_Ranging(&data);
 		}
 	}
 
@@ -106,49 +106,10 @@ void SGY_P2(){
 				data[RecieverL] = 1;
 				data[RecieverU] = n;
 				//start the trdMeasure
-				SGY_Sendmessage(&data);
+				SendMsg(&data);
 			}
 		}  
 	}
-
-
-
-
-
-
-	// if (upperAsk[Cmtype] == secMeasure && upperAsk[Sender] == P1 && upperAsk[RecieverL] <= P2 && upperAsk[RecieverU] >= P2){
-	// 	data[Cmtype] = secMeasure;
-	// 	data[Sender] = P2;
-	// 	data[RecieverL] = 1;
-	// 	data[RecieverU] = n/2;
-	// 	data[coodiX] = P2X;
-	// 	data[coodiY] = P2Y;
-	// 	data[Success] = FAIL;
-	// 	secondStatus = SGY_Measuring_Distance(&data);
-	// 	if (secondStatus){
-	// 		data[Cmtype] = secMeasure;
-	// 		data[Sender] = P2;
-	// 		data[RecieverL] = P1;
-	// 		data[RecieverU] = P1;
-	// 		data[coodiX] = 0x00;
-	// 		data[coodiY] = 0x00;
-	// 		data[Success] = FAIL;
-	// 		SGY_Sendmessage(&data);
-	// 	}
-	// }
-	
-	// if (upperAsk[Cmtype] == secMeasure && upperAsk[Sender] == P4 && upperAsk[RecieverL] == P2 && upperAsk[RecieverU] == P2 && upperAsk[Success] == SUCCESS){
-	// 	Done[1] = True;
-	// }
-
-	// if (Done[0] && Done[1]){
-	// 	//Start the 3rd step
-	// 	data[Cmtype] = trdMeasure;
-	// 	data[Sender] = P1;
-	// 	data[RecieverL] = 1;
-	// 	data[RecieverU] = n;
-	// 	SGY_Sendmessage(&data);
-	// }
 }
 
 void SGY_P3(){
@@ -162,11 +123,12 @@ void SGY_P3(){
 	}//listening...
 	if (upperAsk[Cmtype] == fstMeasure){
 		if (upperAsk[Sender] == P1 && upperAsk[RecieverL] == P2 && upperAsk[RecieverU] == P4 && upperAsk[CommCount] == 1){
-			dist[1] = passive_Measuring(1);
+			dist[0] = Receptor_Ranging(1);
 		}
 		if (upperAsk[Sender] == P2 && upperAsk[RecieverL] == P3 && upperAsk[RecieverU] == P4 && upperAsk[CommCount] == 1){
-			dist[2] = passive_Measuring(0);
+			dist[1] = Receptor_Ranging(0);
 			double p, S;
+			if (dist[1] != 0xFFFF && dist[2] != 0xFFFF)
 			p = 1.0*(dist[1] + dist[2] + upperAsk[coodiY]) / 2.0;
 			S = sqrt(p*(p-dist1)*(p-dist2)*(p-upperAsk[coodiX]));
 			y = int(2 * S / upperAsk[coodiX]);
@@ -183,7 +145,7 @@ void SGY_P3(){
 			data[coodiY] = y;
 			data[Dist1] = 0;
 			data[Dist2] = 0;
-			SGY_Measuring_Distance(&data);
+			Initiator_Ranging(&data);
 		}
 	}
 
@@ -196,7 +158,7 @@ void SGY_P3(){
 			data[RecieverU] = n;
 			data[coodiX] = x;
 			data[coodiY] = y;
-			SGY_Measuring_Distance(&data);
+			Initiator_Ranging(&data);
 		}
 	}
 }
@@ -213,15 +175,15 @@ void SGY_P4(){
 
 	if (upperAsk[Cmtype] == fstMeasure){
 		if (upperAsk[Sender] == P1 && upperAsk[RecieverL] == P2 && upperAsk[RecieverU] == P4 && upperAsk[CommCount] == 1){
-			dist[1] = passive_Measuring(2);
+			dist[0] = Receptor_Ranging(2);
 		}
 		if (upperAsk[Sender] == P2 && upperAsk[RecieverL] == P3 && upperAsk[RecieverU] == P4 && upperAsk[CommCount] == 1){
 			P2X = upperAsk[coodiX];
-			dist[2] = passive_Measuring(1);
+			dist[1] = Receptor_Ranging(1);
 		}
 		if (upperAsk[Sender] == P3 && upperAsk[RecieverL] == P4 && upperAsk[RecieverU] == P4 && upperAsk[CommCount] == 1){
-			dist[3] = passive_Measuring(0);
-			if (dist[3] != 0xFF){
+			dist[2] = Receptor_Ranging(0);
+			if (dist[2] != 0xFFFF && dist[1] != 0xFFFF && dist[0] != 0xFFFF){
 				double p, S;
 				p = 1.0*(dist[1] + dist[2] + P2X) / 2.0;
 				S = sqrt(p*(p-dist1)*(p-dist2)*(p-P2X));
@@ -242,7 +204,7 @@ void SGY_P4(){
 				data[Dist1] = 0;
 				data[Dist2] = 0;
 				data[CommCount] = 0;
-				SGY_Sendmessage(&data);
+				SendMsg(&data);
 				channel = ChB;
 			}
 		}
@@ -292,7 +254,7 @@ void SGY_Receptor(){
 		y2 = 0;
 		delay(id - 1);
 		//tell Leader Init is done
-		SGY_Sendmessage(&data)
+		SendMsg(&data)
 		if (id > n/2){
 			channel = ChB;
 		}
@@ -305,21 +267,21 @@ void SGY_Receptor(){
 		if (upperAsk[Sender] == P3 && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >= id && upperAsk[CommCount] == 1){//P3 done, let P4 start measuring
 			P3X = upperAsk[coodiX];
 			P3Y = upperAsk[coodiY];
-			dist[0] = passive_Measuring((id-1) % (n/2));
-			if (id == n && dist[0] != 0xFF){
+			dist[0] = Receptor_Ranging((id-1) % (n/2));
+			if (id == n && dist[0] != 0xFFFF){
 				data[Cmtype] = secMeasure;
 				data[Sender] = n;
 				data[RecieverL] = P4;
 				data[RecieverU] = P4;
 				data[CommCount] = 0;
-				SGY_Sendmessage(&data);
+				SendMsg(&data);
 			} 
 		}												//==n/2+1 						//==n
 		if (upperAsk[Sender] == P4 && upperAsk[RecieverL] <= id  && upperAsk[RecieverU] >= id && upperAsk[CommCount] == 1){//P4 measure with n/2+1 : n
 			P4X = upperAsk[coodiX];
 			P4Y = upperAsk[coodiY];
-			dist[1] = passive_Measuring((id-1) % (n/2));
-			if (dist[1] != 0xFF){
+			dist[1] = Receptor_Ranging((id-1) % (n/2));
+			if (dist[1] != 0xFFFF){
 				if (id >= n/2 + 1){// if this measuring is done, n/2+2:n should reverse channel to ChA
 					channel = ChA;
 				}
@@ -329,7 +291,7 @@ void SGY_Receptor(){
 					data[RecieverL] = P2;
 					data[RecieverU] = P2;
 					data[CommCount] = 0;
-					SGY_Sendmessage(&data);
+					SendMsg(&data);
 				}
 				double d, p, S, h, a, x_, y_;
 				d = sqrt((P3X - P4X)*(P3X - P4X) + (P3Y - P4Y)*(P3Y - P4Y));
@@ -349,22 +311,22 @@ void SGY_Receptor(){
 		if (upperAsk[Sender] == P2 && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >= id && upperAsk[CommCount] == 1){
 			P2X = upperAsk[coodiX];
 			P2Y = upperAsk[coodiY];
-			dist[1] = passive_Measuring((id - 1) % (n / 2));
-            if (id == n/2 && dist[1] != 0xFF){
+			dist[1] = Receptor_Ranging((id - 1) % (n / 2));
+            if (id == n/2 && dist[1] != 0xFFFF){
             	data[Cmtype] = secMeasure;
 				data[Sender] = n/2;
 				data[RecieverL] = P1;
 				data[RecieverU] = P1;
 				data[CommCount] = 0;
-				SGY_Sendmessage(&data);
+				SendMsg(&data);
             }
 		}
 
 		if (upperAsk[Sender] == P1 && upperAsk[RecieverL] <= id && upperAsk[RecieverU] >= id && upperAsk[CommCount] == 1){
 			P1X = upperAsk[coodiX];
 			P1Y = upperAsk[coodiY];
-			data[0] = passive_Measuring((id - 1) % (n /2));
-			if (dist[0] != 0xFF){
+			data[0] = Receptor_Ranging((id - 1) % (n /2));
+			if (dist[0] != 0xFFFF){
 				if (id > 1 && id <= n/2 - 1){
 					channel = ChB;
 				}
@@ -377,7 +339,7 @@ void SGY_Receptor(){
 					data[RecieverL] = P2;
 					data[RecieverU] = P2;
 					data[CommCount] = 0;
-					SGY_Sendmessage(&data);
+					SendMsg(&data);
 					channel = ChB;//tell P2 that P1 and P2's measuring is done, start the trdstep
 				}
 				//Calculate//	
@@ -410,7 +372,7 @@ void SGY_Receptor(){
 				data[Dist1] = x2;
 				data[Dist2] = y2;
 				data[CommCount] = 1;
-				SGY_Sendmessage(&data);
+				SendMsg(&data);
 				//start trdmeasuring with n/2+2:n
 			}
 			if (id == n/2+1){
@@ -424,7 +386,7 @@ void SGY_Receptor(){
 				data[Dist1] = x2;
 				data[Dist2] = y2;
 				data[CommCount] = 1;
-				SGY_Sendmessage(&data);
+				SendMsg(&data);
 				//start trdmeasuring with 2:n/2
  			}
 		}
@@ -432,8 +394,8 @@ void SGY_Receptor(){
 		//2:n/2 passive measure with n/2+1
 		if (upperAsk[Sender] == n/2 + 1 && upperAsk[RecieverL] == 2 && upperAsk[RecieverU] == n/2 && upperAsk[CommCount] == 1){
 			if (id >= 2 && id <= n/2){
-				dist=passive_Measuring(id-2);
-				if (dist != 0xFF){
+				dist=Receptor_Ranging(id-2);
+				if (dist != 0xFFFF){
 					double min11, min12, min21, min22, ID2X, ID2Y;
 					min11 = abs((data[coodiY] - y1)*(data[coodiY] - y1) + (data[coodiX]-x1)*(data[coodiX]-x1) - dist*dist);
 					min12 = abs((data[coodiY] - y2)*(data[coodiY] - y2) + (data[coodiX]-x2)*(data[coodiX]-x2) - dist*dist);
@@ -481,7 +443,7 @@ void SGY_Receptor(){
 						data[Dist1] = 0;
 						data[Dist2] = 0;
 						data[CommCount] = 0;
-						SGY_Sendmessage(&data);
+						SendMsg(&data);
 						channel = ChA;
 					}
 				}
@@ -490,8 +452,8 @@ void SGY_Receptor(){
 		//n/2+2:n passive measure with 1
 		if (upperAsk[Sender] == 1 && upperAsk[RecieverL] == n/2 + 2 && upperAsk[RecieverU] == n && upperAsk[CommCount] == 1){
 			if (id >= n/2 + 2 && id <= n){
-				dist=passive_Measuring(id-2-n/2);
-				if (dist!=0xFF){
+				dist=Receptor_Ranging(id-2-n/2);
+				if (dist!=0xFFFF){
 					double min11, min12, min21, min22, ID1X, ID1Y;
 					min11 = abs((data[coodiY] - y1)*(data[coodiY] - y1) + (data[coodiX]-x1)*(data[coodiX]-x1) - dist*dist);
 					min12 = abs((data[coodiY] - y2)*(data[coodiY] - y2) + (data[coodiX]-x2)*(data[coodiX]-x2) - dist*dist);
@@ -536,7 +498,7 @@ void SGY_Receptor(){
 						data[Dist1] = 0;
 						data[Dist2] = 0;
 						data[CommCount] = 0;
-						SGY_Sendmessage(&data);
+						SendMsg(&data);
 					}
 				}
 			}
@@ -554,7 +516,7 @@ void SGY_Receptor(){
 				// data[RecieverL] = P1;
 				// data[RecieverU] = P1;
 				// data[CommCount] = 0;
-				// SGY_Sendmessage(&data);
+				// SendMsg(&data);
 			}
 		}
 
@@ -570,7 +532,7 @@ void SGY_Receptor(){
 				// data[RecieverU] = P1;
 				// data[CommCount] = 0;
 				// delay(1);
-				// SGY_Sendmessage(&data);
+				// SendMsg(&data);
 			}
 		}
 	}
