@@ -1,7 +1,27 @@
 #include "newStrategy.h"
+#define P1 (n+1)
+#define P2 (n+2)
+#define P3 (n+3)
+#define P4 (n+4)
+#define Init 0x01
+#define fstMeasure 0x0A
+#define secMeasure 0x0B
+#define trdMeasure 0x0C
+
+
+#define Cmtype 0
+#define Sender 1
+#define RecieverL 2
+#define RecieverU 3
+#define data[coodiX]=x ((data[5]=(x<<8));data[6]=(x & 0xFF))
+
+int n;
 
 void SGY_P1(){//P1's strategy
-	
+	u8 data[13];
+
+
+
 	do{
 		upperAsk = Receptor_Listening(0);
 	}
@@ -13,7 +33,10 @@ void SGY_P1(){//P1's strategy
 	}//listening...
 	if recieve the indication from master{
 		data[Cmtype] = Init;
-		data[Cmtype]
+		data[Sender] = P1;
+		data[RecieverL] = 1;
+		data[RecieverU] = P4;
+		SendMsg(&data, 4);
 	}
 
 	if (data[Cmtype] == Init){
@@ -28,11 +51,12 @@ void SGY_P1(){//P1's strategy
 			data[Dist1] = 0;
 			data[Dist2] = 0;
 			data[CommCount] = 1;
-			Initiator_Ranging(&data);//Measuring P1 with P2 P3 P4 
+			Initiator_Ranging(&data, 13);//Measuring P1 with P2 P3 P4 
 		}
 	}
 
 	if (upperAsk[Cmtype] = secMeasure){
+		//P1 measuring with 1:n/2
 		if (upperAsk[Sender] == n/2 && upperAsk[RecieverL] == P1 && upperAsk[RecieverU] == P1 && upperAsk[Cmtype] == 0){
 			data[Cmtype] = secMeasure;
 			data[Sender] = P1;
@@ -40,7 +64,10 @@ void SGY_P1(){//P1's strategy
 			data[RecieverU] = n/2;
 			data[coodiX] = x;
 			data[coodiY] = y;
-			Initiator_Ranging(&data);	
+			data[Dist1] = 0;
+			data[Dist2] = 0;
+			data[CommCount] = 1;
+			Initiator_Ranging(&data, 13);	
 		}
 	}
 
