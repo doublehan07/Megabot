@@ -50,13 +50,15 @@ void Timer1_PWM_Configuration(void)
 	TIM_CtrlPWMOutputs(PWM_TIM, ENABLE);
 }
 
-
 void Motor_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
 	//Usart1 init for Yaw
 	Usart_JY901_init();
+	
+	//Encoder init for speed
+	Encoder_EXTI_Configuration();
 	
 	//Enable GPIO used for controlling motor
 	//Signal
