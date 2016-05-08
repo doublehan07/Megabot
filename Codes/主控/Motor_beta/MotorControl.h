@@ -7,7 +7,7 @@
 *  
 *  Output function:
 *  Moter_Move(uint16_t angle, bool if_related, uint16_t speed)
-*  	parameters:
+*  	parameters:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 *      angle: the angle that want to move
 *      if_related: 1 means relative angle to current angle
 *                  0 means absolutely angle
