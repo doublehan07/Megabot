@@ -142,7 +142,14 @@ void PendSV_Handler(void)
   */
 /* Tick timer count. */
 void SysTick_Handler(void)
-{		
+{	
+	static u8 encoderCounter = 0;
+	encoderCounter++;
+	if(encoderCounter == 30) //Sampling speed in each 30 ms.
+	{
+		encoderCounter = 0;
+		Sampling_Tick_Speed();
+	}
 	TimingDelay_Decrement();
 }
 

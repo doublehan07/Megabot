@@ -148,5 +148,9 @@ void Motor_Set_Speed(u8 left_or_right, u16 speed);
 void Usart_JY901_init(void);
 void ParseSerialData(unsigned char ucData);
 int16_t Inertia_Get_Angle_Yaw(void);
+void Encoder_EXTI_Configuration(void);
+
+void Sampling_Tick_Speed(void);
+u16 Get_Speed(u8 left_or_right);
 
 #endif /* __MOTOR_PCB_INTI */
