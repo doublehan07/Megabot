@@ -149,6 +149,9 @@ void SysTick_Handler(void)
 	{
 		encoderCounter = 0;
 		Sampling_Tick_Speed();
+		
+		// after get current speed, we can calculate the PID parameters and control the motor
+		//MotorSpeedPID(currentSettedSpeed);
 	}
 	TimingDelay_Decrement();
 }

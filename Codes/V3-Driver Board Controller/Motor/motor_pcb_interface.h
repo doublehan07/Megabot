@@ -90,6 +90,9 @@ extern struct SLonLat 		stcLonLat;
 extern struct SGPSV 			stcGPSV;
 extern float sAngle;
 
+// global parameter to set the speed
+extern int16_t currentSettedSpeed;
+
 /* Exported macro ------------------------------------------------------------*/
 //JY901 - others are in usart_imu.h
 #define USART_JY901_CHANNEL			USART1
@@ -152,5 +155,8 @@ void Encoder_EXTI_Configuration(void);
 
 void Sampling_Tick_Speed(void);
 u16 Get_Speed(u8 left_or_right);
+
+// PID -- set the speed
+void MotorSpeedPID(int16_t speed);
 
 #endif /* __MOTOR_PCB_INTI */
