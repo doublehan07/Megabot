@@ -6,6 +6,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "dwm1000_port.h"
+#include "ranging_api.h"          
 #include "deca_sleep.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -86,7 +87,7 @@ void SPI_DW1000_ConfigFastRate(uint16_t scalingfactor)
 
 void SPI_DW1000_set_rate_low (void) //Set SPI rate to less than 3 MHz to properly perform DW1000 initialisation.
 {
-    SPI_DW1000_ChangeRate(SPI_BaudRatePrescaler_8);
+    SPI_DW1000_ChangeRate(SPI_BaudRatePrescaler_16);
 }
 
 
@@ -178,6 +179,9 @@ void Dwm1000_Init(void)
 	EXTI_InitTypeDef EXTI_InitStructure; //EXTI - 外部中断
 	NVIC_InitTypeDef NVIC_InitStructure; //NVIC - 嵌套向量中断控制器
 	
+	//Congigure SPI3
+	SPI3_DW1000_Configuration();
+	
 	// Enable GPIO used as DECA IRQ for interrupt
 	GPIO_InitStructure.GPIO_Pin = DECAIRQ;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;	//IRQ pin should be Pull Down to prevent unnecessary EXT IRQ while DW1000 goes to sleep mode
@@ -203,7 +207,4 @@ void Dwm1000_Init(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	
 	NVIC_Init(&NVIC_InitStructure);
-	
-	//Congigure SPI3
-	SPI3_DW1000_Configuration();
 }
