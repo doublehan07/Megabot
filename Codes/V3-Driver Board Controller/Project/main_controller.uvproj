@@ -45,10 +45,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\OutPuts\</OutputDirectory>
-          <OutputName>main_controller</OutputName>
+          <OutputName>controller</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\OutPuts\</ListingPath>
@@ -525,6 +525,16 @@
               <FileName>usart_imu.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\IMU\usart_imu.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>PID Controller</GroupName>
+          <Files>
+            <File>
+              <FileName>MotorControl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PID_Controller\MotorControl.c</FilePath>
             </File>
           </Files>
         </Group>

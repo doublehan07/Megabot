@@ -18,11 +18,10 @@
 *  adjustion, we convert the scope from 0 to 360, clockwise represents turning right
 *
 ****************************************************************************************/
-#include "stm32f4xx.h"
-#include "cmath"
-
 #ifndef MOTOR_CONTROL
 #define MOTOR_CONTROL
+
+#include "stm32f4xx.h"
 
 // some constrain
 #define MAX_SPEED 1000   
@@ -31,11 +30,19 @@
 #define LEFT 0
 #define RIGHT 1
 
-// PID parameters
-#define P_DATA 10
-#define I_DATA 0.6
-#define D_DATA 1
-#define ACCEPTTED_ERROR 10
+// PID parameters (angle)
+#define P_DATA_ANGLE 1
+#define I_DATA_ANGLE 0
+#define D_DATA_ANGLE 0
+#define ACCEPTTED_ERROR_ANGLE 10
+
+// PID parameters (speed)
+#define P_DATA_SPEED 1
+#define I_DATA_SPEED 0
+#define D_DATA_SPEED 0
+int16_t LastError = 0;  // global error [-1]
+int16_t PrevError = 0;  // global error [-2]
+
 
 /************************  useful tools  ******************************/
 
@@ -47,10 +54,9 @@ int16_t angleTransform(int16_t angle_ABS180);
 uint16_t myABS(int16_t value);
 
 /**********************************************************************/
+
 // PID -- turn the angle
-void Motor_Move(uint16_t angle, char if_related, uint16_t speed);
-// PID -- set the speed
-void MotorSpeedPID();
+void Motor_Move(int16_t angle, u8 if_related, int16_t speed);
 
 
 #endif // MOTOR_CONTROL
