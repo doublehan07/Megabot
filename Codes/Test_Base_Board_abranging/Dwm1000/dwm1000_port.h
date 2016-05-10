@@ -51,9 +51,9 @@ unsigned long portGetTickCnt(void);
 #define DECARSTIRQ_EXTI_IRQn      				  EXTI4_IRQn							//(407ZG)EXTI_Line4
 
 #define DECAIRQ                 			  	  GPIO_Pin_2
-#define DECAIRQ_GPIO          							GPIOD
+#define DECAIRQ_GPIO          							GPIOA
 #define DECAIRQ_EXTI            			 	    EXTI_Line2
-#define DECAIRQ_EXTI_PORT       			  	  EXTI_PortSourceGPIOD
+#define DECAIRQ_EXTI_PORT       			  	  EXTI_PortSourceGPIOA
 #define DECAIRQ_EXTI_PIN        			  	  EXTI_PinSource2
 #define DECAIRQ_EXTI_IRQn        			 	    EXTI2_IRQn							//(407ZG)EXTI_Line2
 
@@ -76,11 +76,5 @@ ITStatus EXTI_GetITEnStatus(uint32_t x);
 //DW1000
 void SPI_DW1000_ChangeRate(uint16_t scalingfactor);
 void SPI_DW1000_ConfigFastRate(uint16_t scalingfactor);
-void SPI_DW1000_set_rate_low (void); //Set SPI rate to less than 3 MHz to properly perform DW1000 initialisation.
-void SPI_DW1000_set_rate_high (void); //Set SPI rate as close to 20 MHz as possible for optimum performances.
-
-void RESET_DW1000(void);
-
-void Dwm1000_Init(void);
 
 #endif /* __DWM1000_PORT_H */
