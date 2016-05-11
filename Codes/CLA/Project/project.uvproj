@@ -476,6 +476,21 @@
               <FileType>1</FileType>
               <FilePath>..\User\main.c</FilePath>
             </File>
+            <File>
+              <FileName>Commtest.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\Commtest.c</FilePath>
+            </File>
+            <File>
+              <FileName>newmain.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\newmain.c</FilePath>
+            </File>
+            <File>
+              <FileName>newStrategy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\newStrategy.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
