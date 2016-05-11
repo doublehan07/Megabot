@@ -25,7 +25,7 @@
 #include "ranging_api.h"
 //typedef short u8;
 //typedef unsigned int u16;
-
+int dist[4][4];
 
 
 typedef struct Message{
@@ -53,38 +53,16 @@ int Round(double m){
     return (int)(m+0.5);
 }
 
-
-//void SendMsg(u8* data, int len){
-//    int i = 0;
-//    for (i = 0; i<data[3] - data[2]+1; i++){
-//        if (data[2]+i != data[1])
-//        //printf("Sending data to id %d\n", data[2]+i);
-//					
-//            //MPI_Send(data, len, MPI_SHORT, data[2]+i, data[2]+i, MPI_COMM_WORLD);
-//    }
-//}
-void Initiator_Ranging(uint8_t* data, int len){
-    int i = 0;
-    for (i = 0; i<data[3]-data[2]+1; ++i){
-        if (data[2]+i != data[1])
-					Initiator_Communication(data[2]+i);
-            //MPI_Send(data, len, MPI_SHORT, data[2]+i, data[2]+i, MPI_COMM_WORLD);
-    }
+void InitiatorMeasuring(u8* data, int len){
+		Initiator_Ranging(data);
 }
-int Receptor_Listening(Node* p, int len, Node* source){
-    //MPI_Status status;
-    //MPI_Recv(p->rx_buffer, len, MPI_SHORT, source->id, p->id, MPI_COMM_WORLD, &status);
-            //printf("in id%d, data is %d%d%d%d%d\n",p->id, p->rx_buffer[0],p->rx_buffer[1],p->rx_buffer[2],p->rx_buffer[3],p->rx_buffer[4]);
+int ReceptorGrasping(Node* p, int *len, Node* source){
+		Receptor_Listening(p->rx_buffer, len);
     return len;
 }
-int Receptor_Ranging(Node* p, Node* source){//, int len){
-		//u16 dist = Receptor_Communication();
-    //int tag;
-    //MPI_Status* status;
-    //MPI_Recv(p.rx_buffer, len, MPI_SHORT_INT, source.id, p.id, MPI_COMM_WORLD, status);
-    //int dist = Round(sqrt((p->pox - source->pox)*(p->pox - source->pox)+(p->poy - source->poy)*(p->poy - source->poy)));
-    return 1;
-    
+int ReceptorMeasuring(Node* p, Node* source){//, int len){
+		double dist = Receptor_Ranging(p->id);
+    return dist; 
 }
 
 #endif /* Commtest_h */
