@@ -1,4 +1,4 @@
-//
+﻿//
 //  Commtest.c
 //  testMPI
 //
@@ -11,10 +11,10 @@
 
 #include "Commtest.h"
 
-Node p[4];
-Node Recp[5];
+extern Node p[4];
+extern int dist[4][4];
+extern int get_all_distance;
 
-int n=4;
 void SendMsg(u8*, int);
 void InitiatorMeasuring(u8*, int);
 int Receptor_Listening(Node* p, int len, Node* source);
@@ -37,14 +37,9 @@ u8* SendMessage(Message msg, int len){
         data[11] = msg.Dist2 & 0xFF;
         data[12] = msg.CommCount;
         if (msg.CommCount == 0){
-            //printf("%d,%d,%d", Rounddata[0],Rounddata[1],Rounddata[12]);
             SendMsg(data, len);
-            //int tag = 0;
-            //MPI_Status status;
-            //MPI_Recv(data, len, MPI_SHORT, data[1], tag, MPI_COMM_WORLD, &status)
         }
         else{
-            //printf("%d,%d,%d", data[0],data[1],data[12]);
             InitiatorMeasuring(data, len);
         }
         return data;
@@ -270,7 +265,7 @@ void SGY_P3(){
 
 void SGY_P4(){
     Message msg, upperAsk;
-    int i;
+    int i,j;
     u8 len;
     Receptor_Listening(p[3].rx_buffer,&len);
     upperAsk = SaveMessage(p[3].rx_buffer, len);
@@ -279,12 +274,16 @@ void SGY_P4(){
 			  p[3].x = 0;
 				p[3].y = 0;
 				get_all_distance = 0;
+	for (i = 0; i < 4; i++)
+		for (j = 0; j < 4; j++){
+			dist[i][j] = 0;
+	}
+
         msg.Cmtype = Init;
         msg.Sender = P4;
         msg.RecieverL = P1;
         msg.RecieverU = P1;
         msg.CommCount = 0;
-        //printf("P4 has Initialed\n");
         SendMessage(msg, 5);
     }
     
@@ -407,7 +406,7 @@ void SGY_P4(){
 				
 				p[3].x = x4;
 				p[3].y = y4;
-				msg.Cmtype = Finale;
+				msg.Cmtype = fstMeasure;
 				msg.Sender = P4;
 				msg.RecieverL = P2;
 				msg.RecieverU = P3;
