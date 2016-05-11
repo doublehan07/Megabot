@@ -38,15 +38,14 @@ void Encoder_EXTI_Configuration(void)
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
 	GPIO_InitStructure.GPIO_Pin = ENCODER_LEFT_A | ENCODER_LEFT_B | ENCODER_RIGHT_A | ENCODER_RIGHT_B;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	
 	GPIO_Init(ENCODER_GPIO, &GPIO_InitStructure);
 	
-	SYSCFG_EXTILineConfig(ENCODER_PORT_SOURCE, ENCODER_LEFT_A_Source);
-	SYSCFG_EXTILineConfig(ENCODER_PORT_SOURCE, ENCODER_RIGHT_A_Source);
+	/* Connect EXTI0 Line to PA.00 pin */
+  GPIO_EXTILineConfig(ENCODER_PORT_SOURCE, ENCODER_LEFT_A_Source);
+	GPIO_EXTILineConfig(ENCODER_PORT_SOURCE, ENCODER_RIGHT_A_Source);
 	
 	EXTI_InitStructure.EXTI_Line = ENCODER_LEFT_A_Line;
   EXTI_InitStructure.EXTI_LineCmd = ENABLE;

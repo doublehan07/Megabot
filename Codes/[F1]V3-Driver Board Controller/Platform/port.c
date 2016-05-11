@@ -9,8 +9,6 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
-//#define DMA_JY901
-
 /* Private variables ---------------------------------------------------------*/
 RCC_ClocksTypeDef RCC_Clocks;
 static __IO uint32_t uwTimingDelay;
@@ -27,6 +25,8 @@ void Systick_init(void);
 //系统时钟配置
 void RCC_init(void)
 {
+	ErrorStatus HSEStartUpStatus;
+	
 	/* SYSCLK, HCLK, PCLK2 and PCLK1 configuration -----------------------------*/   
   /* RCC system reset(for debug purpose) */
   RCC_DeInit();
@@ -72,15 +72,19 @@ void RCC_init(void)
     while(RCC_GetSYSCLKSource() != 0x08) {}
   }
 
+	/* Enable Clock Security System(CSS): this will generate an NMI exception
+     when HSE clock fails */
+  RCC_ClockSecuritySystemCmd(ENABLE);
+	
 	RCC_GetClocksFreq(&RCC_Clocks);
 	
-	/* Enable EXTI & NVIC clock */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG,ENABLE);
+	/* Enable AFIO clock */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 	
 	/* Enable GPIOs clocks */
-	RCC_AHB1PeriphClockCmd(
-						RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB |
-						RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD , ENABLE);
+	RCC_APB2PeriphClockCmd(
+						RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
+						RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD , ENABLE);
 }
 
 //GPIO初始化
@@ -123,9 +127,6 @@ void TimingDelay_Decrement(void)
 
 void Systick_init(void)
 {
-	/* Enable GPIOs clock */
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA|RCC_AHB1Periph_GPIOB|RCC_AHB1Periph_GPIOC, ENABLE);
-	
 	//Set NVIC for SysTick
 	NVIC_SetPriority (SysTick_IRQn, 0x05); //抢占优先级1，响应优先级1
 	

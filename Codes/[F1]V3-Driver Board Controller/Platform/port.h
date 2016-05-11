@@ -6,9 +6,6 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-extern __IO uint8_t findFirstData_JY901;
-extern __IO uint8_t findFirstData_DW1000;
-
 /* Exported macro ------------------------------------------------------------*/
 //For Systick
 #ifdef CLOCKS_PER_SEC
