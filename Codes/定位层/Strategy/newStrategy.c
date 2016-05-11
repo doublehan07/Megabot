@@ -405,17 +405,17 @@ void SGY_Receptor(){
 					SendMessage(msg,5);
 				}
 				double d, p, S, h, a, x_, y_;
-				d = sqrt((P3X - P4X)*(P3X - P4X) + (P3Y - P4Y)*(P3Y - P4Y));
-				p = (dist[1] + dist[0] + d) / 2;
-				S = sqrt(p*(p-dist[1])*(p-dist[0])*(p-d));
-				h = 2 * S / d;
-				a = sqrt(dist[0]*dist[0] - h * h);
-				x_ = dist[0] / d * P4X + (1 - dist[0] / d) * P3X;
-				y_ = dist[1] / d * P4Y + (1 - dist[1] / d) * P3Y;
-				x1 = x_ + (P4X - P3X) * h / d;
-				y1 = y_ - (P4Y - P3Y) * h / d;
-				x2 = x_ - (P4X - P3X) * h / d;
-				y2 = y_ + (P4Y - P3Y) * h / d; 
+                d = sqrt((P3X - P4X)*(P3X - P4X) + (P3Y - P4Y)*(P3Y - P4Y));
+                p = (dist[0] + dist[1] + d) / 2;
+                S = sqrt(p*(p-dist[0])*(p-dist[1])*(p-d));
+                h = 2.0 * S / d;
+                a = sqrt(dist[0]*dist[0] - h * h);
+                x_ = a*1.0 / d * P2X + (1 - a*1.0 / d) * P3X;
+                y_ = a*1.0 / d * P2Y + (1 - a*1.0 / d) * P3Y;
+                x1 = x_ + (P4Y - P3Y) * h / d;
+                y1 = y_ - (P4X - P3X) * h / d;
+                x2 = x_ - (P4Y - P3Y) * h / d;
+                y2 = y_ + (P4X - P3X) * h / d;
 			}
 		}
 
@@ -455,17 +455,17 @@ void SGY_Receptor(){
 				}
 				//Calculate//	
 				double d, p, S, h, a, x_, y_;
-				d = sqrt((P1X - P2X)*(P1X - P2X) + (P1Y - P2Y)*(P1Y - P2Y));
-				p = (dist[0] + dist[1] + d) / 2;
-				S = sqrt(p*(p-dist[0])*(p-dist[1])*(p-d));
-				h = 2 * S / d;
-				a = sqrt(dist[0]*dist[0] - h * h);
-				x_ = dist[0] / d * P2X + (1 - dist[0] / d) * P1X;
-				y_ = dist[1] / d * P2Y + (1 - dist[1] / d) * P1Y;
-				x1 = x_ + (P2X - P1X) * h / d;
-				y1 = y_ - (P2Y - P1Y) * h / d;
-				x2 = x_ - (P2X - P1X) * h / d;
-				y2 = y_ + (P2Y - P1Y) * h / d;
+                d = sqrt((P1X - P2X)*(P1X - P2X) + (P1Y - P2Y)*(P1Y - P2Y));
+                p = (dist[0] + dist[1] + d) / 2;
+                S = sqrt(p*(p-dist[0])*(p-dist[1])*(p-d));
+                h = 2.0 * S / d;
+                a = sqrt(dist[0]*dist[0] - h * h);
+                x_ = a*1.0 / d * P2X + (1 - a*1.0 / d) * P1X;
+                y_ = a*1.0 / d * P2Y + (1 - a*1.0 / d) * P1Y;
+                x1 = x_ + (P2Y - P1Y) * h / d;
+                y1 = y_ - (P2X - P1X) * h / d;
+                x2 = x_ - (P2Y - P1Y) * h / d;
+                y2 = y_ + (P2X - P1X) * h / d;
 			}
 		}
 	}
