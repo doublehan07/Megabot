@@ -2,8 +2,8 @@
 ##四个子节点的定位
 	- P1(Leader)广播，激活网络测距
 	CmdType | SenderID | RecieveIDLowerBound | RecieveIDUpperBound | CoodinateX \
-			| CoodinateY | Dist1(RESV) | Dist2(RESV) | FLAG(RESV) | CRC | CRC
-	0x0A | 0x01 | 0x02 | 0x04 | 0x00 | 0x00 | 0x00 | 0x00 | 0x00 | 0x0D | 0x0A
+			| CoodinateY | Dist1(RESV) | Dist2(RESV) | (CRC) | (CRC)
+	0x0A | 0x01 | 0x02 | 0x04 | 0x00 | 0x00 | 0x00 | 0x00 | 0x00 | (0x0D) | (0x0A)
 
 	- P2-P4回复
 	Cmdtype | SenderID | TargetID | CRC | CRC
@@ -46,8 +46,9 @@
 	//注意校验，这里不要最后一次回复
 
 	**Interface**
-	u8 Initiator_Ranging(), return IF_SUCCESS_RANGING(0x00 - T, 0xFF - F)
-	u16 Receptor_Ranging(), return IF_GET_DIST(distance_cm, 0xFFFF - F)
+	u8 Initiator_Ranging(u8 *data), return IF_SUCCESS_RANGING(0x00 - T, 0xFF - F)
+	u16 Receptor_Ranging(u8 delay), return IF_GET_DIST(distance_cm, 0xFFFF - F)
+	u8 Recptor_Listening(u8 *rx_buffer[30], u8 *length), return If_SUCCESS_COMMUNICATION(0x00 - T, 0xFF - F)
 
 ##四节点的后续操作
 	- P4计算出自己和P3的坐标，同时知道P1和P2的坐标
