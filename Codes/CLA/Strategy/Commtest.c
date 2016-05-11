@@ -41,15 +41,10 @@ u8* SendMessage(Message msg, int len){
         data[11] = msg.Dist2 & 0xFF;
         data[12] = msg.CommCount;
         if (msg.CommCount == 0){
-            //printf("%d,%d,%d", Rounddata[0],Rounddata[1],Rounddata[12]);
             SendMsg(data, len);
-            //int tag = 0;
-            //MPI_Status status;
-            //MPI_Recv(data, len, MPI_SHORT, data[1], tag, MPI_COMM_WORLD, &status)
         }
         else{
-            //printf("%d,%d,%d", data[0],data[1],data[12]);
-            Initiator_Ranging(data, len);
+            InitiatorMeasuring(data, len);
         }
         return data;
     }
@@ -60,7 +55,6 @@ u8* SendMessage(Message msg, int len){
         data[2] = msg.RecieverL;
         data[3] = msg.RecieverU;
         data[4] = msg.CommCount;
-        
         SendMsg(data, 5);
         return data;
     }
@@ -92,7 +86,7 @@ Message SaveMessage(u8* data, int len){
 void SGY_P1(){ //P1's strategy   
     Message upperAsk;
     Message msg;
-    int len;
+    u8 len;
     int flag = 1;
     if (flag == 1){
         msg.Cmtype = Init;
@@ -105,8 +99,8 @@ void SGY_P1(){ //P1's strategy
 				p[0].y = 0;
     }
     
-    Receptor_Listening(&p[0],5,&p[3]);
-    upperAsk = SaveMessage(p[0].rx_buffer, 5);
+    Receptor_Listening(p[0].rx_buffer,&len);
+    upperAsk = SaveMessage(p[0].rx_buffer, len);
     if (upperAsk.Cmtype == Init){
         if (upperAsk.Sender == P4){
             //start the four point locating...
@@ -124,8 +118,8 @@ void SGY_P1(){ //P1's strategy
         }
     }
     
-    Receptor_Listening(&p[0],13,&p[1]);
-    upperAsk = SaveMessage(p[0].rx_buffer, 13);
+    Receptor_Listening(p[0].rx_buffer,&len);
+    upperAsk = SaveMessage(p[0].rx_buffer, len);
     if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P2 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
         p[0].dist[0] = Receptor_Ranging(&p[0],&p[1]);
         //get the distance of P1 and P2
