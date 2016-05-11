@@ -25,13 +25,22 @@ void Usart_JY901_init(void)
 	/* Enable USART1 clock for JY901 */
 	RCC_APB2PeriphClockCmd(USART_JY901_CLOCK, ENABLE);
 	
+	//Enable and set USART1 Interrupt the the second lowest priority
+	NVIC_InitStructure.NVIC_IRQChannel = JY901_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	
 	/* Set GPIOs for USART1-JY901 */
-	GPIO_InitStructure.GPIO_Pin = STM_JY901_TX | STM_JY901_RX;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_Pin = STM_JY901_TX;// | STM_JY901_RX;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(STM_JY901_PORT, &GPIO_InitStructure);
-    
-  GPIO_PinAFConfig(STM_JY901_PORT, AF_JY901_TX, AF_JY901_CHANNEL);
-  GPIO_PinAFConfig(STM_JY901_PORT, AF_JY901_RX, AF_JY901_CHANNEL);
+  
+	GPIO_InitStructure.GPIO_Pin = STM_JY901_RX;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_Init(STM_JY901_PORT, &GPIO_InitStructure);  
 	
 	/* Usart1 Config */
 	USART_InitStructure.USART_BaudRate = BAUDRATE_JY901;
@@ -46,14 +55,6 @@ void Usart_JY901_init(void)
 	/* Set NVIC for JY901-USART1 */
 	// Interrupt while receiving data
 	USART_ITConfig(USART_JY901_CHANNEL, USART_IT_RXNE, ENABLE); //接收到信息中断
-	
-	//Enable and set USART1 Interrupt the the second lowest priority
-	NVIC_InitStructure.NVIC_IRQChannel = JY901_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-
-	NVIC_Init(&NVIC_InitStructure);
 
 	/* Enable USART1 */
 	USART_Cmd(USART_JY901_CHANNEL, ENABLE);
