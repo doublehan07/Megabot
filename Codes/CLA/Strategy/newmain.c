@@ -51,6 +51,8 @@ static dwt_config_t config = {
 /* Private functions ---------------------------------------------------------*/
 
 Node p[4];
+int get_all_distance = 0;
+int dist[4][4];
 
 int main(void)
 {
@@ -87,7 +89,7 @@ int main(void)
 	p[1].id = P2;
 	p[2].id = P3;
 	p[3].id = P4;
-	flag = 1          // 1 - start 0 - end
+	flag = 1;          // 1 - start 0 - end
   while (1)
   {
 			if (MyID == 0){
@@ -96,10 +98,10 @@ int main(void)
 			if (MyID == 1){
 				SGY_P2();
 			}
-			if (MyID == 1){
+			if (MyID == 2){
 				SGY_P3();
 			}
-			if (MyID == 1){
+			if (MyID == 3){
 				SGY_P4();
 			}
 //		dwt_setGPIOvalue(GDM1, GDP1);
