@@ -13,6 +13,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+static u16 speed  = 0;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -30,16 +31,16 @@ int main(void)
 	Delay(5);
 	Motor_If_Awake(1);
 	Motor_If_FastDecay(0);
-	Motor_If_Forward(1, 0);
-	Motor_Set_Speed(0, 200);
-	//Delay(100);
-	//Motor_If_Forward(0, 0);        
-		
-  /* Infinite loop */
-  while (1)
-  {
-		
-  }
+	
+	// 1 means forward
+	Motor_If_Forward(0, 1);
+	Motor_If_Forward(1, 1);
+	Motor_Set_Speed(0, 500);
+	Motor_Set_Speed(1, 500);
+	
+	while(1)
+	{
+	}      
 }
 
 #ifdef  USE_FULL_ASSERT
