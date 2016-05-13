@@ -100,19 +100,18 @@ extern int16_t currentSettedSpeed;
 //DRV8801
 //Signal
 /* left */
-#define PHASE_PIN_LEFT								GPIO_Pin_2                                                                                                                       
+#define PHASE_PIN_LEFT								GPIO_Pin_4                                                                                                                      
 #define ENABLE_PIN_LEFT							GPIO_Pin_6								//TIM3_CH1 - PA6
 #define ENABLE_PWMO_LEFT 				CCR1
 
 /* right */
-#define PHASE_PIN_RIGHT							GPIO_Pin_3                                                                                                                       
+#define PHASE_PIN_RIGHT							GPIO_Pin_5                                                                                                                    
 #define ENABLE_PIN_RIGHT						GPIO_Pin_7								//TIM3_CH2 - PA7
 #define ENABLE_PWMO_RIGHT	 		CCR2
 
 #define PWM_TIM 											    TIM3
-
 #define PWM_GPIO													GPIOA
-#define SIGNAL_GPIO 								    GPIOB
+#define SIGNAL_GPIO 								    GPIOA
 
 //Control - PCx
 /* left */

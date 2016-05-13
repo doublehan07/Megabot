@@ -24,9 +24,15 @@ u16 Get_Speed(u8 left_or_right)
 {
 	u16 speed;
 	if(left_or_right == 0) //Select left motor.
-		speed = (u16)((double)saveLeftCounter / (double)MAX_SPEED_COUNTER);
+	{
+		speed = saveLeftCounter;
+		//speed = speed * 2;
+	}
 	else //Select right motor.
-		speed = (u16)((double)saveRightCounter / (double)MAX_SPEED_COUNTER);
+	{
+		speed = saveRightCounter;
+		//speed = speed * 1.4;
+	}
 	speed = speed > 1000 ? 1000 : speed;
 	return speed;
 }
@@ -37,6 +43,7 @@ void Encoder_EXTI_Configuration(void)
 	EXTI_InitTypeDef EXTI_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 	
+	// initial the GPIO pin 
 	GPIO_InitStructure.GPIO_Pin = ENCODER_LEFT_A | ENCODER_LEFT_B | ENCODER_RIGHT_A | ENCODER_RIGHT_B;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;

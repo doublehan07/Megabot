@@ -58,17 +58,17 @@ void Motor_Init(void)
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
 	//Usart1 init for Yaw
-//	Usart_JY901_init();
+	Usart_JY901_init();
 	
 	//Encoder init for speed
-//	Encoder_EXTI_Configuration();
+	Encoder_EXTI_Configuration();
 	
 	//Enable GPIO used for controlling motor
 	//Signal
-//	GPIO_InitStructure.GPIO_Pin = PHASE_PIN_LEFT | PHASE_PIN_RIGHT;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_Init(SIGNAL_GPIO, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = PHASE_PIN_LEFT | PHASE_PIN_RIGHT;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(SIGNAL_GPIO, &GPIO_InitStructure);
 	
 	GPIO_InitStructure.GPIO_Pin = ENABLE_PIN_LEFT | ENABLE_PIN_RIGHT;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -78,11 +78,11 @@ void Motor_Init(void)
 	Timer1_PWM_Configuration();
 	
 	//Control
-//	GPIO_InitStructure.GPIO_Pin = nFAULT_LEFT | MODE1_LEFT | MODE2_LEFT | nSLEEP_RIGHT \
-//															                 | nFAULT_RIGHT | MODE1_RIGHT | MODE1_RIGHT | nSLEEP_LEFT;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_Init(CONTROL_GPIO, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = nFAULT_LEFT   | MODE1_LEFT   | MODE2_LEFT   | nSLEEP_RIGHT \
+															                      | nFAULT_RIGHT | MODE1_RIGHT | MODE1_RIGHT | nSLEEP_LEFT;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(CONTROL_GPIO, &GPIO_InitStructure);
 	
 	//ADC
 	//TODO
