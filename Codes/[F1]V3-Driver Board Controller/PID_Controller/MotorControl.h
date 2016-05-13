@@ -58,5 +58,8 @@ uint16_t myABS(int16_t value);
 // PID -- turn the angle
 void Motor_Move(int16_t angle, u8 if_related, int16_t speed);
 
+// go to the target position
+void goToPosition(int16_t currentX, int16_t currentY, int16_t targetX, int16_t targetY);
+
 
 #endif // MOTOR_CONTROL

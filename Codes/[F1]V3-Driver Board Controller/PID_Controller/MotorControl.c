@@ -1,5 +1,6 @@
 #include "MotorControl.h"
 #include "motor_pcb_interface.h"
+#include "math.h"
 
 /*
 * so easy!!
@@ -149,4 +150,32 @@ void Motor_Move(int16_t angle, u8 if_related, int16_t speed)
 	// but this function only set the parameter of the PID function
 	// use a global parameter
 	//currentSettedSpeed = speed;
+}
+
+/*
+* we know the current position and we know the target position, so we need
+* turn an approprite angle and go straight to reach the target position.
+* When we go straight, we should know how far we have ran.
+*/
+void goToPosition(int16_t currentX, int16_t currentY, int16_t targetX, int16_t targetY)
+{
+	// get the distance
+	int16_t straightDistance = sqrt(pow(targetY-currentY, 2) + pow(targetX-currentX, 2));
+	
+	// we should calculate the angle we should turn
+	// int16_t currentAngle = Inertia_Get_Angle_Yaw();
+	int16_t turnAngle = asin(myABS((targetY-currentY)/straightDistance));
+
+	// turn the angle and set the speed 
+	if(targetX > currentX && targetY > currentY)        // first quadrant
+		Motor_Move(turnAngle, 1, MAX_SPEED);
+	else if(targetX < currentX && targetY > currentY)   // second quadrant
+		Motor_Move(-turnAngle, 1, MAX_SPEED);
+	else if(targetX < currentX && targetY < currentY)   // third quadrant
+		Motor_Move(turnAngle - MAX_ANGLE/2, 1, MAX_SPEED);
+	else                                                // forth quadrant
+		Motor_Move(MAX_ANGLE/2 - turnAngle, 1, MAX_SPEED);
+
+	// run the distance
+	// TODO
 }
