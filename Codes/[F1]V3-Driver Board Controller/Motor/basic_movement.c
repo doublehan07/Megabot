@@ -75,11 +75,20 @@ void Motor_If_Forward(u8 left_or_right, u8 if_forward)
 
 void Motor_Set_Speed(u8 left_or_right, u16 speed)
 {
+	TIM_OCInitTypeDef  TIM_OCInitStructure;
+	
 	speed = speed > 1000 ? 1000 : speed;
 	
+	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;									//选择模式PWM1，小于比较值时有效
+		
+	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;		//TIM1CH1-TIM1CH4失能
+	TIM_OCInitStructure.TIM_Pulse = speed;												//每次捕获的比较值
+	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;					//有效电平为低电平（由于使用的是反相输出）
+	TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;			//TIM1CH1-TIM1CH4输出状态
+	
 	if(left_or_right == 0) //select left motor
-		PWM_TIM -> ENABLE_PWMO_LEFT = speed;
+		TIM_OC1Init(PWM_TIM, &TIM_OCInitStructure);
 	
 	else //select right motor
-		PWM_TIM -> ENABLE_PWMO_RIGHT = speed;
+		TIM_OC2Init(PWM_TIM, &TIM_OCInitStructure);
 }

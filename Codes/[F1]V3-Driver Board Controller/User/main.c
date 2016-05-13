@@ -30,11 +30,11 @@ int main(void)
 	Delay(5);
 	Motor_If_Awake(1);
 	Motor_If_FastDecay(0);
-	Motor_If_Forward(1, 1);
-	Motor_Set_Speed(0, 800);
-	Delay(100);
-	Motor_If_Forward(0, 0);
-
+	Motor_If_Forward(1, 0);
+	Motor_Set_Speed(0, 200);
+	//Delay(100);
+	//Motor_If_Forward(0, 0);        
+		
   /* Infinite loop */
   while (1)
   {

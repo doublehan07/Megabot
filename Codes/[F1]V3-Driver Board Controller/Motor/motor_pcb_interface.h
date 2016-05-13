@@ -101,42 +101,41 @@ extern int16_t currentSettedSpeed;
 //Signal
 /* left */
 #define PHASE_PIN_LEFT								GPIO_Pin_2                                                                                                                       
-#define ENABLE_PIN_LEFT								GPIO_Pin_0								//TIM1_CH2N - PB0
-#define ENABLE_Source_LEFT 						GPIO_PinSource0
-#define ENABLE_PWMO_LEFT 							CCR2
+#define ENABLE_PIN_LEFT							GPIO_Pin_6								//TIM3_CH1 - PA6
+#define ENABLE_PWMO_LEFT 				CCR1
 
 /* right */
-#define PHASE_PIN_RIGHT								GPIO_Pin_3                                                                                                                       
-#define ENABLE_PIN_RIGHT							GPIO_Pin_1								//TIM1_CH3N - PB1
-#define ENABLE_Source_RIGHT	 					GPIO_PinSource1
-#define ENABLE_PWMO_RIGHT	 						CCR3
+#define PHASE_PIN_RIGHT							GPIO_Pin_3                                                                                                                       
+#define ENABLE_PIN_RIGHT						GPIO_Pin_7								//TIM3_CH2 - PA7
+#define ENABLE_PWMO_RIGHT	 		CCR2
 
-#define ENABLE_TIM  									GPIO_AF_TIM1
-#define PWM_TIM 											TIM1
-#define SIGNAL_GPIO 									GPIOB
+#define PWM_TIM 											    TIM3
+
+#define PWM_GPIO													GPIOA
+#define SIGNAL_GPIO 								    GPIOB
 
 //Control - PCx
 /* left */
-#define nFAULT_LEFT										GPIO_Pin_0
-#define MODE1_LEFT										GPIO_Pin_1
-#define MODE2_LEFT										GPIO_Pin_2
-#define nSLEEP_LEFT										GPIO_Pin_3
+#define nFAULT_LEFT										GPIO_Pin_4
+#define MODE1_LEFT										GPIO_Pin_5
+#define MODE2_LEFT										GPIO_Pin_6
+#define nSLEEP_LEFT										GPIO_Pin_7
 
 /* right */
-#define nFAULT_RIGHT									GPIO_Pin_4
-#define MODE1_RIGHT										GPIO_Pin_5
-#define MODE2_RIGHT										GPIO_Pin_6
-#define nSLEEP_RIGHT									GPIO_Pin_7
+#define nFAULT_RIGHT									GPIO_Pin_8
+#define MODE1_RIGHT									GPIO_Pin_9
+#define MODE2_RIGHT									GPIO_Pin_10
+#define nSLEEP_RIGHT									GPIO_Pin_11
 
-#define CONTROL_GPIO									GPIOC
+#define CONTROL_GPIO								GPIOB
 
 //ADC - PAx
 /* left */
-#define Vpropi_LEFT										GPIO_Pin_1
+#define Vpropi_LEFT										GPIO_Pin_1.
 #define ADC_GPIO_LEFT									GPIOA
 
 /* right */
-#define Vpropi_RIGHT									GPIO_Pin_1
+#define Vpropi_RIGHT									GPIO_Pin_2
 #define ADC_GPIO_RIGHT								GPIOA
 
 /* Exported functions ------------------------------------------------------- */
