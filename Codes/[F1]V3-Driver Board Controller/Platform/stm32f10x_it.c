@@ -134,18 +134,24 @@ void PendSV_Handler(void)
   * @param  None
   * @retval None
   */
+static u8 encoderCounter = 0;
+static u16 motorControlCounter = 0;
 void SysTick_Handler(void)
 {
-	static u8 encoderCounter = 0;
+	motorControlCounter++;
 	encoderCounter++;
 	if(encoderCounter == 30) //Sampling speed in each 30 ms.
 	{
 		encoderCounter = 0;
 		Sampling_Tick_Speed();
-		
-		// after get current speed, we can calculate the PID parameters and control the motor
-		//MotorSpeedPID(currentSettedSpeed);
 	}
+	if(motorControlCounter == 100)
+	{
+		motorControlCounter = 0;
+		// after get current speed, we can calculate the PID parameters and control the motor
+		MotorSpeedPID(returnSpeed());
+	}
+	
 	TimingDelay_Decrement();
 }
 
@@ -178,8 +184,10 @@ void USART1_IRQHandler(void)
 {
 	if (USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)
 	{	
-		u8 tmp = USART_ReceiveData(USART_JY901_CHANNEL);
-		ParseSerialData(tmp);
+		//u8 tmp = USART_ReceiveData(USART_JY901_CHANNEL);
+		//ParseSerialData(tmp);
+		
+		USART_SendData(USART1,0xAA);
 	}
 	//USART不用手动清除标志位
 }

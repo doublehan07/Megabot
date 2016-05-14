@@ -37,12 +37,9 @@
 #define ACCEPTTED_ERROR_ANGLE 10
 
 // PID parameters (speed)
-#define P_DATA_SPEED 1
+#define P_DATA_SPEED 2
 #define I_DATA_SPEED 0
 #define D_DATA_SPEED 0
-int16_t LastError = 0;  // global error [-1]
-int16_t PrevError = 0;  // global error [-2]
-
 
 /************************  useful tools  ******************************/
 
@@ -60,6 +57,5 @@ void Motor_Move(int16_t angle, u8 if_related, int16_t speed);
 
 // go to the target position
 void goToPosition(int16_t currentX, int16_t currentY, int16_t targetX, int16_t targetY);
-
 
 #endif // MOTOR_CONTROL
