@@ -13,7 +13,6 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-static u16 speed  = 0;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -26,7 +25,7 @@ int main(void)
 	//关于初始化：
 	//如果一开始就可以做的尽量都放在开始时
 	//如果有后续工作则在此处另外调用
-	
+	Usart_JY901_init();
 	Motor_Init();
 	Delay(5);
 	Motor_If_Awake(1);
@@ -35,8 +34,9 @@ int main(void)
 	// 1 means forward
 	Motor_If_Forward(0, 1);
 	Motor_If_Forward(1, 1);
-	Motor_Set_Speed(0, 500);
-	Motor_Set_Speed(1, 500);
+	Motor_Set_Speed(0, 10);
+	Motor_Set_Speed(1, 10);
+	setSpeed(500);
 	
 	while(1)
 	{

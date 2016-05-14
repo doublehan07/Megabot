@@ -2,6 +2,22 @@
 #include "motor_pcb_interface.h"
 #include "math.h"
 
+/****************************************************************************************/
+// global parameter to set the speed
+// when we want to set a speed we could change this parameter
+static int16_t currentSettedSpeed;
+
+void setSpeed(int16_t speed)
+{
+	currentSettedSpeed = speed;
+}
+int16_t returnSpeed()
+{
+	return currentSettedSpeed;
+}
+
+/******************************************************************************************/
+
 /*
 * so easy!!
 */
@@ -43,6 +59,8 @@ int16_t angleTransform(int16_t angle_ABS180)
 * the correction of PID is the speed difference, so when we set the speed using API,
 * we need to plus the correction with a const speed which we received 
 */
+static int16_t LastError = 0;     // global error [-1]
+static int16_t PrevError = 0;     // global error [-2]
 void MotorSpeedPID(int16_t speed)
 {
 	// get current speed from conuter
@@ -57,15 +75,15 @@ void MotorSpeedPID(int16_t speed)
 	int16_t speedDiffernrce = leftSpeed - rightSpeed;
 
     // delta calculation     
-    int16_t correctionSpeed = Proportion * speedDiffernrce  // E[k]              
-                            - Integral   * LastError        // E[k-1]
-                            + Derivative * PrevError;       // E[k-2] 
+    int16_t correctionSpeed = Proportion * speedDiffernrce  // E[k]
+                            - Integral   * LastError                          // E[k-1]
+                            + Derivative * PrevError;                       // E[k-2]
     PrevError = LastError; 
     LastError = speedDiffernrce;
 
     // implenment the PID settings
-    Motor_Set_Speed(LEFT, speed + correctionSpeed);
-    Motor_Set_Speed(RIGHT, speed - correctionSpeed);
+    Motor_Set_Speed(LEFT, speed - correctionSpeed);
+    Motor_Set_Speed(RIGHT, speed + correctionSpeed);
 }
 
 /*
