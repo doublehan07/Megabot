@@ -182,13 +182,26 @@ void SysTick_Handler(void)
   */
 void USART1_IRQHandler(void)
 {
+	static u16 uartCounter = 0;
 	if (USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)
 	{	
 		//u8 tmp = USART_ReceiveData(USART_JY901_CHANNEL);
 		//ParseSerialData(tmp);
-		
-		USART_SendData(USART1,0xAA);
 	}
+	if(USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_TXE) != RESET)
+	{
+			uartCounter++;
+			if(uartCounter == 5000)
+			{
+				USART_SendData(USART1,Get_Speed(0));
+			}
+			if(uartCounter == 10000)
+			{
+				USART_SendData(USART1,Get_Speed(1));
+				uartCounter = 0;
+			}
+	}
+	
 	//USART不用手动清除标志位
 }
 

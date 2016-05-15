@@ -54,7 +54,8 @@ void Usart_JY901_init(void)
 
 	/* Set NVIC for JY901-USART1 */
 	// Interrupt while receiving data
-	USART_ITConfig(USART_JY901_CHANNEL, USART_IT_RXNE, ENABLE); //接收到信息中断
+	USART_ITConfig(USART_JY901_CHANNEL, USART_IT_RXNE, DISABLE); //接收到信息中断
+	USART_ITConfig(USART_JY901_CHANNEL, USART_IT_TXE, ENABLE); //接收到信息中断
 
 	/* Enable USART1 */
 	USART_Cmd(USART_JY901_CHANNEL, ENABLE);
