@@ -25,12 +25,12 @@ u16 Get_Speed(u8 left_or_right)
 	u16 speed;
 	if(left_or_right == 0) //Select left motor.
 	{
-		speed = saveLeftCounter;
+		speed = saveLeftCounter%100;
 		//speed = speed * 2;
 	}
 	else //Select right motor.
 	{
-		speed = saveRightCounter;
+		speed = saveRightCounter%100;
 		//speed = speed * 1.4;
 	}
 	speed = speed > 1000 ? 1000 : speed;

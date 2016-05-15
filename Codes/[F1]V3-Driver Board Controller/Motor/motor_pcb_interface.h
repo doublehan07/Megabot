@@ -154,6 +154,6 @@ u16 Get_Speed(u8 left_or_right);
 // PID -- set the speed
 void MotorSpeedPID(int16_t speed);
 void setSpeed(int16_t speed);
-int16_t returnSpeed();
+int16_t returnSpeed(void);
 
 #endif /* __MOTOR_PCB_INTI */

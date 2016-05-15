@@ -34,8 +34,8 @@ int main(void)
 	// 1 means forward
 	Motor_If_Forward(0, 1);
 	Motor_If_Forward(1, 1);
-	Motor_Set_Speed(0, 10);
-	Motor_Set_Speed(1, 10);
+	Motor_Set_Speed(0, 500);
+	Motor_Set_Speed(1, 500);
 	setSpeed(500);
 	
 	while(1)
