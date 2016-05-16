@@ -8,7 +8,7 @@
 
 #ifndef Commtest_h
 #define Commtest_h
-/*
+
 #define P1 (0)
 #define P2 (1)
 #define P3 (2)
@@ -24,10 +24,9 @@
 //#include "mpi.h"
 #include "stdio.h"
 #include "ranging_api.h"
+#include <math.h>
 //typedef short u8;
 //typedef unsigned int u16;
-int dist[4][4];
-
 
 typedef struct Message{
     u8 Cmtype;
@@ -50,20 +49,11 @@ typedef struct Node{
 }Node;
 
 
-int Round(double m){
-    return (int)(m+0.5);
-}
+int Round(double);
 
-void InitiatorMeasuring(u8* data, int len){
-		Initiator_Ranging(data);
-}
-int ReceptorGrasping(Node* p, int *len, Node* source){
-		Receptor_Listening(p->rx_buffer, len);
-    return len;
-}
-int ReceptorMeasuring(Node* p, Node* source){//, int len){
-		double dist = Receptor_Ranging(p->id);
-    return dist; 
-}
-*/
+void SGY_P1();
+void SGY_P2();
+void SGY_P3();
+void SGY_P4();
+
 #endif /* Commtest_h */

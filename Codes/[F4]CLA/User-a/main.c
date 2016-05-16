@@ -12,6 +12,7 @@
 #include "deca_regs.h"
 #include "port.h"
 #include "ranging_api.h"
+#include "Commtest.h"
 
 /*
 #include "Commtest.h"
@@ -54,11 +55,12 @@ static dwt_config_t config = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-/*
+
 Node p[4];
 int get_all_distance = 0;
 int dist[4][4];
-*/
+int flag;
+
 
 int main(void)
 {
@@ -90,17 +92,17 @@ int main(void)
 	
 	dwt_setGPIOvalue(GDM0, GDP0);
 
-/*
+
 	p[0].id = P1;
 	p[1].id = P2;
 	p[2].id = P3;
 	p[3].id = P4;
 	flag = 1;          // 1 - start 0 - end
-*/
+
 	
   while (1)
   {
-		/*
+		
 		if (MyID == 0){
 			SGY_P1();	
 		}
@@ -113,7 +115,7 @@ int main(void)
 		if (MyID == 3){
 			SGY_P4();
 		}
-		*/
+		
 			
 //		dwt_setGPIOvalue(GDM1, GDP1);
 //		dwt_setGPIOvalue(GDM2, GDP2);
