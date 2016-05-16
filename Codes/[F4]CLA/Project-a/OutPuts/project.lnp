@@ -24,8 +24,6 @@
 ".\outputs\ranging_interface.o"
 ".\outputs\ranging_template_1to1.o"
 ".\outputs\ccommtest.o"
-".\outputs\commtest.o"
-".\outputs\newstrategy.o"
 --strict --scatter ".\OutPuts\project.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

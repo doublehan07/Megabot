@@ -33,3 +33,6 @@
 .\outputs\main.o: ..\decadriver\deca_version.h
 .\outputs\main.o: ..\platform\port.h
 .\outputs\main.o: ..\User-a\ranging_api.h
+.\outputs\main.o: ..\Strategy\Commtest.h
+.\outputs\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\outputs\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
