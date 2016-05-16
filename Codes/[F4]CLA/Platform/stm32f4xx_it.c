@@ -141,11 +141,18 @@ void PendSV_Handler(void)
   */
 /* Tick timer count. */
 __IO uint32_t time32_incr;
+int counter;
+extern int flag;
 void SysTick_Handler(void)
 {	
 	time32_incr++;
+	counter++;
 	if(time32_incr >= 0xFFFFFFFF) //·ÀÖ¹50ÌìºóÒç³ö
 		time32_incr = 0;
+	if (counter > 1000){
+		counter = 0;
+		flag = 1;
+	}
 	TimingDelay_Decrement();
 }
 
