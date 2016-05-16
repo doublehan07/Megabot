@@ -97,7 +97,7 @@ int main(void)
 	p[1].id = P2;
 	p[2].id = P3;
 	p[3].id = P4;
-	flag = 1;          // 1 - start 0 - end
+	flag = 0;          // 1 - start 0 - end
 
 	
   while (1)
