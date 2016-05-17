@@ -57,8 +57,11 @@ void Motor_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
-	//Usart1 init for Yaw
+	//Usart2 init for Yaw
 	Usart_JY901_init();
+	
+	//Usart1 init for PID
+	Usart_PID_init();
 	
 	//Encoder init for speed
 	Encoder_EXTI_Configuration();

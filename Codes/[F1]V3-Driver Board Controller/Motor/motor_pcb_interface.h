@@ -91,9 +91,6 @@ extern struct SGPSV 			stcGPSV;
 extern float sAngle;
 
 /* Exported macro ------------------------------------------------------------*/
-//JY901 - others are in usart_imu.h
-#define USART_JY901_CHANNEL			USART1
-
 //DRV8801
 //Signal
 /* left */
@@ -127,12 +124,12 @@ extern float sAngle;
 
 //ADC - PAx
 /* left */
-#define Vpropi_LEFT										GPIO_Pin_1.
-#define ADC_GPIO_LEFT									GPIOA
+//#define Vpropi_LEFT										GPIO_Pin_1.
+//#define ADC_GPIO_LEFT									GPIOA
 
-/* right */
-#define Vpropi_RIGHT									GPIO_Pin_2
-#define ADC_GPIO_RIGHT								GPIOA
+///* right */
+//#define Vpropi_RIGHT									GPIO_Pin_2
+//#define ADC_GPIO_RIGHT								GPIOA
 
 /* Exported functions ------------------------------------------------------- */
 
@@ -143,6 +140,7 @@ void Motor_If_FastDecay(u8 if_fast_decay);
 void Motor_If_Forward(u8 left_or_right, u8 if_forward);
 void Motor_Set_Speed(u8 left_or_right, u16 speed);
 
+void Usart_PID_init(void);
 void Usart_JY901_init(void);
 void ParseSerialData(unsigned char ucData);
 int16_t Inertia_Get_Angle_Yaw(void);
@@ -152,8 +150,15 @@ void Sampling_Tick_Speed(void);
 u16 Get_Speed(u8 left_or_right);
 
 // PID -- set the speed
-void MotorSpeedPID(int16_t speed);
+int16_t MotorSpeedPID(int16_t speed);
 void setSpeed(int16_t speed);
 int16_t returnSpeed(void);
+
+void setAngle(int16_t angle);
+int16_t returnAngle(void);
+
+// data to be sent of PID and JY901
+static char sendDataPID[5];
+static char sendDataAngle[5];
 
 #endif /* __MOTOR_PCB_INTI */

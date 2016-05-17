@@ -23,14 +23,15 @@ __IO u16 saveRightCounter = 0;
 u16 Get_Speed(u8 left_or_right)
 {
 	u16 speed;
+	// the data of encoder id larger than 1000, so we use %1000
 	if(left_or_right == 0) //Select left motor.
 	{
-		speed = saveLeftCounter%100;
+		speed = saveLeftCounter%1000;
 		//speed = speed * 2;
 	}
 	else //Select right motor.
 	{
-		speed = saveRightCounter%100;
+		speed = saveRightCounter%1000;
 		//speed = speed * 1.4;
 	}
 	speed = speed > 1000 ? 1000 : speed;
