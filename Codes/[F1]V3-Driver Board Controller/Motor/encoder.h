@@ -25,8 +25,8 @@
 
 #define ENCODER_RIGHT_B										 GPIO_Pin_3
 
-#define ENCODER_GPIO												   GPIOA
-#define ENCODER_PORT_SOURCE					 GPIO_PortSourceGPIOA
+#define ENCODER_GPIO												   GPIOB
+#define ENCODER_PORT_SOURCE					 GPIO_PortSourceGPIOB
 
 /* Exported functions ------------------------------------------------------- */
 

@@ -31,15 +31,15 @@
 #define RIGHT 1
 
 // PID parameters (angle)
-#define P_DATA_ANGLE 1
-#define I_DATA_ANGLE 0
-#define D_DATA_ANGLE 0
+#define P_DATA_ANGLE 10
+#define I_DATA_ANGLE 0.5
+#define D_DATA_ANGLE 0.5
 #define ACCEPTTED_ERROR_ANGLE 10
 
 // PID parameters (speed)
-#define P_DATA_SPEED 2
-#define I_DATA_SPEED 0
-#define D_DATA_SPEED 0
+#define P_DATA_SPEED 5
+#define I_DATA_SPEED 0.5
+#define D_DATA_SPEED 0.5
 
 /************************  useful tools  ******************************/
 

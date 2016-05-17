@@ -136,11 +136,12 @@ void PendSV_Handler(void)
   */
 static u8 encoderCounter = 0;
 static u16 motorControlCounter = 0;
+static int temp123;
 void SysTick_Handler(void)
 {
 	motorControlCounter++;
 	encoderCounter++;
-	if(encoderCounter == 30) //Sampling speed in each 30 ms.
+	if(encoderCounter == 10) //Sampling speed in each 30 ms.
 	{
 		encoderCounter = 0;
 		Sampling_Tick_Speed();
@@ -149,7 +150,7 @@ void SysTick_Handler(void)
 	{
 		motorControlCounter = 0;
 		// after get current speed, we can calculate the PID parameters and control the motor
-		MotorSpeedPID(returnSpeed());
+		temp123 = MotorSpeedPID(returnSpeed());
 	}
 	
 	TimingDelay_Decrement();
@@ -176,33 +177,68 @@ void SysTick_Handler(void)
   */ 
 
 /**
+  * @brief  This function handles USART1 Handler. For PID
+	*             Get current speed from the encoder
+  * @param  None
+  * @retval None
+  */
+static int uartCounter = 0;
+static u8 pointer = 0;
+void USART1_IRQHandler(void)
+{
+	if(USART_GetITStatus(USART1, USART_IT_TXE) != RESET)
+	{
+		  // inilazition of the data to be snet ending
+			sendDataPID[3] = 0x0d;
+			sendDataPID[4] = 0x0a;
+			uartCounter++;
+			if(uartCounter == 500)
+			{
+				// the speed differnece between two wheel
+				// left - right
+				int motorDifference = Get_Speed(0) - Get_Speed(1);
+				
+				// the angle differnece 
+				motorDifference = Inertia_Get_Angle_Yaw();
+				//motorDifference = temp123;
+				
+				uartCounter = 0;
+				// decide the sign of the value
+				if(motorDifference > 0)
+				{
+					unsigned int temp = motorDifference;
+					sendDataPID[0] = ((temp) >> 8) & 0xFF;
+					sendDataPID[1] = temp & 0xFF;
+					sendDataPID[2] =  0x01;
+				}
+				else
+				{
+					unsigned int temp = -motorDifference;
+					sendDataPID[0] = (temp >> 8) & 0xFF;
+					sendDataPID[1] = temp & 0xFF;
+					sendDataPID[2] =  0x00;
+				}
+				// sned a 5 length messgae
+				if(pointer == 5)
+					pointer = 0;
+				USART_SendData(USART1, sendDataPID[pointer]);
+				pointer++;
+			}
+	}
+}
+
+/**
   * @brief  This function handles USART1 Handler. For JY901.
   * @param  None
   * @retval None
   */
-void USART1_IRQHandler(void)
+void USART2_IRQHandler(void)
 {
-	static u16 uartCounter = 0;
-	if (USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_RXNE) != RESET)
+	if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
 	{	
-		//u8 tmp = USART_ReceiveData(USART_JY901_CHANNEL);
-		//ParseSerialData(tmp);
+		u8 tmp = USART_ReceiveData(USART2);
+		ParseSerialData(tmp);
 	}
-	if(USART_GetITStatus(USART_JY901_CHANNEL, USART_IT_TXE) != RESET)
-	{
-			uartCounter++;
-			if(uartCounter == 5000)
-			{
-				USART_SendData(USART1,Get_Speed(0));
-			}
-			if(uartCounter == 10000)
-			{
-				USART_SendData(USART1,Get_Speed(1));
-				uartCounter = 0;
-			}
-	}
-	
-	//USART不用手动清除标志位
-}
+}	
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
