@@ -136,7 +136,6 @@ void PendSV_Handler(void)
   */
 static u8 encoderCounter = 0;
 static u16 motorControlCounter = 0;
-static int temp123;
 void SysTick_Handler(void)
 {
 	motorControlCounter++;
@@ -146,11 +145,11 @@ void SysTick_Handler(void)
 		encoderCounter = 0;
 		Sampling_Tick_Speed();
 	}
-	if(motorControlCounter == 100)
+	if(motorControlCounter == 50)
 	{
 		motorControlCounter = 0;
 		// after get current speed, we can calculate the PID parameters and control the motor
-		temp123 = MotorSpeedPID(returnSpeed());
+		MotorSpeedPID(returnSpeed());
 	}
 	
 	TimingDelay_Decrement();
@@ -186,6 +185,7 @@ static int uartCounter = 0;
 static u8 pointer = 0;
 void USART1_IRQHandler(void)
 {
+	static int16_t motorDifference = 0;
 	if(USART_GetITStatus(USART1, USART_IT_TXE) != RESET)
 	{
 		  // inilazition of the data to be snet ending
@@ -196,24 +196,34 @@ void USART1_IRQHandler(void)
 			{
 				// the speed differnece between two wheel
 				// left - right
-				int motorDifference = Get_Speed(0) - Get_Speed(1);
+				motorDifference = Get_Speed(0) - Get_Speed(1);
 				
-				// the angle differnece 
+				// send the different angle
+				/****************************************************************************************/
+				/*
 				motorDifference = Inertia_Get_Angle_Yaw();
-				//motorDifference = temp123;
 				
+					if(motorDifference > 0)
+							motorDifference = motorDifference % 360;
+					else
+							motorDifference = (360 + motorDifference) % 360;
+				*/
+				//motorDifference = /*returnAngle() - */Inertia_Get_Angle_Yaw();
+				
+				/****************************************************************************************/
+	
 				uartCounter = 0;
 				// decide the sign of the value
 				if(motorDifference > 0)
 				{
-					unsigned int temp = motorDifference;
+					uint16_t temp = motorDifference;
 					sendDataPID[0] = ((temp) >> 8) & 0xFF;
 					sendDataPID[1] = temp & 0xFF;
-					sendDataPID[2] =  0x01;
+					sendDataPID[2] =  0x00;
 				}
 				else
 				{
-					unsigned int temp = -motorDifference;
+					uint16_t temp = -motorDifference;
 					sendDataPID[0] = (temp >> 8) & 0xFF;
 					sendDataPID[1] = temp & 0xFF;
 					sendDataPID[2] =  0x00;

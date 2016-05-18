@@ -21,11 +21,6 @@ int16_t returnSpeed()
 /*****************************   return the angle difference  ****************************/
 // global parameter to return the angle
 static int16_t currentAngleDifference = 0;
-void setAngle(int16_t angle)
-{
-	Motor_Move(angle, 1, 0);
-	currentAngleDifference = angle;
-}
 int16_t returnAngle(void)
 {
 		return currentAngleDifference;
@@ -34,7 +29,7 @@ int16_t returnAngle(void)
 /*
 * so easy!!
 */
-uint16_t myABS(int16_t value)
+int16_t myABS(int16_t value)
 {
 	if(value >= 0)
 		return value;
@@ -62,7 +57,7 @@ int16_t angleTransform(int16_t angle_ABS180)
 	if(angle_ABS180 > 0)
 		return angle_ABS180 % 360;
 	else
-		return (MAX_ANGLE + angle_ABS180) % 360;
+		return (360 + angle_ABS180) % 360;
 }
 
 /*
@@ -79,6 +74,7 @@ int16_t MotorSpeedPID(int16_t speed)
 	// get current speed from conuter
 	uint16_t leftSpeed = Get_Speed(LEFT);
 	uint16_t rightSpeed = Get_Speed(RIGHT);
+	u16 s1, s2;
 
 	double Proportion = P_DATA_SPEED;  // Proportional Const
   double Integral   = I_DATA_SPEED;  // Integral Const
@@ -95,8 +91,16 @@ int16_t MotorSpeedPID(int16_t speed)
   LastError = speedDiffernrce;
 
   // implenment the PID settings
-  Motor_Set_Speed(LEFT, speed*0.8 - correctionSpeed);
-  Motor_Set_Speed(RIGHT, speed + correctionSpeed);
+	if(speed - correctionSpeed < 0)
+		s1 = 0;
+	else
+		s1 = speed - correctionSpeed;
+	if(speed + correctionSpeed < 0)
+		s2 = 0;
+	else
+		s2 = speed + correctionSpeed;
+  Motor_Set_Speed(LEFT, s1);
+  Motor_Set_Speed(RIGHT, s2);
 	return correctionSpeed;
 }
 
@@ -104,87 +108,115 @@ int16_t MotorSpeedPID(int16_t speed)
 * use increment PID, before we reach the setted angle, we will keep calculating
 * after seting angle, we will call another function to set the speed
 */
-static u16 mycount = 0;
 void Motor_Move(int16_t angle, u8 if_related, int16_t speed)
 {
 		double Proportion = P_DATA_ANGLE;  // Proportional Const
-		double Integral   = I_DATA_ANGLE;  // Integral Const
-		double Derivative = D_DATA_ANGLE;  // Derivative Const
-		int16_t LastError = 0;             // Error [-1]
-		int16_t PrevError = 0;             // Error [-2]
+		double Integral     = I_DATA_ANGLE;  // Integral Const
+		double Derivative  = D_DATA_ANGLE;  // Derivative Const
+		int16_t LastError  = 0;             // Error [-1]
+		int16_t PrevError  = 0;             // Error [-2]
+		u16 i = 0;
 	
-		int16_t angleNow = angleTransform(Inertia_Get_Angle_Yaw());
-		int16_t angleSet = if_related ? angleNow + angleTransform(angle) : angleTransform(angle);
-		speed = constrain(speed, -MAX_SPEED, MAX_SPEED);
-
+		// make sure that we get a right angle, sometimes this function will return zero which is a wrong number
+		// the larger the value is the true value we will get
+		int16_t angleNow;
+		int16_t angleSet;
+		
+		if (angle > 180 ){
+			angle = angle - 360;
+		}
+		if (angle < -180){
+			angle = 360 + angle;
+		}
+		
+		for(;i < 700;i++)
+		{
+			angleNow = Inertia_Get_Angle_Yaw();
+		}
+		angleSet = if_related ? (angleNow + angle) : angle;
+		
+		// in case last time speed disturbs
+		currentSettedSpeed = 0;
+		//speed = constrain(speed, -MAX_SPEED, MAX_SPEED);
+		
+		/*******************  debug  *********************/
+		currentAngleDifference = angleSet;
+		/**************************************************/
+	
 		// a loop to turn the angle setted
 		// in this loop we will get the current angle and compare with the angle setted
 		// using PID to achieve this goal
 
 		// △u(k)=Kp[e(k)-e(k-1)]+Kie(k)+Kd[e(k)-2e(k-1)+e(k-2)]
 		// △u(k)=Ae(k)-Be(k-1)+Ce(k-2)
-		while(mycount < 10)
-		//while(myABS(angleSet - angleNow) > ACCEPTTED_ERROR_ANGLE)
+		while(myABS(angleSet - 360 - angleNow) > ACCEPTTED_ERROR_ANGLE  && myABS(angleSet - angleNow) > ACCEPTTED_ERROR_ANGLE)
 		{
-			// current error and the correction
-			int16_t currentError, correctionAngle;
-			currentError = angleSet - angleNow;
+				// current error and the correction
+				int16_t currentError, correctionAngle;
+				int i = 0;
+				currentError = myABS(angleSet - angleNow);
+				
+				// delta calculation     
+				correctionAngle = Proportion * currentError     // E[k]              
+																- Integral * LastError             // E[k-1]
+																+ Derivative * PrevError;        // E[k-2] 
 
-    	// delta calculation     
-    	correctionAngle = Proportion * currentError  // E[k]              
-                        - Integral * LastError     // E[k-1]
-                        + Derivative * PrevError;  // E[k-2] 
+				PrevError = LastError;     // save last error, for next usage 
+				LastError = currentError;
 
-    	PrevError = LastError;     // save last error, for next usage 
-    	LastError = currentError;
+				// implement
+				// right and less than 180 degree, so we directly turn the angle difference
+				if((angleSet - angleNow > 0 && angleSet - angleNow < 180) || (angleSet - angleNow  < 540  && angleSet - angleNow > 360) )
+				{
+					Motor_If_Forward(RIGHT, 1);
+					Motor_If_Forward(LEFT, 0);
 
-			// implement
-			// left
-			if(angleSet - angleNow > 0 && angleSet - angleNow < 180) 
-			{
-				Motor_If_Forward(RIGHT, 1);
-    		Motor_If_Forward(LEFT, 0);
+					Motor_Set_Speed(LEFT, correctionAngle); 
+					Motor_Set_Speed(RIGHT, correctionAngle);   
+				}
+				/*/ larger than 180, so we turn the opposite direction
+				else if (angleSet - angleNow > 180 || (angleSet - angleNow - 360) > 180) 
+				{
+					Motor_If_Forward(RIGHT, 0);
+					Motor_If_Forward(LEFT, 1);
 
-				Motor_Set_Speed(LEFT, correctionAngle); 
-				Motor_Set_Speed(RIGHT, correctionAngle);   
-			}
-			// right
-			else if(angleSet - angleNow > 180) 
-			{
-				Motor_If_Forward(RIGHT, 0);
-    		Motor_If_Forward(LEFT, 1);
+					Motor_Set_Speed(LEFT, correctionAngle); 
+					Motor_Set_Speed(RIGHT, correctionAngle);   
+				}
+			
+				*/// negative value and larger than 180 means we should turn left
+				
+				else if((angleSet - angleNow < 0 && angleSet - angleNow > -180) || (angleSet - angleNow < 360 && angleSet - angleNow  > 180) )
+				{
+					Motor_If_Forward(RIGHT, 0);
+					Motor_If_Forward(LEFT, 1);
 
-				Motor_Set_Speed(LEFT, correctionAngle); 
-				Motor_Set_Speed(RIGHT, correctionAngle);   
-			}
-			// left
-			else if(angleSet - angleNow < 0 && angleSet - angleNow > -180) 
-			{
-    		Motor_If_Forward(RIGHT, 1);
-    		Motor_If_Forward(LEFT, 0);
+					Motor_Set_Speed(LEFT, correctionAngle); 
+					Motor_Set_Speed(RIGHT, correctionAngle);    
+				}
+				/*/ negative value and larger than 180 means we should turn right
+				else if(angleSet - angleNow < -180)    
+				{
+					Motor_If_Forward(RIGHT, 1);
+					Motor_If_Forward(LEFT, 0);
 
-				Motor_Set_Speed(LEFT, correctionAngle); 
-				Motor_Set_Speed(RIGHT, correctionAngle);    
-    	}
-    	// right
-    	else if(angleSet - angleNow < -180)    
-    	{
-    		Motor_If_Forward(RIGHT, 0);
-    		Motor_If_Forward(LEFT, 1);
-
-				Motor_Set_Speed(LEFT, correctionAngle); 
-				Motor_Set_Speed(RIGHT, correctionAngle);   
-    	}  
-    	
-			// update the current angle
-			angleNow = angleTransform(Inertia_Get_Angle_Yaw());
-			mycount++;
-	}
+					Motor_Set_Speed(LEFT, correctionAngle); 
+					Motor_Set_Speed(RIGHT, correctionAngle);   
+				}  
+				
+				*/// update the current angle
+				for(;i < 30;i++)
+				{
+				angleNow = Inertia_Get_Angle_Yaw();
+				}
+		}
 	
-	// after the turning, we should set the speed for the straight line
-	// but this function only set the parameter of the PID function
-	// use a global parameter
-	//currentSettedSpeed = speed;
+		// after the turning, we should set the speed for the straight line
+		// but this function only set the parameter of the PID function
+		// use a global parameter
+		Motor_If_Forward(RIGHT, 1);
+		Motor_If_Forward(LEFT, 1);
+		currentSettedSpeed = speed;
 }
 
 /*

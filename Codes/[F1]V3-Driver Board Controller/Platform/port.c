@@ -129,7 +129,7 @@ void TimingDelay_Decrement(void)
 void Systick_init(void)
 {
 	//Set NVIC for SysTick
-	NVIC_SetPriority (SysTick_IRQn, 0x05); //抢占优先级1，响应优先级1
+	NVIC_SetPriority (SysTick_IRQn, 0x00); //抢占优先，响应优先级
 	
 	/* SysTick end of count event each 1ms */
 	//RCC_GetClocksFreq(&RCC_Clocks); //系统时钟已经在时钟配置里获取，全局变量
