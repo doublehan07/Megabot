@@ -27,19 +27,22 @@ int main(void)
 	//如果有后续工作则在此处另外调用
 	
 	Motor_Init();
-	Delay(5);
+	Delay(2000);
 	Motor_If_Awake(1);
 	Motor_If_FastDecay(0);
 	
 	// 1 means forward
 	Motor_If_Forward(0, 1);
 	Motor_If_Forward(1, 1);
-	Motor_Set_Speed(0, 100);
-	Motor_Set_Speed(1, 100);
-	setSpeed(1000);
+	Motor_Set_Speed(0, 300);
+	Motor_Set_Speed(1, 300);
+	//Motor_Move(0, 1, 300);
+	setSpeed(500);
 	
 	while(1)
 	{
+		//Motor_Move(90, 1, 0);
+		//Delay(2000);
 	}      
 }
 

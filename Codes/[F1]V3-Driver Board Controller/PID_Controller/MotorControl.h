@@ -31,15 +31,15 @@
 #define RIGHT 1
 
 // PID parameters (angle)
-#define P_DATA_ANGLE 10
-#define I_DATA_ANGLE 0.5
-#define D_DATA_ANGLE 0.5
-#define ACCEPTTED_ERROR_ANGLE 10
+#define P_DATA_ANGLE 100
+#define I_DATA_ANGLE 0
+#define D_DATA_ANGLE 0
+#define ACCEPTTED_ERROR_ANGLE 3
 
 // PID parameters (speed)
-#define P_DATA_SPEED 5
-#define I_DATA_SPEED 0.5
-#define D_DATA_SPEED 0.5
+#define P_DATA_SPEED 1000
+#define I_DATA_SPEED 0
+#define D_DATA_SPEED 0
 
 /************************  useful tools  ******************************/
 
@@ -48,12 +48,9 @@ int16_t constrain(int16_t input, int16_t min, int16_t max);
 // transform the abgle from 180 to 360  
 int16_t angleTransform(int16_t angle_ABS180);
 // get absolutely value
-uint16_t myABS(int16_t value);
+int16_t myABS(int16_t value);
 
 /**********************************************************************/
-
-// PID -- turn the angle
-void Motor_Move(int16_t angle, u8 if_related, int16_t speed);
 
 // go to the target position
 void goToPosition(int16_t currentX, int16_t currentY, int16_t targetX, int16_t targetY);

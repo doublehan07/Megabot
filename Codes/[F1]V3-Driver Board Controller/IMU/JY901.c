@@ -32,6 +32,9 @@ float Calculate_Angle()
 	float sum = 0;
 	short max = 0x8000, min = 0x7fff, j;
 	temp_Angle[i++] = stcAngle.Angle[2];
+//	short temp_angle = 0;
+//	temp_angle = stcAngle.Angle[2] * 1.0 / 1.0;
+//	sum += temp_angle;
 	i %= 5;
 	for (j = 0; j < 5; j++)
 	{
@@ -42,6 +45,7 @@ float Calculate_Angle()
 			min = temp_Angle[j];
 	}
 	return ((sum - max - min)*60/32768);
+	//return sum;
 }
 
 void ParseSerialData(unsigned char ucData)
@@ -68,6 +72,7 @@ void ParseSerialData(unsigned char ucData)
 			case 0x52:	memcpy(&stcGyro, &ucRxBuffer[2], 8); break;			//角速度								
 			case 0x53:	memcpy(&stcAngle, &ucRxBuffer[2], 8);						//角度
 									sAngle = Calculate_Angle(); break;
+									//sAngle = (float)(stcAngle.Angle[2] * 2.0 / 2.0); break;
 			case 0x54:	memcpy(&stcMag, &ucRxBuffer[2], 8); break;			//磁场
 			case 0x55:	memcpy(&stcDStatus, &ucRxBuffer[2], 8); break;	//端口状态数据
 			case 0x56:	memcpy(&stcPress, &ucRxBuffer[2], 8); break;		//气压

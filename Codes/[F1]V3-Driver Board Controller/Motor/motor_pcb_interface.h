@@ -154,7 +154,8 @@ int16_t MotorSpeedPID(int16_t speed);
 void setSpeed(int16_t speed);
 int16_t returnSpeed(void);
 
-void setAngle(int16_t angle);
+// PID -- turn the angle
+void Motor_Move(int16_t angle, u8 if_related, int16_t speed);
 int16_t returnAngle(void);
 
 // data to be sent of PID and JY901

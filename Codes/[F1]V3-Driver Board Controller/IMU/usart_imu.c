@@ -47,10 +47,10 @@ void Usart_PID_init(void)
 	/* Set NVIC for PID-USART1 */
 	// Interrupt while receiving data
 	USART_ITConfig(USART_PID_CHANNEL, USART_IT_RXNE, DISABLE); //接收到信息中断
-	USART_ITConfig(USART_PID_CHANNEL, USART_IT_TXE, ENABLE); //SEND到信息中断
+	USART_ITConfig(USART_PID_CHANNEL, USART_IT_TXE, DISABLE); //SEND到信息中断
 
 	/* Enable USART1 */
-	USART_Cmd(USART_PID_CHANNEL, ENABLE);
+	//USART_Cmd(USART_PID_CHANNEL, ENABLE);
 }
 
 void Usart_JY901_init(void)
