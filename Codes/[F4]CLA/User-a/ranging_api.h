@@ -14,7 +14,7 @@
 #define TX_ANT_DLY 16438
 #define RX_ANT_DLY 16438
 
-#define BUFFER_LENGTH 30 //The length of rx_buffer
+#define BUFFER_LENGTH 50 //The length of rx_buffer
 
 /* Exported functions ------------------------------------------------------- */
 void SPI_DW1000_set_rate_low (void); //Set SPI rate to less than 3 MHz to properly perform DW1000 initialisation.
@@ -29,7 +29,7 @@ void Dwm1000_Init(void);
 	0x0A | 0x01 | 0x02 | 0x04 | 0x00 | 0x00 | 0x00 | 0x00 | 0x00 | (0x0D) | (0x0A)
 */
 u8 Initiator_Ranging(u8 *data, u8 length); //return IF_FAIL_SENDING(0x00 - T, 0xFF - F)
-u16 Receptor_Ranging(u8 delay, u8 leftnumber); //return IF_FAIL_GET_DIST(distance_cm, 0xFFFF - F)
+u16 Receptor_Ranging(u8 delay, u8 leftnumber, u8 *rx_buffer); //return IF_FAIL_GET_DIST(distance_cm, 0xFFFF - F)
 u8 Receptor_Listening(u8 *rx_buffer, u8 *length, u8 *emergency_stop, u16 timeout); //return If_FAIL_COMMUNICATION(0x00 - T, 0xFF - F)
 u8 SendMsg(u8 *pointer, u8 arrayLenth); //return IF_FAIL_SENDING(0x00 - T, 0xFF - F)
 void Delay(__IO uint32_t nTime);

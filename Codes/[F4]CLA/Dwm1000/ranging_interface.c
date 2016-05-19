@@ -16,7 +16,7 @@
 //UWB microsecond (uus) to device time unit (dtu, around 15.65 ps) conversion factor.
 #define UUS_TO_DWT_TIME 65536 //1 uus = 512 / 499.2 us and 1 us = 499.2 * 128 dtu. */
 #define RESP_RX_TO_FINAL_TX_DLY_UUS 1000
-#define POLL_RX_TO_RESP_TX_DLY_UUS 150
+#define POLL_RX_TO_RESP_TX_DLY_UUS 1000
 #define SPEED_OF_LIGHT 299702547
 
 /* Private macro -------------------------------------------------------------*/
@@ -46,7 +46,7 @@ static double tof = 0.0;
 double distance = 0.0;
 uint16_t distance_cm = 0;
 
-const u8 N = 4; //之后节点数量是动态设置的，记得加接口
+const u8 Nnodes = 0x04; //之后节点数量是动态设置的，记得加接口
 
 /* Private function prototypes -----------------------------------------------*/
 u8 Receptor_Waiting(u8 *rx_buffer, u8 *length, u8 *emergency_stop); //return If_FAIL_COMMUNICATION(0x00 - T, 0xFF - F)
@@ -148,6 +148,7 @@ u8 Initiator_Ranging(u8 *data, u8 length) //return IF_FAIL_SENDING(0x00 - T, 0xF
 	u8 Times = data[0];
 	u8 RecieveIDLowerBound = data[2];
 	u8 RecieveIDUpperBound = data[3];
+	static u8 emer = 0;
 	static u8 IF_FAIL_SENDING = 0xFF;
 	static u8 rx_buffer[BUFFER_LENGTH] = {0};
 	static u8 rx_length = 0;
@@ -162,7 +163,7 @@ u8 Initiator_Ranging(u8 *data, u8 length) //return IF_FAIL_SENDING(0x00 - T, 0xF
 	data[12] = Times; //Whether we need one more reply or not after finishing broadcast ranging.
 	data[0] = 0xF1;
 	
-	dwt_setrxtimeout(5000); //Delay maximun ~5ms for each nodes. 
+//	dwt_setrxtimeout(8700); //Delay maximun ~5ms for each nodes. 
 	
 	dwt_writetxdata(length, data, 0);
 	dwt_writetxfctrl(length, 0);
@@ -170,9 +171,9 @@ u8 Initiator_Ranging(u8 *data, u8 length) //return IF_FAIL_SENDING(0x00 - T, 0xF
 	
 	tx_DeviceA_1 = get_tx_timestamp_u64();
 	
-	for(i = 0; i < N - 1; i++) //Receive N noodes' info
+	for(i = 0; i < 0x03; i++) //Receive N noodes' info
 	{
-		if(Receptor_Waiting(rx_buffer, &rx_length, 0) == 0) //Successfully receive data.
+		if(Receptor_Listening(rx_buffer, &rx_length, &emer, 10000) == 0) //Successfully receive data.
 		{
 			//Check that the frame is the expected response from Target Device(LBD <= TargetID < UBD).
 			if(rx_buffer[0] == 0xF2 && rx_buffer[2] == MyID \
@@ -184,7 +185,7 @@ u8 Initiator_Ranging(u8 *data, u8 length) //return IF_FAIL_SENDING(0x00 - T, 0xF
 		}
 	}
 	
-	if(ts_counter == N - 1)
+	if(ts_counter == 0x03)
 		IF_FAIL_SENDING = 0;
 	
 	sysTime = get_sys_timestamp_u64();
@@ -208,25 +209,26 @@ u8 Initiator_Ranging(u8 *data, u8 length) //return IF_FAIL_SENDING(0x00 - T, 0xF
 	return IF_FAIL_SENDING;
 }
 
-u16 Receptor_Ranging(u8 delay, u8 leftnumber) //return IF_FAIL_GET_DIST(distance_cm, 0xFFFF - F)
+u16 Receptor_Ranging(u8 delay, u8 leftnumber, u8 *rx_buffer) //return IF_FAIL_GET_DIST(distance_cm, 0xFFFF - F)
 {
 	u8 RecieveIDLowerBound;
 	u8 RecieveIDUpperBound;
 	u8 SourceID;
-	static u8 rx_buffer[BUFFER_LENGTH] = {0};
-	static u8 rx_length = 0;
+	static u8 emer = 0;
+	static u8 rx_length1 = 0;
+	static u8 rx_buffer1[40] = {0};
 	u32 resp_tx_time;
 	uint64_t sysTime;
 	
-	if(Receptor_Listening(rx_buffer, &rx_length, 0, 0) == 0) //Successfully receive data.
-	{
+//	if(Receptor_Listening(rx_buffer, &rx_length, 0, 0) == 0) //Successfully receive data.
+//	{
 		SourceID = rx_buffer[1];
 		RecieveIDLowerBound = rx_buffer[2];
 		RecieveIDUpperBound = rx_buffer[3];
 		
 		//Check that the frame is the expected response from Target Device(LBD <= TargetID < UBD).
-		if(rx_buffer[0] == 0xF1 && MyID >= RecieveIDLowerBound && MyID < RecieveIDUpperBound)
-		{
+//		if(rx_buffer[0] == 0xF1 && MyID >= RecieveIDLowerBound && MyID < RecieveIDUpperBound)
+//		{
 			rx_DeviceB_1 = get_rx_timestamp_u64(); //Retrieve poll reception timestamp.
 			//I need reply when delay action is done.
 			Delay(3 * delay);
@@ -243,13 +245,13 @@ u16 Receptor_Ranging(u8 delay, u8 leftnumber) //return IF_FAIL_GET_DIST(distance
 			Delay(leftnumber * 3000);
 			tx_DeviceB_2 = get_tx_timestamp_u64();
 			
-			if(Receptor_Listening(rx_buffer, &rx_length, 0, 5700) == 0)
+			if(Receptor_Listening(rx_buffer1, &rx_length1, &emer, 0) == 0)
 			{
-				if(rx_buffer[0] == 0xF3 && rx_buffer[1] == SourceID)
+				if(rx_buffer1[0] == 0xF3 && rx_buffer1[1] == SourceID)
 				{
 					rx_DeviceB_3 = get_rx_timestamp_u64();
-					Tround1 = (double)get_ts(rx_buffer + 2 + delay * 10);
-					Treply2 = (double)get_ts(rx_buffer + 2 + 5 + delay * 10);
+					Tround1 = (double)get_ts(rx_buffer1 + 2 + delay * 10);
+					Treply2 = (double)get_ts(rx_buffer1 + 2 + 5 + delay * 10);
 					Treply1 = (double)(tx_DeviceB_2 - rx_DeviceB_1);
 					Tround2 = (double)(rx_DeviceB_3 - tx_DeviceB_2);
 					
@@ -267,8 +269,8 @@ u16 Receptor_Ranging(u8 delay, u8 leftnumber) //return IF_FAIL_GET_DIST(distance
 					}
 				}
 			}
-		}
-	}
+//		}
+//	}
 	return 0xFFFF;
 }
 

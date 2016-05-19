@@ -6,8 +6,6 @@
 //  Copyright © 2016年 温拓朴. All rights reserved.
 //
 
-#ifndef COMM
-#define COMM
 
 #include "Commtest.h"
 
@@ -15,11 +13,12 @@ extern Node p[4];
 extern int dist[4][4];
 extern int get_all_distance;
 extern int flag;
+extern int HasInitialed;
 
 int Round(double m){
     return (int)(m+0.5);
 }
-u8* SendMessage(Message msg, int len){
+void SendMessage(Message msg, int len){
     if (len == 13){
         u8 data[15];
         data[0] = msg.Cmtype;
@@ -38,12 +37,11 @@ u8* SendMessage(Message msg, int len){
 				data[13] = 0x0D;
 				data[14] = 0x0A;
         if (msg.CommCount == 0){
-            SendMsg(data, len+2);
+            SendMsg(data, 0x0F);
         }
         else{
-            Initiator_Ranging(data, len+2);
+            Initiator_Ranging(data, 0x0F);
         }
-        return data;
     }
     else{
         u8 data[7];
@@ -55,13 +53,12 @@ u8* SendMessage(Message msg, int len){
         data[5] = 0x0D;
 				data[6] = 0x0A;
         SendMsg(data, 7);
-        return data;
     }
 }
 
 Message SaveMessage(u8* data, int len){
     Message msg;
-    if (len == 13){
+    if (len == 15){
         msg.Cmtype = data[0];
         msg.Sender = data[1];
         msg.RecieverL = data[2];
@@ -86,7 +83,8 @@ void SGY_P1(){ //P1's strategy
     Message upperAsk;
     Message msg;
     u8 len;
-    if (flag == 1){
+		u8 emergency = 0;
+    if (flag == 1 && HasInitialed == 0){
         msg.Cmtype = Init;
         msg.Sender = P1;
         msg.RecieverL = P2;
@@ -96,9 +94,12 @@ void SGY_P1(){ //P1's strategy
 			  p[0].x = 0;
 				p[0].y = 0;
 				flag = 0;
+				HasInitialed = 1;	
     }
-    
-		Receptor_Listening(p[0].rx_buffer, &len,0,0);
+		
+		if (HasInitialed != 1) return;
+		
+		while(Receptor_Listening(p[0].rx_buffer, &len, &emergency, 0)==0xFF);
     upperAsk = SaveMessage(p[0].rx_buffer, len);
 		
     if (upperAsk.Cmtype == Init){
@@ -113,23 +114,23 @@ void SGY_P1(){ //P1's strategy
             msg.Dist1 = 0;
             msg.Dist2 = 0;
             msg.CommCount = 1;
-            printf("P1 has Initialed in id%d\n", p[0].id);
             SendMessage(msg,13);//Measuring P1 with P2 P3 P4
+						Delay(1);
         }
     }
     
-    if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P2 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
-        p[0].dist[0] = Receptor_Ranging(0,2);
+    if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P2 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
+        p[0].dist[0] = Receptor_Ranging(0,2,p[0].rx_buffer);
         //get the distance of P1 and P2
     }
     
-    if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P3 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
-        p[0].dist[1] = Receptor_Ranging(0,2);
+    if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P3 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
+        p[0].dist[1] = Receptor_Ranging(0,2,p[0].rx_buffer);
         //get the distance of P1 and P3
     }
     
-    if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P4 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
-        p[0].dist[2] = Receptor_Ranging(0,2);
+    if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P4 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
+        p[0].dist[2] = Receptor_Ranging(0,2,p[0].rx_buffer);
 			  //get the distance of P1 and P4
         msg.Cmtype = fstMeasure;
         msg.Sender = P1;
@@ -141,25 +142,25 @@ void SGY_P1(){ //P1's strategy
         msg.Dist2 = 0;
         msg.CommCount = 0;
         SendMessage(msg, 13);
+				HasInitialed = 0;
         //tell P4 the measuring result
     }
 }
 
 void SGY_P2(){
 		u8 len;
+		u8 emergency = 0;
     Message msg,upperAsk;  
-    Receptor_Listening(p[1].rx_buffer, &len,0,0);
+    Receptor_Listening(p[1].rx_buffer, &len,&emergency,0);
     upperAsk = SaveMessage(p[1].rx_buffer, len);
 	
     if (upperAsk.Cmtype == Init){
 			    p[1].x = 0;
 					p[1].y = 0;
-
-        //printf("P2 has Initialed\n");
     }
 
-				if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P1 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
-            p[1].dist[0] = Receptor_Ranging(1,1);         
+				if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P1 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P1 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
+            p[1].dist[0] = Receptor_Ranging(1,1,p[1].rx_buffer);         
             //get the distance of P1 and P2
         }
     
@@ -177,14 +178,14 @@ void SGY_P2(){
             SendMessage(msg,13);
         }
     
-				if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P3 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P3 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
-						p[1].dist[1] = Receptor_Ranging(1,1);
+				if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P3 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P3 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
+						p[1].dist[1] = Receptor_Ranging(1,1,p[1].rx_buffer);
         //get the distance of P3 and P2
 				}
     
   
-				if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P4 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P4 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
-						p[1].dist[2] = Receptor_Ranging(1,1);
+				if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P4 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){//P4 measuring the distance with P2 P3 P4, CommCount==1 represent a measuring
+						p[1].dist[2] = Receptor_Ranging(1,1,p[1].rx_buffer);
         //delay(2)
 						msg.Cmtype = fstMeasure;
 						msg.Sender = P2;
@@ -209,23 +210,23 @@ void SGY_P2(){
 void SGY_P3(){
     Message msg, upperAsk;
     u8 len;
-    Receptor_Listening(p[2].rx_buffer,&len,0,0);
+		u8 emergency = 0;
+    Receptor_Listening(p[2].rx_buffer,&len,&emergency,0);
     upperAsk = SaveMessage(p[2].rx_buffer, len);
 	
     if (upperAsk.Cmtype == Init){
 			    p[2].channel = ChA;
 					p[2].x = 0;
 					p[2].y = 0;
-        //printf("P2 has Initialed\n");
     }
     
-        if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P1 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
-            p[2].dist[0] = Receptor_Ranging(1, 1);
+        if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P1 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
+            p[2].dist[0] = Receptor_Ranging(1, 1,p[2].rx_buffer);
         }//measuring P1 with P2 P3 P4
     
     //mesuring P2 with P3 P4
-        if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P2 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
-            p[2].dist[1] = Receptor_Ranging(1, 1);
+        if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P2 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
+            p[2].dist[1] = Receptor_Ranging(1, 1,p[2].rx_buffer);
         }
     
         if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P4 && upperAsk.RecieverL == P3 && upperAsk.RecieverU == P3 && upperAsk.CommCount == 0){//P2 has measured P3 P4, then P4 should tell P3 to start measuring P3 P4
@@ -243,8 +244,8 @@ void SGY_P3(){
     
     //P4's measuring
 
-			if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P4 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
-					p[2].dist[2] = Receptor_Ranging(1, 1);
+			if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P4 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
+					p[2].dist[2] = Receptor_Ranging(1, 1,p[2].rx_buffer);
 					//delay(3);
 					msg.Cmtype = fstMeasure;
 					msg.Sender = P3;
@@ -269,17 +270,18 @@ void SGY_P4(){
     Message msg, upperAsk;
     int i,j;
     u8 len;
-    Receptor_Listening(p[3].rx_buffer,&len,0,0);
+		u8 emergency = 0;
+    while(Receptor_Listening(p[3].rx_buffer,&len,&emergency,0)==0xFF);
     upperAsk = SaveMessage(p[3].rx_buffer, len);
 
     if (upperAsk.Cmtype == Init){
 			  p[3].x = 0;
 				p[3].y = 0;
 				get_all_distance = 0;
-	for (i = 0; i < 4; i++)
-		for (j = 0; j < 4; j++){
-			dist[i][j] = 0;
-	}
+				for (i = 0; i < 4; i++)
+						for (j = 0; j < 4; j++){
+								dist[i][j] = 0;
+				}
 
         msg.Cmtype = Init;
         msg.Sender = P4;
@@ -290,8 +292,8 @@ void SGY_P4(){
     }
     
    
-        if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P1 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
-            p[3].dist[0] = Receptor_Ranging(2,0);
+        if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P1 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
+            p[3].dist[0] = Receptor_Ranging(2,0,p[3].rx_buffer);
             msg.Cmtype = fstMeasure;
             msg.Sender = P4;
             msg.RecieverL = P2;
@@ -300,8 +302,8 @@ void SGY_P4(){
             SendMessage(msg,5);//tell P2 to Start
         }
     
-        if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P2 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
-            p[3].dist[1] = Receptor_Ranging(2,0);
+        if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P2 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
+            p[3].dist[1] = Receptor_Ranging(2,0,p[3].rx_buffer);
             msg.Cmtype = fstMeasure;
             msg.Sender = P4;
             msg.RecieverL = P3;
@@ -310,8 +312,8 @@ void SGY_P4(){
             SendMessage(msg,5);//tell P3 to Start
         }
     
-        if (upperAsk.Cmtype == fstMeasure && upperAsk.Sender == P3 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
-            p[3].dist[2] = Receptor_Ranging(2,0);
+        if (upperAsk.Cmtype == 0xF1){// && upperAsk.Sender == P3 && upperAsk.RecieverL == P1 && upperAsk.RecieverU == P4 && upperAsk.CommCount == 1){
+            p[3].dist[2] = Receptor_Ranging(2,0,p[3].rx_buffer);
             msg.Cmtype = fstMeasure;
             msg.Sender = P4;
             msg.RecieverL = P1;
@@ -349,7 +351,7 @@ void SGY_P4(){
     //calculate!
 		if (get_all_distance == 1){
 				double x1 = 0, y1 = 0, y2 = 0;
-				double x2,x3,x4,y3,y4,tx1,tx2,tx3,tx4,ty1,ty2,ty3,ty4,dist_12,dist_13,dist_14,dist_23,dist_24,dist_34;
+				double x2,x3,x4,y3,y4,tx2,tx3,tx4,ty3,ty4,dist_12,dist_13,dist_14,dist_23,dist_24,dist_34;
 				double pp,S,a,b,c,d,b1,b2,b3,B1,B2,delta,rate;
 				dist[3][0]=p[3].dist[0];
 				dist[3][1]=p[3].dist[1];
@@ -418,5 +420,4 @@ void SGY_P4(){
 		}
 }
 
-#endif
 
