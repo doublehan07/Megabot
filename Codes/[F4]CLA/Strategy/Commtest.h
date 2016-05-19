@@ -21,12 +21,9 @@
 #define ChA 1
 #define ChB 1
 
-//#include "mpi.h"
 #include "stdio.h"
 #include "ranging_api.h"
 #include <math.h>
-//typedef short u8;
-//typedef unsigned int u16;
 
 typedef struct Message{
     u8 Cmtype;
@@ -41,7 +38,7 @@ typedef struct Message{
 }Message;
 
 typedef struct Node{
-    u8 rx_buffer[13];
+    u8 rx_buffer[50];
     int id;
     int x,y;
     int dist[3];
@@ -51,9 +48,9 @@ typedef struct Node{
 
 int Round(double);
 
-void SGY_P1();
-void SGY_P2();
-void SGY_P3();
-void SGY_P4();
+void SGY_P1(void);
+void SGY_P2(void);
+void SGY_P3(void);
+void SGY_P4(void);
 
 #endif /* Commtest_h */

@@ -60,7 +60,7 @@ Node p[4];
 int get_all_distance = 0;
 int dist[4][4];
 int flag;
-
+int HasInitialed;
 
 int main(void)
 {
@@ -98,12 +98,12 @@ int main(void)
 	p[2].id = P3;
 	p[3].id = P4;
 	flag = 0;          // 1 - start 0 - end
-
+	HasInitialed = 0;
 	
   while (1)
   {
 		
-		if (MyID == 0){
+		if ((MyID) == 0){
 			SGY_P1();	
 		}
 		if (MyID == 1){
