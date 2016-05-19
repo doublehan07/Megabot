@@ -19,7 +19,7 @@
 int main(void)
 {
 	//所有外设的初始化：时钟、IO、定时器等
-  	Our_Sys_Init();
+  Our_Sys_Init();
 	/* Insert 50 ms delay */
   Delay(10);
 	//关于初始化：
@@ -30,9 +30,11 @@ int main(void)
 	Delay(5);
 	Motor_If_Awake(1);
 	Motor_If_FastDecay(0);
+	Motor_If_Forward(1, 1);
+	Motor_Set_Speed(0, 800);
+	Delay(100);
 	Motor_If_Forward(0, 0);
-	Motor_Set_Speed(0, 1000);
-	
+
   /* Infinite loop */
   while (1)
   {
