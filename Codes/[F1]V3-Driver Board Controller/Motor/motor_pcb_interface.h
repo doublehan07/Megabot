@@ -95,17 +95,17 @@ extern float sAngle;
 //Signal
 /* left */
 #define PHASE_PIN_LEFT								GPIO_Pin_4                                                                                                                      
-#define ENABLE_PIN_LEFT							GPIO_Pin_6								//TIM3_CH1 - PA6
-#define ENABLE_PWMO_LEFT 				CCR1
+#define ENABLE_PIN_LEFT								GPIO_Pin_6								//TIM3_CH1 - PA6
+#define ENABLE_PWMO_LEFT 							CCR1
 
 /* right */
-#define PHASE_PIN_RIGHT							GPIO_Pin_5                                                                                                                    
-#define ENABLE_PIN_RIGHT						GPIO_Pin_7								//TIM3_CH2 - PA7
-#define ENABLE_PWMO_RIGHT	 		CCR2
+#define PHASE_PIN_RIGHT								GPIO_Pin_5                                                                                                                    
+#define ENABLE_PIN_RIGHT							GPIO_Pin_7								//TIM3_CH2 - PA7
+#define ENABLE_PWMO_RIGHT		 					CCR2
 
-#define PWM_TIM 											    TIM3
-#define PWM_GPIO													GPIOA
-#define SIGNAL_GPIO 								    GPIOA
+#define PWM_TIM 									    TIM3
+#define PWM_GPIO											GPIOA
+#define SIGNAL_GPIO 							    GPIOA
 
 //Control - PCx
 /* left */
@@ -116,11 +116,11 @@ extern float sAngle;
 
 /* right */
 #define nFAULT_RIGHT									GPIO_Pin_8
-#define MODE1_RIGHT									GPIO_Pin_9
-#define MODE2_RIGHT									GPIO_Pin_10
+#define MODE1_RIGHT										GPIO_Pin_9
+#define MODE2_RIGHT										GPIO_Pin_10
 #define nSLEEP_RIGHT									GPIO_Pin_11
 
-#define CONTROL_GPIO								GPIOB
+#define CONTROL_GPIO									GPIOB
 
 //ADC - PAx
 /* left */
@@ -139,6 +139,7 @@ void Motor_If_Awake(u8 if_awake);
 void Motor_If_FastDecay(u8 if_fast_decay);
 void Motor_If_Forward(u8 left_or_right, u8 if_forward);
 void Motor_Set_Speed(u8 left_or_right, u16 speed);
+void Motor_Tonggle_Direc(u8 left_or_right);
 
 void Usart_PID_init(void);
 void Usart_JY901_init(void);

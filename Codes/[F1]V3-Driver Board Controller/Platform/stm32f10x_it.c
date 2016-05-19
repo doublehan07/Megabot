@@ -145,12 +145,12 @@ void SysTick_Handler(void)
 		encoderCounter = 0;
 		Sampling_Tick_Speed();
 	}
-	if(motorControlCounter == 50)
-	{
-		motorControlCounter = 0;
-		// after get current speed, we can calculate the PID parameters and control the motor
-		MotorSpeedPID(returnSpeed());
-	}
+//	if(motorControlCounter == 70)
+//	{
+//		motorControlCounter = 0;
+//		// after get current speed, we can calculate the PID parameters and control the motor
+//		MotorSpeedPID(returnSpeed());
+//	}
 	
 	TimingDelay_Decrement();
 }
