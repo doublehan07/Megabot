@@ -37,7 +37,7 @@
 #define ACCEPTTED_ERROR_ANGLE 3
 
 // PID parameters (speed)
-#define P_DATA_SPEED 1000
+#define P_DATA_SPEED 1
 #define I_DATA_SPEED 0
 #define D_DATA_SPEED 0
 

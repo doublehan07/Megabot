@@ -67,13 +67,15 @@ int16_t angleTransform(int16_t angle_ABS180)
 * the correction of PID is the speed difference, so when we set the speed using API,
 * we need to plus the correction with a const speed which we received 
 */
-static int16_t LastError = 0;     // global error [-1]
-static int16_t PrevError = 0;     // global error [-2]
+
 int16_t MotorSpeedPID(int16_t speed)
 {
 	// get current speed from conuter
 	uint16_t leftSpeed = Get_Speed(LEFT);
 	uint16_t rightSpeed = Get_Speed(RIGHT);
+	static int16_t LastError = 0;     // global error [-1]
+	static int16_t PrevError = 0;     // global error [-2]
+	static int16_t temp = 0;
 	u16 s1, s2;
 
 	double Proportion = P_DATA_SPEED;  // Proportional Const
@@ -84,19 +86,27 @@ int16_t MotorSpeedPID(int16_t speed)
 	int16_t speedDiffernrce = leftSpeed - rightSpeed;
 
   // delta calculation     
-  int16_t correctionSpeed = Proportion * speedDiffernrce  // E[k]
-                                   - Integral   * LastError                 // E[k-1]
-                                   + Derivative * PrevError;              // E[k-2]
+  int16_t correctionSpeed = Proportion * (speedDiffernrce -  LastError) // E[k]
+                                   + Integral   * speedDiffernrce                 // E[k-1]
+                                   + Derivative * (speedDiffernrce - 2 * LastError + PrevError);              // E[k-2]
   PrevError = LastError; 
   LastError = speedDiffernrce;
 
   // implenment the PID settings
 	if(speed - correctionSpeed < 0)
+	{
 		s1 = 0;
+//		Motor_Tonggle_Direc(LEFT);
+//		s1 = -temp;
+	}
 	else
 		s1 = speed - correctionSpeed;
 	if(speed + correctionSpeed < 0)
+	{
 		s2 = 0;
+//		Motor_Tonggle_Direc(RIGHT);
+//		s2 = -temp;
+	}
 	else
 		s2 = speed + correctionSpeed;
   Motor_Set_Speed(LEFT, s1);
@@ -113,8 +123,8 @@ void Motor_Move(int16_t angle, u8 if_related, int16_t speed)
 		double Proportion = P_DATA_ANGLE;  // Proportional Const
 		double Integral     = I_DATA_ANGLE;  // Integral Const
 		double Derivative  = D_DATA_ANGLE;  // Derivative Const
-		int16_t LastError  = 0;             // Error [-1]
-		int16_t PrevError  = 0;             // Error [-2]
+		static int16_t LastError  = 0;             // Error [-1]
+		static int16_t PrevError  = 0;             // Error [-2]
 		u16 i = 0;
 	
 		// make sure that we get a right angle, sometimes this function will return zero which is a wrong number
