@@ -145,6 +145,7 @@ int counter;
 extern int flag;
 void SysTick_Handler(void)
 {	
+<<<<<<< HEAD:Codes/[F4]CLA/Platform/stm32f4xx_it.c
 	time32_incr++;
 	counter++;
 	if(time32_incr >= 0xFFFFFFFF) //·ÀÖ¹50ÌìºóÒç³ö
@@ -152,6 +153,17 @@ void SysTick_Handler(void)
 	if (counter > 1000){
 		counter = 0;
 		flag = 1;
+=======
+	static u8 encoderCounter = 0;
+	encoderCounter++;
+	if(encoderCounter == 30) //Sampling speed in each 30 ms.
+	{
+		encoderCounter = 0;
+		Sampling_Tick_Speed();
+		
+		// after get current speed, we can calculate the PID parameters and control the motor
+		//MotorSpeedPID(currentSettedSpeed);
+>>>>>>> a70b5b338fcf09625a1e16cf0d3c64d3904be7f9:Codes/V3-Driver Board Controller/Platform/stm32f4xx_it.c
 	}
 	TimingDelay_Decrement();
 }
