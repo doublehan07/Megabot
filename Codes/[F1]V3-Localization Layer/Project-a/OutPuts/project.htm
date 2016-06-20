@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\OutPuts\project.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\OutPuts\project.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Sat Jun 18 22:02:06 2016
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Mon Jun 20 14:17:18 2016
 <BR><P>
 <H3>Maximum Stack Usage =        152 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -723,7 +723,7 @@ Global Symbols
 
 <P><STRONG><a name="[14a]"></a>SPI_I2S_ClearITPendingBit</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, stm32f10x_spi.o(.text), UNUSED)
 
-<P><STRONG><a name="[44]"></a>main</STRONG> (Thumb, 258 bytes, Stack size 0 bytes, main.o(.text))
+<P><STRONG><a name="[44]"></a>main</STRONG> (Thumb, 134 bytes, Stack size 0 bytes, main.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = main &rArr; dwt_initialise &rArr; _dwt_otpread &rArr; dwt_read32bitoffsetreg &rArr; dwt_readfromdevice &rArr; readfromspi_serial &rArr; decamutexon
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dwt_settxantennadelay
@@ -789,9 +789,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[8e]"></a>TimingDelay_Decrement</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, port.o(.text))
+<P><STRONG><a name="[8e]"></a>TimingDelay_Decrement</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, port.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Handler
 </UL>
+
+<P><STRONG><a name="[14b]"></a>SetTick</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, port.o(.text), UNUSED)
+
+<P><STRONG><a name="[14c]"></a>GetTick</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, port.o(.text), UNUSED)
 
 <P><STRONG><a name="[7f]"></a>Systick_init</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, port.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Systick_init &rArr; NVIC_SetPriority
@@ -854,7 +858,7 @@ Global Symbols
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_dwt_loaducodefromrom
 </UL>
 
-<P><STRONG><a name="[14b]"></a>openspi</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, deca_spi.o(.text), UNUSED)
+<P><STRONG><a name="[14d]"></a>openspi</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, deca_spi.o(.text), UNUSED)
 
 <P><STRONG><a name="[88]"></a>closespi</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, deca_spi.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_I2S_GetFlagStatus
@@ -917,7 +921,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f10x_md.o(.text)
 </UL>
-<P><STRONG><a name="[14c]"></a>SystemCoreClockUpdate</STRONG> (Thumb, 142 bytes, Stack size 8 bytes, system_stm32f10x.o(.text), UNUSED)
+<P><STRONG><a name="[14e]"></a>SystemCoreClockUpdate</STRONG> (Thumb, 142 bytes, Stack size 8 bytes, system_stm32f10x.o(.text), UNUSED)
 
 <P><STRONG><a name="[91]"></a>dwt_readfromdevice</STRONG> (Thumb, 100 bytes, Stack size 32 bytes, deca_device.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = dwt_readfromdevice &rArr; readfromspi_serial &rArr; decamutexon
@@ -1130,7 +1134,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[14d]"></a>dwt_otprevision</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, deca_device.o(.text), UNUSED)
+<P><STRONG><a name="[14f]"></a>dwt_otprevision</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, deca_device.o(.text), UNUSED)
 
 <P><STRONG><a name="[9b]"></a>dwt_setGPIOforEXTTRX</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, deca_device.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dwt_writetodevice
@@ -1153,9 +1157,9 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[14e]"></a>dwt_getpartid</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, deca_device.o(.text), UNUSED)
+<P><STRONG><a name="[150]"></a>dwt_getpartid</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, deca_device.o(.text), UNUSED)
 
-<P><STRONG><a name="[14f]"></a>dwt_getlotid</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, deca_device.o(.text), UNUSED)
+<P><STRONG><a name="[151]"></a>dwt_getlotid</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, deca_device.o(.text), UNUSED)
 
 <P><STRONG><a name="[9c]"></a>dwt_write32bitoffsetreg</STRONG> (Thumb, 48 bytes, Stack size 32 bytes, deca_device.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = dwt_write32bitoffsetreg &rArr; dwt_writetodevice &rArr; writetospi_serial &rArr; decamutexon
@@ -1409,7 +1413,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[150]"></a>dwt_setcallbacks</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, deca_device.o(.text), UNUSED)
+<P><STRONG><a name="[152]"></a>dwt_setcallbacks</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, deca_device.o(.text), UNUSED)
 
 <P><STRONG><a name="[c1]"></a>dwt_checkIRQ</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, deca_device.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dwt_readfromdevice
@@ -1628,11 +1632,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[151]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[153]"></a>__use_two_region_memory</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[152]"></a>__rt_heap_escrow$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[154]"></a>__rt_heap_escrow$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
-<P><STRONG><a name="[153]"></a>__rt_heap_expand$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
+<P><STRONG><a name="[155]"></a>__rt_heap_expand$2region</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
 <P><STRONG><a name="[40]"></a>__user_setup_stackheap</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, sys_stackheap_outer.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8 + Unknown Stack Size
@@ -1650,23 +1654,23 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[43]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[154]"></a>__user_libspace</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+<P><STRONG><a name="[156]"></a>__user_libspace</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
 
 <P><STRONG><a name="[e3]"></a>__user_perproc_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[40]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__user_setup_stackheap
 </UL>
 
-<P><STRONG><a name="[155]"></a>__user_perthread_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
+<P><STRONG><a name="[157]"></a>__user_perthread_libspace</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, libspace.o(.text), UNUSED)
 
 <P><STRONG><a name="[49]"></a>_sys_exit</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, sys_exit.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[48]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_exit_exit
 </UL>
 
-<P><STRONG><a name="[156]"></a>__I$use$semihosting</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+<P><STRONG><a name="[158]"></a>__I$use$semihosting</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[157]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
+<P><STRONG><a name="[159]"></a>__use_no_semihosting_swi</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, use_no_semi.o(.text), UNUSED)
 
-<P><STRONG><a name="[158]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
+<P><STRONG><a name="[15a]"></a>__semihosting_library_function</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, indicate_semi.o(.text), UNUSED)
 <P>
 <H3>
 Local Symbols

@@ -139,7 +139,10 @@ void SysTick_Handler(void)
 {
 	time32_incr++;
 	if(time32_incr >= 0xFFFFFFFF) //·ÀÖ¹50ÌìºóÒç³ö
-	time32_incr = 0;
+	{
+		time32_incr = 0;
+	}
+	
 	TimingDelay_Decrement();
 }
 
