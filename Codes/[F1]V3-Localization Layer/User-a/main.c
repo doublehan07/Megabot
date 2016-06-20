@@ -84,27 +84,27 @@ int main(void)
 	
   while (1)
   {			
-		dwt_setGPIOvalue(GDM0, GDP0);
-		Delay(5);
-		dwt_setGPIOvalue(GDM1, GDP1);
-		Delay(5);
-		dwt_setGPIOvalue(GDM2, GDP2);
-		Delay(5);
-		dwt_setGPIOvalue(GDM3, GDP3);
-		Delay(5);
-		
-		Delay(5); //500ms
-		
-		dwt_setGPIOvalue(GDM0, 0);
-		Delay(5);
-		dwt_setGPIOvalue(GDM1, 0);
-		Delay(5);
-		dwt_setGPIOvalue(GDM2, 0);
-		Delay(5);
-		dwt_setGPIOvalue(GDM3, 0);
-		Delay(5);
-		
-		Delay(5); //500ms
+//		dwt_setGPIOvalue(GDM0, GDP0);
+//		Delay(5);
+//		dwt_setGPIOvalue(GDM1, GDP1);
+//		Delay(5);
+//		dwt_setGPIOvalue(GDM2, GDP2);
+//		Delay(5);
+//		dwt_setGPIOvalue(GDM3, GDP3);
+//		Delay(5);
+//		
+//		Delay(5); //500ms
+//		
+//		dwt_setGPIOvalue(GDM0, 0);
+//		Delay(5);
+//		dwt_setGPIOvalue(GDM1, 0);
+//		Delay(5);
+//		dwt_setGPIOvalue(GDM2, 0);
+//		Delay(5);
+//		dwt_setGPIOvalue(GDM3, 0);
+//		Delay(5);
+//		
+//		Delay(5); //500ms
 		
 //		Receptor_Listening(rxbuffer, &length, &flag, 0);
 			

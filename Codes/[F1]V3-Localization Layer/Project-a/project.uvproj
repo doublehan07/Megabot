@@ -542,6 +542,11 @@
               <FilePath>..\Dwm1000\dwm1000_port.c</FilePath>
             </File>
             <File>
+              <FileName>ranging_interface_old.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Dwm1000\ranging_interface_old.c</FilePath>
+            </File>
+            <File>
               <FileName>ranging_interface.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Dwm1000\ranging_interface.c</FilePath>
@@ -555,6 +560,13 @@
         </Group>
         <Group>
           <GroupName>Strategy</GroupName>
+          <Files>
+            <File>
+              <FileName>FourCars.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Strategy\FourCars.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>

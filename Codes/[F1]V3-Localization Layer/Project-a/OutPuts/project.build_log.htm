@@ -22,14 +22,51 @@ Dialog DLL:      TARMSTM.DLL V1.64.0.0
  
 <h2>Project:</h2>
 D:\Project\Challenge\Codes\[F1]V3-Localization Layer\Project-a\project.uvproj
-Project File Date:  06/18/2016
+Project File Date:  06/20/2016
 
 <h2>Output:</h2>
 Build target 'Target 1'
+compiling main.c...
+compiling port.c...
 compiling dwm1000_port.c...
+compiling ranging_interface.c...
+..\Dwm1000\ranging_interface.c(29): warning:  #550-D: variable "tx_DeviceA_1" was set but never used
+  static uint64_t tx_DeviceA_1;
+..\Dwm1000\ranging_interface.c(30): warning:  #177-D: variable "rx_DeviceA_2" was declared but never referenced
+  static uint64_t rx_DeviceA_2;
+..\Dwm1000\ranging_interface.c(31): warning:  #177-D: variable "tx_DeviceA_3" was declared but never referenced
+  static uint64_t tx_DeviceA_3;
+..\Dwm1000\ranging_interface.c(34): warning:  #550-D: variable "rx_DeviceB_1" was set but never used
+  static uint64_t rx_DeviceB_1;
+..\Dwm1000\ranging_interface.c(35): warning:  #550-D: variable "tx_DeviceB_2" was set but never used
+  static uint64_t tx_DeviceB_2;
+..\Dwm1000\ranging_interface.c(36): warning:  #177-D: variable "rx_DeviceB_3" was declared but never referenced
+  static uint64_t rx_DeviceB_3;
+..\Dwm1000\ranging_interface.c(38): warning:  #177-D: variable "Treply1" was declared but never referenced
+  static double Treply1 = 0.0;
+..\Dwm1000\ranging_interface.c(39): warning:  #177-D: variable "Treply2" was declared but never referenced
+  static double Treply2 = 0.0;
+..\Dwm1000\ranging_interface.c(40): warning:  #177-D: variable "Tround1" was declared but never referenced
+  static double Tround1 = 0.0;
+..\Dwm1000\ranging_interface.c(41): warning:  #177-D: variable "Tround2" was declared but never referenced
+  static double Tround2 = 0.0;
+..\Dwm1000\ranging_interface.c(42): warning:  #177-D: variable "Tprop" was declared but never referenced
+  static double Tprop = 0.0;
+..\Dwm1000\ranging_interface.c(43): warning:  #177-D: variable "tof_dtu" was declared but never referenced
+  static int64_t tof_dtu;
+..\Dwm1000\ranging_interface.c(44): warning:  #177-D: variable "tof" was declared but never referenced
+  static double tof = 0.0;
+..\Dwm1000\ranging_interface.c(260): warning:  #177-D: function "get_sys_timestamp_u64" was declared but never referenced
+  static uint64_t get_sys_timestamp_u64(void)
+..\Dwm1000\ranging_interface.c(274): warning:  #177-D: function "set_ts" was declared but never referenced
+  static void set_ts(u8 *addr, uint64_t ts)
+..\Dwm1000\ranging_interface.c(285): warning:  #177-D: function "get_ts" was declared but never referenced
+  static uint64_t get_ts(u8 *addr)
+..\Dwm1000\ranging_interface.c: 16 warnings, 0 errors
+compiling FourCars.c...
 linking...
-Program Size: Code=13556 RO-data=444 RW-data=60 ZI-data=1716  
-".\OutPuts\project.axf" - 0 Error(s), 0 Warning(s).
+Program Size: Code=13464 RO-data=444 RW-data=64 ZI-data=1712  
+".\OutPuts\project.axf" - 0 Error(s), 16 Warning(s).
 </pre>
 </body>
 </html>

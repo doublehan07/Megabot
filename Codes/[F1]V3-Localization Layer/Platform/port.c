@@ -14,7 +14,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 RCC_ClocksTypeDef RCC_Clocks;
-static __IO uint32_t uwTimingDelay;
+static __IO uint32_t uwTimingDelay, tickCnt;
 
 /* Private function prototypes -----------------------------------------------*/
 void RCC_init(void);
@@ -122,10 +122,25 @@ void Delay(__IO uint32_t nTime)
 //每次SysTick会调用
 void TimingDelay_Decrement(void)
 {
-  if (uwTimingDelay != 0x00)
+  if (uwTimingDelay != 0)
   {  
     uwTimingDelay--;
   }
+	
+	if(tickCnt != 0)
+	{
+		tickCnt--;
+	}
+}
+
+void SetTick(u32 tick)
+{
+	tickCnt = tick;
+}
+
+u32 GetTick(void)
+{
+	return tickCnt;
 }
 
 void Systick_init(void)

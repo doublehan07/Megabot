@@ -21,8 +21,10 @@
 ".\outputs\deca_params_init.o"
 ".\outputs\deca_range_tables.o"
 ".\outputs\dwm1000_port.o"
+".\outputs\ranging_interface_old.o"
 ".\outputs\ranging_interface.o"
 ".\outputs\ranging_template_1to1.o"
+".\outputs\fourcars.o"
 --strict --scatter ".\OutPuts\project.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
