@@ -346,7 +346,7 @@ I (..\decadriver\deca_device_api.h)(0x576125F8)
 I (..\decadriver\deca_regs.h)(0x576125F8)
 I (..\decadriver\deca_version.h)(0x576125F8)
 I (..\platform\port.h)(0x57634B2A)
-I (..\User-a\ranging_api.h)(0x57665119)
+I (..\User-a\ranging_api.h)(0x5769C05E)
 F (..\platform\port.c)(0x5766430D)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\port.o --omf_browse .\outputs\port.crf --depend .\outputs\port.d)
 I (..\platform\port.h)(0x57634B2A)
 I (..\platform\stm32f10x.h)(0x563F85D9)
@@ -379,7 +379,7 @@ I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\misc.h)(0x563F85D9)
-I (..\User-a\ranging_api.h)(0x57665119)
+I (..\User-a\ranging_api.h)(0x5769C05E)
 F (..\Platform\deca_mutex.c)(0x576125F8)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\deca_mutex.o --omf_browse .\outputs\deca_mutex.crf --depend .\outputs\deca_mutex.d)
 I (..\decadriver\deca_device_api.h)(0x576125F8)
 I (..\Dwm1000\dwm1000_port.h)(0x57654EB9)
@@ -547,7 +547,7 @@ I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\misc.h)(0x563F85D9)
-F (..\decadriver\deca_device.c)(0x576125F8)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\deca_device.o --omf_browse .\outputs\deca_device.crf --depend .\outputs\deca_device.d)
+F (..\decadriver\deca_device.c)(0x57680A32)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\deca_device.o --omf_browse .\outputs\deca_device.crf --depend .\outputs\deca_device.d)
 I (..\decadriver\deca_types.h)(0x576125F8)
 I (..\decadriver\deca_param_types.h)(0x576125F8)
 I (..\decadriver\deca_regs.h)(0x576125F8)
@@ -631,11 +631,11 @@ I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\misc.h)(0x563F85D9)
-I (..\User-a\ranging_api.h)(0x57665119)
+I (..\User-a\ranging_api.h)(0x5769C05E)
 I (..\platform\deca_sleep.h)(0x576125F8)
 F (..\Dwm1000\ranging_interface_old.c)(0x5766325D)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\ranging_interface_old.o --omf_browse .\outputs\ranging_interface_old.crf --depend .\outputs\ranging_interface_old.d)
-F (..\Dwm1000\ranging_interface.c)(0x57678A67)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\ranging_interface.o --omf_browse .\outputs\ranging_interface.crf --depend .\outputs\ranging_interface.d)
-I (..\User-a\ranging_api.h)(0x57665119)
+F (..\Dwm1000\ranging_interface.c)(0x5769C04E)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\ranging_interface.o --omf_browse .\outputs\ranging_interface.crf --depend .\outputs\ranging_interface.d)
+I (..\User-a\ranging_api.h)(0x5769C05E)
 I (..\platform\stm32f10x.h)(0x563F85D9)
 I (C:\Keil_v5\ARM\CMSIS\Include\core_cm3.h)(0x53463974)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5475F300)
@@ -671,7 +671,7 @@ I (..\decadriver\deca_regs.h)(0x576125F8)
 I (..\decadriver\deca_version.h)(0x576125F8)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x5475F300)
 F (..\Dwm1000\ranging_template_1to1.c)(0x576125F8)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\ranging_template_1to1.o --omf_browse .\outputs\ranging_template_1to1.crf --depend .\outputs\ranging_template_1to1.d)
-F (..\Strategy\FourCars.c)(0x576647D8)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\fourcars.o --omf_browse .\outputs\fourcars.crf --depend .\outputs\fourcars.d)
+F (..\Strategy\FourCars.c)(0x5769C722)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I..\STM32F10x_StdPeriph_Driver\inc -I..\decadriver -I..\platform -I..\Dwm1000 -I..\User-a -I..\Strategy-I C:\Keil_v5\ARM\RV31\INC-I C:\Keil_v5\ARM\CMSIS\Include-I C:\Keil_v5\ARM\Inc\ST\STM32F10x-D__UVISION_VERSION="514" -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -DMyID="0x00"-o .\outputs\fourcars.o --omf_browse .\outputs\fourcars.crf --depend .\outputs\fourcars.d)
 I (..\Strategy\FourCars.h)(0x576647F1)
 I (..\platform\stm32f10x.h)(0x563F85D9)
 I (C:\Keil_v5\ARM\CMSIS\Include\core_cm3.h)(0x53463974)
@@ -703,4 +703,5 @@ I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h)(0x563F85D9)
 I (..\STM32F10x_StdPeriph_Driver\inc\misc.h)(0x563F85D9)
-I (..\User-a\ranging_api.h)(0x57665119)
+I (..\User-a\ranging_api.h)(0x5769C05E)
+I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x5475F2FE)
