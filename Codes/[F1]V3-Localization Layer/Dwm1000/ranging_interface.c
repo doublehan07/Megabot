@@ -26,34 +26,23 @@ static u32 status_reg;
 //Time-stamps of frames transmission/reception, expressed in device time units.
 //As they are 40-bit wide, we need to define a 64-bit int type to handle them.
 //For Initiator
-static uint64_t tx_DeviceA_1;
-static uint64_t rx_DeviceA_2;
-static uint64_t tx_DeviceA_3;
+u64 tx_DeviceA_1;
+u64 rx_DeviceA_2a;
+u64 rx_DeviceA_2b;
+u64 rx_DeviceA_2c;
+u64 tx_DeviceA_3;
 
 //For Recptor
-static uint64_t rx_DeviceB_1;
-static uint64_t tx_DeviceB_2;
-static uint64_t rx_DeviceB_3;
-
-static double Treply1 = 0.0;
-static double Treply2 = 0.0;
-static double Tround1 = 0.0;
-static double Tround2 = 0.0;
-static double Tprop = 0.0;
-static int64_t tof_dtu;
-static double tof = 0.0;
-double distance = 0.0;
-uint16_t distance_cm = 0;
+u64 rx_DeviceB_1;
+u64 tx_DeviceB_2;
+u64 rx_DeviceB_3;
 
 u32 frame_len;
 u8 rx_buffer[RX_BUFFER_LENGTH];
 
 /* Private function prototypes -----------------------------------------------*/
-static uint64_t get_tx_timestamp_u64(void);
-static uint64_t get_rx_timestamp_u64(void);
-static uint64_t get_sys_timestamp_u64(void);
 static void set_ts(u8 *addr, uint64_t ts);
-static uint64_t get_ts(u8 *addr);
+static u64 get_ts(u8 *addr);
 
 /* Private functions ---------------------------------------------------------*/
 /*
@@ -74,6 +63,33 @@ static uint64_t get_ts(u8 *addr);
 	new dist-time unit 4.69e-3 两个8字节，这样压缩的话final放在一条消息里面吧233
 */
 
+u8 Brd_Msg(void)
+{
+	/*	CmdType | SenderID | dist1a | dist1b | dist2a | dist2b | dist3a | dist3b | CRC | CRC
+			0xB0
+	*/
+	static u8 IF_FAIL_SENDING = 0xFF;
+	static u8 brdMsg[10] = {0};
+	
+	brdMsg[0] = 0xB0;
+	brdMsg[1] = MyID;
+	
+	brdMsg[2] = (u8)ourNodes[MyID].Dist[0]; //L
+	brdMsg[3] = (u8)(ourNodes[MyID].Dist[0]>>8); //H
+	
+	brdMsg[4] = (u8)ourNodes[MyID].Dist[1]; //L
+	brdMsg[5] = (u8)(ourNodes[MyID].Dist[1]>>8); //H
+	
+	brdMsg[6] = (u8)ourNodes[MyID].Dist[2]; //L
+	brdMsg[7] = (u8)(ourNodes[MyID].Dist[2]>>8); //H
+	
+	//CRC
+	//CRC
+	
+	IF_FAIL_SENDING = SendMsg(brdMsg, 10, 0);
+	
+	return IF_FAIL_SENDING;
+}
 u8 Poll_Msg(u8 LBD, u8 UBD, u16 MyX, u16 MyY)
 {
 	/*	CmdType | SenderID | RecieveIDLowerBound | RecieveIDUpperBound | CoodinateX \
@@ -88,10 +104,10 @@ u8 Poll_Msg(u8 LBD, u8 UBD, u16 MyX, u16 MyY)
 	pollMsg[1] = MyID; //SenderID
 	pollMsg[2] = LBD; //ReceiveIDLowerBound
 	pollMsg[3] = UBD; //ReceiveIDUpperBound
-	pollMsg[4] = (u8)MyX; //xH
-	pollMsg[5] = (u8)(MyX>>8); //xL
-	pollMsg[6] = (u8)MyY; //yH
-	pollMsg[7] = (u8)(MyY>>8); //yL 
+	pollMsg[4] = (u8)MyX; //xL
+	pollMsg[5] = (u8)(MyX>>8); //xH
+	pollMsg[6] = (u8)MyY; //yL
+	pollMsg[7] = (u8)(MyY>>8); //yH 
 	
 	//CRC
 	//CRC
@@ -125,7 +141,6 @@ u8 Resp_Msg(u8 Target)
 	
 	if(!IF_FAIL_SENDING)
 	{
-		rx_DeviceB_1 = get_rx_timestamp_u64();
 		tx_DeviceB_2 = get_tx_timestamp_u64();
 	}
 	
@@ -278,7 +293,7 @@ u8 Safe_Receive(u32 timeout)
 	return If_FAIL_COMMUNICATION;
 }
 
-static uint64_t get_tx_timestamp_u64(void)
+u64 get_tx_timestamp_u64(void)
 {
 	uint8_t ts_tab[5];
 	uint64_t ts = 0;
@@ -292,7 +307,7 @@ static uint64_t get_tx_timestamp_u64(void)
 	return ts;
 }
 
-static uint64_t get_rx_timestamp_u64(void)
+u64 get_rx_timestamp_u64(void)
 {
 	uint8_t ts_tab[5];
 	uint64_t ts = 0;
@@ -306,7 +321,7 @@ static uint64_t get_rx_timestamp_u64(void)
 	return ts;
 }
 
-static uint64_t get_sys_timestamp_u64(void)
+u64 get_sys_timestamp_u64(void)
 {
 	u8 ts_tab[5] = {0};
 	uint64_t ts = 0;
@@ -331,7 +346,7 @@ static void set_ts(u8 *addr, uint64_t ts)
 	}
 }
 
-static uint64_t get_ts(u8 *addr)
+static u64 get_ts(u8 *addr)
 {
 	uint64_t ts = 0;
 	u8 i;
