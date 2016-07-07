@@ -77,43 +77,17 @@ int main(void)
 	dwt_setGPIOdirection(GDM2, 0);
 	dwt_setGPIOdirection(GDM3, 0);
 	
-	dwt_setGPIOvalue(GDM0, GDP0);
-	dwt_setGPIOvalue(GDM1, GDP1);
-	dwt_setGPIOvalue(GDM2, GDP2);
+//	dwt_setGPIOvalue(GDM0, GDP0);
+//	dwt_setGPIOvalue(GDM1, GDP1);
+//	dwt_setGPIOvalue(GDM2, GDP2);
 	dwt_setGPIOvalue(GDM3, GDP3);
 	
   while (1)
-  {			
+  {
+		Range_Once();
 		dwt_setGPIOvalue(GDM0, GDP0);
-		Delay(5);
-		dwt_setGPIOvalue(GDM1, GDP1);
-		Delay(5);
-		dwt_setGPIOvalue(GDM2, GDP2);
-		Delay(5);
-		dwt_setGPIOvalue(GDM3, GDP3);
-		Delay(5);
-		
-		Delay(5); //500ms
-		
+		Delay(1000);
 		dwt_setGPIOvalue(GDM0, 0);
-		Delay(5);
-		dwt_setGPIOvalue(GDM1, 0);
-		Delay(5);
-		dwt_setGPIOvalue(GDM2, 0);
-		Delay(5);
-		dwt_setGPIOvalue(GDM3, 0);
-		Delay(5);
-		
-		Delay(5); //500ms
-		
-//		Receptor_Listening(rxbuffer, &length, &flag, 0);
-			
-//		Initiator_Communication(0x02);
-//		Delay(5);
-			
-//		dwt_setGPIOvalue(GDM3, GDP3);
-//		Delay(100); //100ms
-//		dwt_setGPIOvalue(GDM3, 0);
 	}
 }
 

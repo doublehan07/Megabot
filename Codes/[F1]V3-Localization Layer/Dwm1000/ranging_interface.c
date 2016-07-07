@@ -41,8 +41,8 @@ u32 frame_len;
 u8 rx_buffer[RX_BUFFER_LENGTH];
 
 /* Private function prototypes -----------------------------------------------*/
-static void set_ts(u8 *addr, uint64_t ts);
-static u64 get_ts(u8 *addr);
+//static void set_ts(u8 *addr, uint64_t ts);
+//static u64 get_ts(u8 *addr);
 
 /* Private functions ---------------------------------------------------------*/
 /*
@@ -335,25 +335,25 @@ u64 get_sys_timestamp_u64(void)
 	return ts;
 }
 
-static void set_ts(u8 *addr, uint64_t ts)
-{
-	u8 i, temp;
-	for(i = 0; i < 5; i++)
-	{
-		temp = (u8)ts;
-		*(addr + i) = temp;
-		ts >>= 8;
-	}
-}
+//static void set_ts(u8 *addr, uint64_t ts)
+//{
+//	u8 i, temp;
+//	for(i = 0; i < 5; i++)
+//	{
+//		temp = (u8)ts;
+//		*(addr + i) = temp;
+//		ts >>= 8;
+//	}
+//}
 
-static u64 get_ts(u8 *addr)
-{
-	uint64_t ts = 0;
-	u8 i;
-	for(i = 0; i < 5; i++)
-	{
-		ts |= *(addr + 4 - i);
-		ts <<= 8;
-	}
-	return ts;
-}
+//static u64 get_ts(u8 *addr)
+//{
+//	uint64_t ts = 0;
+//	u8 i;
+//	for(i = 0; i < 5; i++)
+//	{
+//		ts |= *(addr + 4 - i);
+//		ts <<= 8;
+//	}
+//	return ts;
+//}
