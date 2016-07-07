@@ -66,4 +66,6 @@ u64 get_tx_timestamp_u64(void);
 u64 get_rx_timestamp_u64(void);
 u64 get_sys_timestamp_u64(void);
 
+void Range_Once(void); //调用测距函数，开始一轮定位
+
 #endif /* __RANGING_API_H */
