@@ -14,12 +14,13 @@
 #include "ranging_api.h"
 
 #include "receptor.h"
+#include "usart2.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-/* Channe2 , PRF64M , Preamble length = 1024 , Preamble code = 9 , 110k , standard SFD */
+/* Channel2 , PRF64M , Preamble length = 1024 , Preamble code = 9 , 110k , standard SFD */
 dwt_config_t config = {
   2,               /* Channel number. */
   DWT_PRF_64M,     /* Pulse repetition frequency. */
@@ -28,9 +29,9 @@ dwt_config_t config = {
   9,               /* TX preamble code. Used in TX only. */
   9,               /* RX preamble code. Used in RX only. */
   0,         		   /* Use non-standard SFD (Boolean) */
-  DWT_BR_110K,     /* Data rate. */
+  DWT_BR_6M8,      /* Data rate. */
   DWT_PHRMODE_STD, /* PHY header mode. */
-  (1025 + 64 - 32) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+  (1025 + 64 - 32) 	 /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -43,6 +44,7 @@ int main(void)
 	Our_Sys_Init();
 	Delay(5);
 	Dwm1000_Init();
+	USART2_INTERFACE_Configuration(115200);
 
   RESET_DW1000(); //Target specific drive of RSTn line into DW1000 low for a period.
   SPI_DW1000_set_rate_low();
@@ -70,12 +72,15 @@ int main(void)
 	
   while (1)
   {
-		GPIO_SetBits(GPIOC, GPIO_Pin_13);
-//		SetTick(10000);
-		Receptor_Ranging();
-		GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-//		val = 10000 - GetTick();
-		Delay(1);
+		//GPIO_SetBits(GPIOC, GPIO_Pin_13);
+		//GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+		//for(val = 0; val < 500; val++);
+		
+		if(Receptor_Ranging() == 0)
+		{
+			
+		}
+
 	}
 }
 

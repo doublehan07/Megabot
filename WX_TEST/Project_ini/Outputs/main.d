@@ -37,3 +37,4 @@
 .\outputs\main.o: ..\Platform\port.h
 .\outputs\main.o: ..\User_ini\ranging_api.h
 .\outputs\main.o: ..\Dwm1000\initiator.h
+.\outputs\main.o: ..\Dwm1000\usart2.h

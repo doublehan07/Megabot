@@ -8,9 +8,11 @@
 /* Frames used in the ranging process. See NOTE 2 below. */
 static u8 rx_poll_msg[] = {0xF1, MyID, 0, 0x00, 0x00};
 static u8 tx_resp_msg[] = {0xF2, MyID, 0, 0x00, 0x00};
-static u8 rx_final_msg[] = {0xF3, MyID, 0, 0x00, 0, 0, 0, 0x00, 0, 0, 0, 0x00, 0, 0, 0, 0x00, 0x00};
+static u8 rx_final_msg[] = {0xF3, MyID, 0, 0x00, 0, 0, 0, 0x00, 0, 0, 0, 0x00, 0x00};
 //static u8 tx_exd_msg[] = {0xF4, MyID, 0, 0, 0, 0x00, 0x00};
 static u8 cmp_msg[] = {0, 0, MyID};
+
+static u8 upper_data[] = {0x0D, 0x00, 0, 0x00, 0, 0x0A}; //0x0D | xH | xL | yH | yL | 0x0A, x&y - int16
 
 #define FINAL_MSG_POLL_TX_TS_IDX 3
 #define FINAL_MSG_RESP_RX_TS_IDX 7
@@ -85,9 +87,10 @@ static void final_msg_get_ts(const u8 *ts_field, u32 *ts)
 }
 
 
-void Receptor_Ranging(void)
+u8 Receptor_Ranging(void)
 {
 	static u8 TargetID = 0x00;
+	u8 IF_FAIL_RECEIVING = 0xFF;
 	
 	/* Clear reception timeout to start next ranging process. */
 	dwt_setrxtimeout(0);
@@ -158,8 +161,9 @@ void Receptor_Ranging(void)
 				cmp_msg[1] = TargetID;
 				if (memcmp(rx_buffer, cmp_msg, 3) == 0)
 				{
-					u32 poll_tx_ts, resp_rx_ts, final_tx_ts;
+					u8 i;
 					u32 poll_rx_ts_32, resp_tx_ts_32, final_rx_ts_32;
+					u32 diff_ts;
 					double Ra, Rb, Da, Db;
 					int64 tof_dtu;
             
@@ -168,32 +172,43 @@ void Receptor_Ranging(void)
 					final_rx_ts = get_rx_timestamp_u64();
             
 					/* Get timestamps embedded in the final message. */
-					final_msg_get_ts(&rx_buffer[FINAL_MSG_POLL_TX_TS_IDX], &poll_tx_ts);
-					final_msg_get_ts(&rx_buffer[FINAL_MSG_RESP_RX_TS_IDX], &resp_rx_ts);
-					final_msg_get_ts(&rx_buffer[FINAL_MSG_FINAL_TX_TS_IDX], &final_tx_ts);
+					final_msg_get_ts(&rx_buffer[FINAL_MSG_POLL_TX_TS_IDX], &diff_ts);
+					Ra = (double)diff_ts;
+					final_msg_get_ts(&rx_buffer[FINAL_MSG_RESP_RX_TS_IDX], &diff_ts);
+					Da = (double)diff_ts;
             
 					/* Compute time of flight. 32-bit subtractions give correct answers even if clock has wrapped. See NOTE 10 below. */
 					poll_rx_ts_32 = (uint32)poll_rx_ts;
 					resp_tx_ts_32 = (uint32)resp_tx_ts;
 					final_rx_ts_32 = (uint32)final_rx_ts;
-					Ra = (double)(resp_rx_ts - poll_tx_ts);
 					Rb = (double)(final_rx_ts_32 - resp_tx_ts_32);
-					Da = (double)(final_tx_ts - resp_rx_ts);
 					Db = (double)(resp_tx_ts_32 - poll_rx_ts_32);
 					tof_dtu = (int64)((Ra * Rb - Da * Db) / (Ra + Rb + Da + Db));
             
 					tof = tof_dtu * DWT_TIME_UNITS;
-					distance = tof * SPEED_OF_LIGHT; 
-					
+					distance = tof * SPEED_OF_LIGHT; 					
 					dist_cm = (u16)(distance * 1000);
-//					tx_exd_msg[3] = (u8)(dist_cm >> 8); //H
-//					tx_exd_msg[4] = (u8)dist_cm;				//L
 					
+					upper_data[1] = dist_cm >> 8; //xH
+					upper_data[2] = (u8)dist_cm;	//xL
+					upper_data[3] = 0;						//yH
+					upper_data[4] = 0;						//yL
+					
+					for(i = 0; i < 6; i++)
+					{
+						USART_SendData(USART2, upper_data[i]);
+						while(USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
+					}
+					
+					IF_FAIL_RECEIVING = 0;
+// 					tx_exd_msg[3] = (u8)(dist_cm >> 8); //H
+//					tx_exd_msg[4] = (u8)dist_cm;				//L
+//					
 //					/* Write and send the response message. See NOTE 9 below.*/
 //					dwt_writetxdata(sizeof(tx_exd_msg), tx_exd_msg, 0);
 //					dwt_writetxfctrl(sizeof(tx_exd_msg), 0);
 //					dwt_starttx(DWT_START_TX_IMMEDIATE);
-//					
+					
 //					/* Poll DW1000 until TX frame sent event set. See NOTE 8 below. */
 //					while (!(dwt_read32bitreg(SYS_STATUS_ID) & SYS_STATUS_TXFRS))
 //					{ };
@@ -214,4 +229,5 @@ void Receptor_Ranging(void)
 		/* Clear RX error events in the DW1000 status register. */
 		dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
 	}
+	return IF_FAIL_RECEIVING;
 }
