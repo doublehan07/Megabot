@@ -8,13 +8,14 @@
 /* Frames used in the ranging process. See NOTE 2 below. */
 static u8 tx_poll_msg[] = {0xF1, MyID, 0, 0, 0};
 static u8 rx_resp_msg[] = {0xF2, MyID, 0, 0, 0};
-static u8 tx_final_msg[] = {0xF3, MyID, 0, 0x00, 0, 0, 0, 0x00, 0, 0, 0, 0x00, 0, 0, 0, 0x00, 0x00};
-//static u8 rx_exd_msg[] = {0xF4, MyID, 0, 0, 0, 0x00, 0x00};
+static u8 tx_final_msg[] = {0xF3, MyID, 0, 0x00, 0, 0, 0, 0x00, 0, 0, 0, 0x00, 0x00};
+static u8 rx_exd_msg[] = {0xF4, MyID, 0, 0, 0, 0x00, 0x00};
 static u8 cmp_msg[] = {0, 0, MyID};
 
-#define FINAL_MSG_POLL_TX_TS_IDX 3
-#define FINAL_MSG_RESP_RX_TS_IDX 7
-#define FINAL_MSG_FINAL_TX_TS_IDX 11
+static u8 upper_data[] = {0x0D, 0, 0, 0, 0, 0x0A};
+
+#define FINAL_MSG_FRT_DIFF_TS_IDX 3
+#define FINAL_MSG_SND_DIFF_TS_IDX 7
 #define FINAL_MSG_TS_LEN 4
 
 /* Buffer to store received response message.
@@ -76,9 +77,10 @@ static void final_msg_set_ts(u8 *ts_field, uint64 ts)
     }
 }
 
-void Initiator_Ranging(u8 TargetID)
+u8 Initiator_Ranging(u8 TargetID)
 {
 	int dwt_ret;
+	u8 IF_FAIL_SENDING = 0xFF;
 		
 	tx_poll_msg[2] = TargetID;
 	tx_final_msg[2] = TargetID;
@@ -112,7 +114,9 @@ void Initiator_Ranging(u8 TargetID)
 		cmp_msg[1] = TargetID;
 		if (memcmp(rx_buffer, cmp_msg, 3) == 0)
 		{
+			u8 i;
 			u32 final_tx_time;
+			uint64 diff_ts;
         
 			/* Retrieve poll transmission and response reception timestamp. */
 			poll_tx_ts = get_tx_timestamp_u64();
@@ -126,9 +130,10 @@ void Initiator_Ranging(u8 TargetID)
 			final_tx_ts = (((uint64)(final_tx_time & 0xFFFFFFFE)) << 8) + TX_ANT_DLY;
         
 			/* Write all timestamps in the final message. See NOTE 10 below. */
-			final_msg_set_ts(&tx_final_msg[FINAL_MSG_POLL_TX_TS_IDX], poll_tx_ts);
-			final_msg_set_ts(&tx_final_msg[FINAL_MSG_RESP_RX_TS_IDX], resp_rx_ts);
-			final_msg_set_ts(&tx_final_msg[FINAL_MSG_FINAL_TX_TS_IDX], final_tx_ts);
+			diff_ts = resp_rx_ts - poll_tx_ts;
+			final_msg_set_ts(&tx_final_msg[FINAL_MSG_FRT_DIFF_TS_IDX], diff_ts);
+			diff_ts = final_tx_ts - resp_rx_ts;
+			final_msg_set_ts(&tx_final_msg[FINAL_MSG_SND_DIFF_TS_IDX], diff_ts);
       
 			//Dont need to set time, it has been done from main.
 			
@@ -143,7 +148,13 @@ void Initiator_Ranging(u8 TargetID)
 			/* Clear TXFRS event. */
 			dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS);  
 		
-		
+			for(i = 0; i < 6; i++)
+			{
+				USART_SendData(USART2, upper_data[i]);
+				while(USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
+			}
+			
+			IF_FAIL_SENDING = 0;
 		
 //			dwt_starttx(DWT_START_TX_DELAYED | DWT_RESPONSE_EXPECTED);
 //      
@@ -182,4 +193,5 @@ void Initiator_Ranging(u8 TargetID)
     
 	/* Execute a delay between ranging exchanges. */
 //	Delay(RNG_DELAY_MS);
+	return IF_FAIL_SENDING;
 }

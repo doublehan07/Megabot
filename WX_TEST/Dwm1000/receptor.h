@@ -22,6 +22,6 @@
 /* Receive final timeout. See NOTE 5 below. */
 #define FINAL_RX_TIMEOUT_UUS 3300
 
-void Receptor_Ranging(void);
+u8 Receptor_Ranging(void);
 
 #endif /* __RECEPTOR_H */

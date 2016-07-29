@@ -14,6 +14,7 @@
 #include "ranging_api.h"
 
 #include "initiator.h"
+#include "usart2.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -28,7 +29,7 @@ dwt_config_t config = {
   9,               /* TX preamble code. Used in TX only. */
   9,               /* RX preamble code. Used in RX only. */
   0,         		   /* Use non-standard SFD (Boolean) */
-  DWT_BR_110K,     /* Data rate. */
+  DWT_BR_6M8,      /* Data rate. */
   DWT_PHRMODE_STD, /* PHY header mode. */
   (1025 + 64 - 32) /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
 };
@@ -41,6 +42,7 @@ int main(void)
 	Our_Sys_Init();
 	Delay(5);
 	Dwm1000_Init();
+	USART2_INTERFACE_Configuration(115200);
 
   RESET_DW1000(); //Target specific drive of RSTn line into DW1000 low for a period.
   SPI_DW1000_set_rate_low();
@@ -77,8 +79,9 @@ int main(void)
 //		Delay(5);
 //		dwt_setGPIOvalue(GDM2, GDP2);
 //		Delay(5);
-		
 		Initiator_Ranging(0x01);
+		
+		//Delay(1);
 	}
 }
 

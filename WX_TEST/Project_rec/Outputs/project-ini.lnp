@@ -23,6 +23,7 @@
 ".\outputs\initiator.o"
 ".\outputs\receptor.o"
 ".\outputs\demo_api.o"
+".\outputs\usart2.o"
 ".\outputs\fourcars.o"
 --library_type=microlib --strict --scatter ".\Outputs\project-ini.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols

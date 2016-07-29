@@ -26,7 +26,7 @@
 /* Receive response timeout. See NOTE 5 below. */
 #define RESP_RX_TIMEOUT_UUS 2700
 
-void Initiator_Ranging(u8 TargetID);
+u8 Initiator_Ranging(u8 TargetID);
 
 
 #endif /*__INITIATOR_H */

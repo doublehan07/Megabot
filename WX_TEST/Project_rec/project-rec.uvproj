@@ -551,6 +551,11 @@
               <FileType>1</FileType>
               <FilePath>..\Dwm1000\demo_api.c</FilePath>
             </File>
+            <File>
+              <FileName>usart2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Dwm1000\usart2.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
