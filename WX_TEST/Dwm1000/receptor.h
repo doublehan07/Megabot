@@ -6,8 +6,8 @@
 #include "stm32f10x.h"
 
 /* Default antenna delay values for 64 MHz PRF. See NOTE 1 below. */
-#define TX_ANT_DLY 16473
-#define RX_ANT_DLY 16473
+#define TX_ANT_DLY 16476
+#define RX_ANT_DLY 16476
 
 /* UWB microsecond (uus) to device time unit (dtu, around 15.65 ps) conversion factor.
  * 1 uus = 512 / 499.2 ? and 1 ? = 499.2 * 128 dtu. */
