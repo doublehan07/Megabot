@@ -1,6 +1,7 @@
 # Demo Ver 1.3
-	For our second demo. Fortunately it works well!
+	Last updated: Sep.07,2016
 	Ver1.3
+	For our second demo. Fortunately it works well!
 	
 # Team member
 **FengGE** Jul.30,2016 - Sep.07,2016
