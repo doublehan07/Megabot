@@ -1,0 +1,11 @@
+*.o
+*.lib
+*.a
+*.elf
+*.bin
+*.hex
+*~
+
+/OUTPUT
+
+*haldak*
