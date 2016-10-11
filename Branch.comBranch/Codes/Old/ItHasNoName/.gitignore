@@ -1,0 +1,10 @@
+*.o
+*.lib
+*.a
+*.elf
+*.bin
+*.hex
+*~
+
+/Project/OutPuts/*
+*Administrator*
