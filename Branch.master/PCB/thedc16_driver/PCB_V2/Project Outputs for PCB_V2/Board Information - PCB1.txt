@@ -1,0 +1,12 @@
+Board Information Report
+Filename     : F:\Çå»ª\ÌôÕ½±­\PCB\PCB_V2\PCB1.PcbDoc
+Date         : 2016/2/15
+Time         : 12:08:18
+Time Elapsed : 00:00:00
+
+Routing Information
+    Routing completion, 99.46%
+    Connections, 184
+    Connections routed, 183
+    Connections remaining, 1
+count : 4

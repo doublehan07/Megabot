@@ -1,0 +1,100 @@
+Added Component: Designator=C31(0805 CAP)
+Added Component: Designator=C32(0805 CAP)
+Added Component: Designator=C33(0805 CAP)
+Added Component: Designator=C34(0805 CAP)
+Added Component: Designator=C35(0805 CAP)
+Added Component: Designator=C36(0805 CAP)
+Added Component: Designator=C44(0805 CAP)
+Added Component: Designator=D4(SMA)
+Added Component: Designator=R31(0805)
+Added Component: Designator=R32(0805)
+Added Component: Designator=R33(0805)
+Added Component: Designator=R34(0805)
+Added Component: Designator=R35(0805)
+Added Component: Designator=R36(0805)
+Added Component: Designator=R37(0805)
+Added Component: Designator=R38(0805)
+Added Component: Designator=R39(0805)
+Added Component: Designator=R40(0805)
+Added Component: Designator=R41(0805)
+Added Component: Designator=R42(0805)
+Added Component: Designator=R43(0805)
+Added Component: Designator=U3(so-8)
+Added Component: Designator=U4(sot-23)
+Added Pin To Net: NetName=M1 CUR Pin=C31-1
+Added Pin To Net: NetName=GND Pin=C31-2
+Added Pin To Net: NetName=M2 CUR Pin=C32-1
+Added Pin To Net: NetName=GND Pin=C32-2
+Added Pin To Net: NetName=M1 VOL Pin=C33-1
+Added Pin To Net: NetName=GND Pin=C33-2
+Added Pin To Net: NetName=M2 VOL Pin=C34-1
+Added Pin To Net: NetName=GND Pin=C34-2
+Added Pin To Net: NetName=NetC35_1 Pin=C35-1
+Added Pin To Net: NetName=GND Pin=C35-2
+Added Pin To Net: NetName=NetC35_1 Pin=C36-1
+Added Pin To Net: NetName=GND Pin=C36-2
+Added Pin To Net: NetName=VOLREF_1.5V Pin=C44-1
+Added Pin To Net: NetName=GND Pin=C44-2
+Added Pin To Net: NetName=VCC_12V Pin=D4-1
+Added Pin To Net: NetName=NetC35_1 Pin=D4-2
+Added Pin To Net: NetName=NetR31_1 Pin=R31-1
+Added Pin To Net: NetName=M1 CUR Pin=R31-2
+Added Pin To Net: NetName=NetR32_1 Pin=R32-1
+Added Pin To Net: NetName=M1 VOL Pin=R32-2
+Added Pin To Net: NetName=NetR33_1 Pin=R33-1
+Added Pin To Net: NetName=M2 CUR Pin=R33-2
+Added Pin To Net: NetName=NetR34_1 Pin=R34-1
+Added Pin To Net: NetName=M2 VOL Pin=R34-2
+Added Pin To Net: NetName=VOLREF_1.5V Pin=R35-1
+Added Pin To Net: NetName=NetR31_1 Pin=R35-2
+Added Pin To Net: NetName=M1 S Pin=R36-1
+Added Pin To Net: NetName=NetR32_1 Pin=R36-2
+Added Pin To Net: NetName=VOLREF_1.5V Pin=R37-1
+Added Pin To Net: NetName=NetR33_1 Pin=R37-2
+Added Pin To Net: NetName=M2 S Pin=R38-1
+Added Pin To Net: NetName=NetR34_1 Pin=R38-2
+Added Pin To Net: NetName=GND Pin=R39-1
+Added Pin To Net: NetName=M1 S Pin=R39-2
+Added Pin To Net: NetName=GND Pin=R40-1
+Added Pin To Net: NetName=M2 S Pin=R40-2
+Added Pin To Net: NetName=NetR41_1 Pin=R41-1
+Added Pin To Net: NetName=NetC35_1 Pin=R41-2
+Added Pin To Net: NetName=VOLREF_1.5V Pin=R42-1
+Added Pin To Net: NetName=NetR41_1 Pin=R42-2
+Added Pin To Net: NetName=GND Pin=R43-1
+Added Pin To Net: NetName=VOLREF_1.5V Pin=R43-2
+Added Pin To Net: NetName=M1 S Pin=U3-1
+Added Pin To Net: NetName=NetR32_1 Pin=U3-2
+Added Pin To Net: NetName=NetR31_1 Pin=U3-3
+Added Pin To Net: NetName=GND Pin=U3-4
+Added Pin To Net: NetName=NetR33_1 Pin=U3-5
+Added Pin To Net: NetName=NetR34_1 Pin=U3-6
+Added Pin To Net: NetName=M2 S Pin=U3-7
+Added Pin To Net: NetName=NetC35_1 Pin=U3-8
+Added Pin To Net: NetName=NetR41_1 Pin=U4-1
+Added Pin To Net: NetName=NetR41_1 Pin=U4-2
+Added Pin To Net: NetName=GND Pin=U4-3
+Added Member To Class: ClassName=analog Member=Component C31 0.1uF
+Added Member To Class: ClassName=analog Member=Component C32 0.1uF
+Added Member To Class: ClassName=analog Member=Component C33 0.1uF
+Added Member To Class: ClassName=analog Member=Component C34 0.1uF
+Added Member To Class: ClassName=analog Member=Component C35 0.1uF
+Added Member To Class: ClassName=analog Member=Component C36 10uF
+Added Member To Class: ClassName=analog Member=Component C44 10uF
+Added Member To Class: ClassName=analog Member=Component D4 SS14
+Added Member To Class: ClassName=analog Member=Component R31 39K
+Added Member To Class: ClassName=analog Member=Component R32 39K
+Added Member To Class: ClassName=analog Member=Component R33 39K
+Added Member To Class: ClassName=analog Member=Component R34 39K
+Added Member To Class: ClassName=analog Member=Component R35 30K
+Added Member To Class: ClassName=analog Member=Component R36 30K
+Added Member To Class: ClassName=analog Member=Component R37 30K
+Added Member To Class: ClassName=analog Member=Component R38 30K
+Added Member To Class: ClassName=analog Member=Component R39 510
+Added Member To Class: ClassName=analog Member=Component R40 510
+Added Member To Class: ClassName=analog Member=Component R41 1K
+Added Member To Class: ClassName=analog Member=Component R42 200
+Added Member To Class: ClassName=analog Member=Component R43 300
+Added Member To Class: ClassName=analog Member=Component U3 LM358
+Added Member To Class: ClassName=analog Member=Component U4 TL431
+Added Room: Name=analog

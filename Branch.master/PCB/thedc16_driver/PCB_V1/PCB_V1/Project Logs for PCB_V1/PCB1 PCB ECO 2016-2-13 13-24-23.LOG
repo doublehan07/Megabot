@@ -1,0 +1,306 @@
+Added Component: Designator=BQ5(SOT-23)
+Added Component: Designator=BQ6(SOT-23)
+Added Component: Designator=C31(0805 CAP)
+Added Component: Designator=C32(0805 CAP)
+Added Component: Designator=C33(0805 CAP)
+Added Component: Designator=C34(0805 CAP)
+Added Component: Designator=C35(0805 CAP)
+Added Component: Designator=C36(0805 CAP)
+Added Component: Designator=C44(0805 CAP)
+Added Component: Designator=C51(SMD-EC-F10)
+Added Component: Designator=C52(SMD-EC-F10)
+Added Component: Designator=C61(SMD-EC-F10)
+Added Component: Designator=C62(SMD-EC-F10)
+Added Component: Designator=D4(SMA)
+Added Component: Designator=D5(SMA)
+Added Component: Designator=D6(SMA)
+Added Component: Designator=J5(con2)
+Added Component: Designator=J6(con2)
+Added Component: Designator=L5(12x12)
+Added Component: Designator=L6(12x12)
+Added Component: Designator=P2(HDR1X6)
+Added Component: Designator=Q51(sot-23)
+Added Component: Designator=Q52(sot-23)
+Added Component: Designator=Q53(sot-23)
+Added Component: Designator=Q54(sot-23)
+Added Component: Designator=Q55(sot-23)
+Added Component: Designator=Q61(sot-23)
+Added Component: Designator=Q62(sot-23)
+Added Component: Designator=Q63(sot-23)
+Added Component: Designator=Q64(sot-23)
+Added Component: Designator=Q65(sot-23)
+Added Component: Designator=R31(0805)
+Added Component: Designator=R32(0805)
+Added Component: Designator=R33(0805)
+Added Component: Designator=R34(0805)
+Added Component: Designator=R35(0805)
+Added Component: Designator=R36(0805)
+Added Component: Designator=R37(0805)
+Added Component: Designator=R38(0805)
+Added Component: Designator=R39(0805)
+Added Component: Designator=R40(0805)
+Added Component: Designator=R41(0805)
+Added Component: Designator=R42(0805)
+Added Component: Designator=R43(0805)
+Added Component: Designator=R50(0805)
+Added Component: Designator=R51(0805)
+Added Component: Designator=R52(0805)
+Added Component: Designator=R53(0805)
+Added Component: Designator=R54(2512)
+Added Component: Designator=R55(0805)
+Added Component: Designator=R56(0805)
+Added Component: Designator=R57(0805)
+Added Component: Designator=R58(0805)
+Added Component: Designator=R59_1(0805)
+Added Component: Designator=R59_2(0805)
+Added Component: Designator=R59_3(0805)
+Added Component: Designator=R60(0805)
+Added Component: Designator=R61(0805)
+Added Component: Designator=R62(0805)
+Added Component: Designator=R63(0805)
+Added Component: Designator=R64(2512)
+Added Component: Designator=R65(0805)
+Added Component: Designator=R66(0805)
+Added Component: Designator=R67(0805)
+Added Component: Designator=R68(0805)
+Added Component: Designator=R69_1(0805)
+Added Component: Designator=R69_2(0805)
+Added Component: Designator=R69_3(0805)
+Added Component: Designator=U3(so-8)
+Added Component: Designator=U4(sot-23)
+Added Pin To Net: NetName=NetBQ5_b Pin=BQ5-1
+Added Pin To Net: NetName=GND Pin=BQ5-2
+Added Pin To Net: NetName=NetBQ5_c Pin=BQ5-3
+Added Pin To Net: NetName=NetBQ6_b Pin=BQ6-1
+Added Pin To Net: NetName=GND Pin=BQ6-2
+Added Pin To Net: NetName=NetBQ6_c Pin=BQ6-3
+Added Pin To Net: NetName=M1 VOL Pin=C31-1
+Added Pin To Net: NetName=GND Pin=C31-2
+Added Pin To Net: NetName=M2 VOL Pin=C32-1
+Added Pin To Net: NetName=GND Pin=C32-2
+Added Pin To Net: NetName=M1 CUR Pin=C33-1
+Added Pin To Net: NetName=GND Pin=C33-2
+Added Pin To Net: NetName=M2 CUR Pin=C34-1
+Added Pin To Net: NetName=GND Pin=C34-2
+Added Pin To Net: NetName=NetC35_1 Pin=C35-1
+Added Pin To Net: NetName=GND Pin=C35-2
+Added Pin To Net: NetName=NetC35_1 Pin=C36-1
+Added Pin To Net: NetName=GND Pin=C36-2
+Added Pin To Net: NetName=VOLREF_1.5V Pin=C44-1
+Added Pin To Net: NetName=GND Pin=C44-2
+Added Pin To Net: NetName=NetC51_1 Pin=C51-1
+Added Pin To Net: NetName=GND Pin=C51-2
+Added Pin To Net: NetName=NetC52_1 Pin=C52-1
+Added Pin To Net: NetName=GND Pin=C52-2
+Added Pin To Net: NetName=NetC61_1 Pin=C61-1
+Added Pin To Net: NetName=GND Pin=C61-2
+Added Pin To Net: NetName=NetC62_1 Pin=C62-1
+Added Pin To Net: NetName=GND Pin=C62-2
+Added Pin To Net: NetName=VCC_12V Pin=D4-1
+Added Pin To Net: NetName=NetC35_1 Pin=D4-2
+Added Pin To Net: NetName=VCC_12V Pin=D5-1
+Added Pin To Net: NetName=NetC51_1 Pin=D5-2
+Added Pin To Net: NetName=VCC_12V Pin=D6-1
+Added Pin To Net: NetName=NetC61_1 Pin=D6-2
+Added Pin To Net: NetName=NetJ5_1 Pin=J5-1
+Added Pin To Net: NetName=M1 CUR Pin=J5-2
+Added Pin To Net: NetName=NetJ6_1 Pin=J6-1
+Added Pin To Net: NetName=M2 CUR Pin=J6-2
+Added Pin To Net: NetName=NetC52_1 Pin=L5-1
+Added Pin To Net: NetName=NetL5_2 Pin=L5-2
+Added Pin To Net: NetName=NetC62_1 Pin=L6-1
+Added Pin To Net: NetName=NetL6_2 Pin=L6-2
+Added Pin To Net: NetName=M1 PWM Pin=P2-1
+Added Pin To Net: NetName=M1 DIR Pin=P2-2
+Added Pin To Net: NetName=M2 PWM Pin=P2-3
+Added Pin To Net: NetName=M2 DIR Pin=P2-4
+Added Pin To Net: NetName=NetP2_5 Pin=P2-5
+Added Pin To Net: NetName=NetP2_6 Pin=P2-6
+Added Pin To Net: NetName=NetQ51_1 Pin=Q51-1
+Added Pin To Net: NetName=NetC51_1 Pin=Q51-2
+Added Pin To Net: NetName=NetL5_2 Pin=Q51-3
+Added Pin To Net: NetName=NetBQ5_c Pin=Q52-1
+Added Pin To Net: NetName=NetC51_1 Pin=Q52-2
+Added Pin To Net: NetName=NetJ5_1 Pin=Q52-3
+Added Pin To Net: NetName=NetBQ5_c Pin=Q53-1
+Added Pin To Net: NetName=GND Pin=Q53-2
+Added Pin To Net: NetName=NetJ5_1 Pin=Q53-3
+Added Pin To Net: NetName=NetQ51_1 Pin=Q54-1
+Added Pin To Net: NetName=GND Pin=Q54-2
+Added Pin To Net: NetName=NetL5_2 Pin=Q54-3
+Added Pin To Net: NetName=NetQ55_1 Pin=Q55-1
+Added Pin To Net: NetName=GND Pin=Q55-2
+Added Pin To Net: NetName=NetQ51_1 Pin=Q55-3
+Added Pin To Net: NetName=NetQ61_1 Pin=Q61-1
+Added Pin To Net: NetName=NetC61_1 Pin=Q61-2
+Added Pin To Net: NetName=NetL6_2 Pin=Q61-3
+Added Pin To Net: NetName=NetBQ6_c Pin=Q62-1
+Added Pin To Net: NetName=NetC61_1 Pin=Q62-2
+Added Pin To Net: NetName=NetJ6_1 Pin=Q62-3
+Added Pin To Net: NetName=NetBQ6_c Pin=Q63-1
+Added Pin To Net: NetName=GND Pin=Q63-2
+Added Pin To Net: NetName=NetJ6_1 Pin=Q63-3
+Added Pin To Net: NetName=NetQ61_1 Pin=Q64-1
+Added Pin To Net: NetName=GND Pin=Q64-2
+Added Pin To Net: NetName=NetL6_2 Pin=Q64-3
+Added Pin To Net: NetName=NetQ65_1 Pin=Q65-1
+Added Pin To Net: NetName=GND Pin=Q65-2
+Added Pin To Net: NetName=NetQ61_1 Pin=Q65-3
+Added Pin To Net: NetName=NetR31_1 Pin=R31-1
+Added Pin To Net: NetName=M1 VOL Pin=R31-2
+Added Pin To Net: NetName=NetR32_1 Pin=R32-1
+Added Pin To Net: NetName=M1 CUR Pin=R32-2
+Added Pin To Net: NetName=NetR33_1 Pin=R33-1
+Added Pin To Net: NetName=M2 VOL Pin=R33-2
+Added Pin To Net: NetName=NetR34_1 Pin=R34-1
+Added Pin To Net: NetName=M2 CUR Pin=R34-2
+Added Pin To Net: NetName=VOLREF_1.5V Pin=R35-1
+Added Pin To Net: NetName=NetR31_1 Pin=R35-2
+Added Pin To Net: NetName=M1 S Pin=R36-1
+Added Pin To Net: NetName=NetR32_1 Pin=R36-2
+Added Pin To Net: NetName=VOLREF_1.5V Pin=R37-1
+Added Pin To Net: NetName=NetR33_1 Pin=R37-2
+Added Pin To Net: NetName=M2 S Pin=R38-1
+Added Pin To Net: NetName=NetR34_1 Pin=R38-2
+Added Pin To Net: NetName=GND Pin=R39-1
+Added Pin To Net: NetName=M1 S Pin=R39-2
+Added Pin To Net: NetName=GND Pin=R40-1
+Added Pin To Net: NetName=M2 S Pin=R40-2
+Added Pin To Net: NetName=NetR41_1 Pin=R41-1
+Added Pin To Net: NetName=NetC35_1 Pin=R41-2
+Added Pin To Net: NetName=VOLREF_1.5V Pin=R42-1
+Added Pin To Net: NetName=NetR41_1 Pin=R42-2
+Added Pin To Net: NetName=GND Pin=R43-1
+Added Pin To Net: NetName=VOLREF_1.5V Pin=R43-2
+Added Pin To Net: NetName=M1 S Pin=R50-1
+Added Pin To Net: NetName=NetP2_5 Pin=R50-2
+Added Pin To Net: NetName=NetQ55_1 Pin=R51-1
+Added Pin To Net: NetName=M1 PWM Pin=R51-2
+Added Pin To Net: NetName=NetQ51_1 Pin=R52-1
+Added Pin To Net: NetName=NetC51_1 Pin=R52-2
+Added Pin To Net: NetName=GND Pin=R53-1
+Added Pin To Net: NetName=NetQ55_1 Pin=R53-2
+Added Pin To Net: NetName=NetC52_1 Pin=R54-1
+Added Pin To Net: NetName=M1 CUR Pin=R54-2
+Added Pin To Net: NetName=NetC52_1 Pin=R55-1
+Added Pin To Net: NetName=M1 VOL Pin=R55-2
+Added Pin To Net: NetName=NetBQ5_c Pin=R56-1
+Added Pin To Net: NetName=NetC51_1 Pin=R56-2
+Added Pin To Net: NetName=NetBQ5_b Pin=R57-1
+Added Pin To Net: NetName=M1 DIR Pin=R57-2
+Added Pin To Net: NetName=GND Pin=R58-1
+Added Pin To Net: NetName=NetBQ5_b Pin=R58-2
+Added Pin To Net: NetName=M1 VOL Pin=R59_1-1
+Added Pin To Net: NetName=NetR59_1_2 Pin=R59_1-2
+Added Pin To Net: NetName=NetR59_1_2 Pin=R59_2-1
+Added Pin To Net: NetName=NetR59_2_2 Pin=R59_2-2
+Added Pin To Net: NetName=NetJ5_1 Pin=R59_3-1
+Added Pin To Net: NetName=NetR59_2_2 Pin=R59_3-2
+Added Pin To Net: NetName=M2 S Pin=R60-1
+Added Pin To Net: NetName=NetP2_6 Pin=R60-2
+Added Pin To Net: NetName=NetQ65_1 Pin=R61-1
+Added Pin To Net: NetName=M2 PWM Pin=R61-2
+Added Pin To Net: NetName=NetQ61_1 Pin=R62-1
+Added Pin To Net: NetName=NetC61_1 Pin=R62-2
+Added Pin To Net: NetName=GND Pin=R63-1
+Added Pin To Net: NetName=NetQ65_1 Pin=R63-2
+Added Pin To Net: NetName=NetC62_1 Pin=R64-1
+Added Pin To Net: NetName=M2 CUR Pin=R64-2
+Added Pin To Net: NetName=NetC62_1 Pin=R65-1
+Added Pin To Net: NetName=M2 VOL Pin=R65-2
+Added Pin To Net: NetName=NetBQ6_c Pin=R66-1
+Added Pin To Net: NetName=NetC61_1 Pin=R66-2
+Added Pin To Net: NetName=NetBQ6_b Pin=R67-1
+Added Pin To Net: NetName=M2 DIR Pin=R67-2
+Added Pin To Net: NetName=GND Pin=R68-1
+Added Pin To Net: NetName=NetBQ6_b Pin=R68-2
+Added Pin To Net: NetName=M2 VOL Pin=R69_1-1
+Added Pin To Net: NetName=NetR69_1_2 Pin=R69_1-2
+Added Pin To Net: NetName=NetR69_1_2 Pin=R69_2-1
+Added Pin To Net: NetName=NetR69_2_2 Pin=R69_2-2
+Added Pin To Net: NetName=NetJ6_1 Pin=R69_3-1
+Added Pin To Net: NetName=NetR69_2_2 Pin=R69_3-2
+Added Pin To Net: NetName=M1 S Pin=U3-1
+Added Pin To Net: NetName=NetR32_1 Pin=U3-2
+Added Pin To Net: NetName=NetR31_1 Pin=U3-3
+Added Pin To Net: NetName=GND Pin=U3-4
+Added Pin To Net: NetName=NetR33_1 Pin=U3-5
+Added Pin To Net: NetName=NetR34_1 Pin=U3-6
+Added Pin To Net: NetName=M2 S Pin=U3-7
+Added Pin To Net: NetName=NetC35_1 Pin=U3-8
+Added Pin To Net: NetName=NetR41_1 Pin=U4-1
+Added Pin To Net: NetName=NetR41_1 Pin=U4-2
+Added Pin To Net: NetName=GND Pin=U4-3
+Added Member To Class: ClassName=motor Member=Component BQ5 9014
+Added Member To Class: ClassName=motor Member=Component BQ6 9014
+Added Member To Class: ClassName=analog Member=Component C31 0.1uF
+Added Member To Class: ClassName=analog Member=Component C32 0.1uF
+Added Member To Class: ClassName=analog Member=Component C33 0.1uF
+Added Member To Class: ClassName=analog Member=Component C34 0.1uF
+Added Member To Class: ClassName=analog Member=Component C35 0.1uF
+Added Member To Class: ClassName=analog Member=Component C36 10uF
+Added Member To Class: ClassName=analog Member=Component C44 10uF
+Added Member To Class: ClassName=motor Member=Component C51 220uF
+Added Member To Class: ClassName=motor Member=Component C52 220uF
+Added Member To Class: ClassName=motor Member=Component C61 220uF
+Added Member To Class: ClassName=motor Member=Component C62 220uF
+Added Member To Class: ClassName=analog Member=Component D4 SS14
+Added Member To Class: ClassName=motor Member=Component D5 SS34
+Added Member To Class: ClassName=motor Member=Component D6 SS34
+Added Member To Class: ClassName=motor Member=Component J5 CON2
+Added Member To Class: ClassName=motor Member=Component J6 CON2
+Added Member To Class: ClassName=motor Member=Component L5 330uH
+Added Member To Class: ClassName=motor Member=Component L6 330uH
+Added Member To Class: ClassName=motor Member=Component P2 Header 6
+Added Member To Class: ClassName=motor Member=Component Q51 AO3407
+Added Member To Class: ClassName=motor Member=Component Q52 AO3407
+Added Member To Class: ClassName=motor Member=Component Q53 AO3406
+Added Member To Class: ClassName=motor Member=Component Q54 AO3406
+Added Member To Class: ClassName=motor Member=Component Q55 2N7002
+Added Member To Class: ClassName=motor Member=Component Q61 AO3407
+Added Member To Class: ClassName=motor Member=Component Q62 AO3407
+Added Member To Class: ClassName=motor Member=Component Q63 AO3406
+Added Member To Class: ClassName=motor Member=Component Q64 AO3406
+Added Member To Class: ClassName=motor Member=Component Q65 2N7002
+Added Member To Class: ClassName=analog Member=Component R31 39K
+Added Member To Class: ClassName=analog Member=Component R32 39K
+Added Member To Class: ClassName=analog Member=Component R33 39K
+Added Member To Class: ClassName=analog Member=Component R34 39K
+Added Member To Class: ClassName=analog Member=Component R35 30K
+Added Member To Class: ClassName=analog Member=Component R36 30K
+Added Member To Class: ClassName=analog Member=Component R37 30K
+Added Member To Class: ClassName=analog Member=Component R38 30K
+Added Member To Class: ClassName=analog Member=Component R39 510
+Added Member To Class: ClassName=analog Member=Component R40 510
+Added Member To Class: ClassName=analog Member=Component R41 1K
+Added Member To Class: ClassName=analog Member=Component R42 200
+Added Member To Class: ClassName=analog Member=Component R43 300
+Added Member To Class: ClassName=motor Member=Component R50 10K
+Added Member To Class: ClassName=motor Member=Component R51 100
+Added Member To Class: ClassName=motor Member=Component R52 5.1K
+Added Member To Class: ClassName=motor Member=Component R53 100K
+Added Member To Class: ClassName=motor Member=Component R54 1
+Added Member To Class: ClassName=motor Member=Component R55 1K
+Added Member To Class: ClassName=motor Member=Component R56 10K
+Added Member To Class: ClassName=motor Member=Component R57 10K
+Added Member To Class: ClassName=motor Member=Component R58 10K
+Added Member To Class: ClassName=motor Member=Component R59_1 0
+Added Member To Class: ClassName=motor Member=Component R59_2 5.1K
+Added Member To Class: ClassName=motor Member=Component R59_3 0
+Added Member To Class: ClassName=motor Member=Component R60 10K
+Added Member To Class: ClassName=motor Member=Component R61 100
+Added Member To Class: ClassName=motor Member=Component R62 5.1K
+Added Member To Class: ClassName=motor Member=Component R63 100K
+Added Member To Class: ClassName=motor Member=Component R64 1
+Added Member To Class: ClassName=motor Member=Component R65 1K
+Added Member To Class: ClassName=motor Member=Component R66 10K
+Added Member To Class: ClassName=motor Member=Component R67 10K
+Added Member To Class: ClassName=motor Member=Component R68 10K
+Added Member To Class: ClassName=motor Member=Component R69_1 0
+Added Member To Class: ClassName=motor Member=Component R69_2 5.1K
+Added Member To Class: ClassName=motor Member=Component R69_3 0
+Added Member To Class: ClassName=analog Member=Component U3 LM358
+Added Member To Class: ClassName=analog Member=Component U4 TL431
+Added Room: Name=analog
+Added Room: Name=motor
+Added Room: Name=power supply
