@@ -1,0 +1,14 @@
+*.o
+*.lib
+*.a
+*.elf
+*.bin
+*.hex
+*~
+
+/Project_0/OutPuts/*
+/Project_1/OutPuts/*
+/Project_2/OutPuts/*
+/Project_3/OutPuts/*
+
+*haldak*
